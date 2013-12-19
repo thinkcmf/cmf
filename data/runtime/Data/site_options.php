@@ -1,0 +1,1 @@
+<?php	return array ( 'site_name' => 'ThinkCMF内容管理框架', 'site_host' => 'http://127.0.0.3/cmf/', 'site_root' => '', 'site_icp' => '', 'site_admin_email' => '479923197@qq.com', 'site_tongji' => '', 'site_copyright' => '', 'site_seo_title' => 'ThinkCMF内容管理框架', 'site_seo_keywords' => '', 'site_seo_description' => 'ThinkCMF是简约风网络科技发布的一款用于快速开发的内容管理框架', );?>
