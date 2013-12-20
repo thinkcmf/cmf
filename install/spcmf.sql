@@ -244,7 +244,7 @@ CREATE TABLE `sp_ad` (
   `ad_content` text,
   `status` int(2) NOT NULL DEFAULT '1',
   PRIMARY KEY (`ad_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 CREATE TABLE `sp_admin_panel` (
   `menuid` mediumint(8) unsigned NOT NULL,
   `userid` mediumint(8) unsigned NOT NULL DEFAULT '0',
@@ -389,7 +389,7 @@ CREATE TABLE `sp_nav` (
   `listorder` int(6) DEFAULT '0',
   `path` varchar(255) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
 INSERT INTO `sp_nav` VALUES (1, 4, 0, '首页', '', 'index.php', '', 1, 0, '0');
 INSERT INTO `sp_nav` VALUES (7, 4, 0, '联系我们', '', 'index.php?m=contact', '', 1, 0, '0');
 INSERT INTO `sp_nav` VALUES (8, 4, 0, '前端工具包', '', 'index.php?m=tools&a=icons', '', 1, 0, '0');
@@ -401,7 +401,7 @@ CREATE TABLE `sp_nav_cat` (
   `active` int(1) NOT NULL DEFAULT '1',
   `remark` text,
   PRIMARY KEY (`navcid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 INSERT INTO `sp_nav_cat` VALUES (4, '主导航', 1, '主导航');
 INSERT INTO `sp_nav_cat` VALUES (5, '左导航', 0, '');
 CREATE TABLE `sp_oauth_member` (
