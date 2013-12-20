@@ -29,11 +29,11 @@ class SettingAction extends AdminbaseAction {
 			
 			sp_save_var($home_config_file, $home_configs);
 			
-			F("site_options",get_site_options());
-			
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);
 			$r=$this->options_obj->where($where)->add($data,array(),true);
+			
+			F("site_options",get_site_options());
 			if ($r) {
 				$this->success("保存成功！");
 			} else {
