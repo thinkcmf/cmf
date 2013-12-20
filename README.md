@@ -1,5 +1,14 @@
-ThinkCMF
-===
-ç”±äºŽç½‘ç»œåŽŸå› ï¼ŒGITHUBä¸Šæ‰˜ç®¡çš„ä»£ç å°šæœªèƒ½ä¼ è¾“å®Œæ¯•
-Free and open source cmf
-è¿™æ˜¯Githubä¸Šç¬¬ä¸€ä¸ªPHPå¼€å‘çš„ä¸­æ–‡å†…å®¹ç®¡ç†æ¡†æž¶
+#thinkcmf
+<<<<<<< HEAD
+
+ThinkCMFÊÇÒ»¿î»ùÓÚPHP+MYSQL¿ª·¢µÄÖÐÎÄÄÚÈÝ¹ÜÀí¿ò¼Ü¡£ThinkCMFÌá³öÁé»îµÄÓ¦ÓÃ»úÖÆ£¬¿ò¼Ü×ÔÉíÌá¹©»ù´¡µÄ¹ÜÀí¹¦ÄÜ£¬¶ø¿ª·¢Õß¿ÉÒÔ¸ù¾Ý×ÔÉíµÄÐèÇóÒÔÓ¦ÓÃµÄÐÎÊ½½øÐÐÀ©Õ¹¡£Ã¿¸öÓ¦ÓÃ¶¼ÄÜ¶ÀÁ¢µÄÍê³É×Ô¼ºµÄÈÎÎñ£¬Ò²¿ÉÍ¨¹ýÏµÍ³µ÷ÓÃÆäËûÓ¦ÓÃ½øÐÐÐ­Í¬¹¤×÷¡£ÔÚÕâÖÖÔËÐÐ»úÖÆÏÂ£¬¿ª·¢ÉÌ³¡Ó¦ÓÃµÄÓÃ»§ÎÞÐè¹ØÐÄ¿ª·¢SNSÓ¦ÓÃÊ±ÈçºÎ¹¤×÷µÄ£¬µ«ËûÃÇÖ®¼äÓÖ¿ÉÍ¨¹ýÏµÍ³±¾Éí½øÐÐÐ­µ÷£¬´ó´óµÄ½µµÍÁË¿ª·¢³É±¾ºÍ¹µÍ¨³É±¾¡£
+¹ÙÍø£ºhttp://www.thinkcmf.com
+ÎÄµµ:http://www.thinkcmf.com/index.php?m=document
+
+ThinkCMF ÃâÔðÉùÃ÷
+  1¡¢ÀûÓÃ ThinkCMF ¹¹½¨µÄÍøÕ¾µÄÈÎºÎÐÅÏ¢ÄÚÈÝÒÔ¼°µ¼ÖÂµÄÈÎºÎ°æÈ¨¾À·×ºÍ·¨ÂÉÕùÒé¼°ºó¹û£¬ThinkCMF ¹Ù·½²»³Ðµ£ÈÎºÎÔðÈÎ¡£
+  2¡¢ÄúÒ»µ©°²×°Ê¹ÓÃThinkCMF£¬¼´±»ÊÓÎªÍêÈ«Àí½â²¢½ÓÊÜ±¾Ð­ÒéµÄ¸÷ÏîÌõ¿î£¬ÔÚÏíÓÐÉÏÊöÌõ¿îÊÚÓèµÄÈ¨Á¦µÄÍ¬Ê±£¬ÊÜµ½Ïà¹ØµÄÔ¼ÊøºÍÏÞÖÆ¡£
+½Ó ÊÜ
+
+=======
+>>>>>>> 018b631cad18c248162d54942058295d815f2c2a

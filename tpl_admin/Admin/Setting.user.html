@@ -1,0 +1,73 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <admintpl file="nav"/>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="{:U('Menu/edit')}">
+      <div class="h_a">菜单信息</div>
+      <div class="table_list">
+        <table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+          <input type="hidden" name="id" value="{$id}" />
+          <tbody>
+            <tr>
+              <td width="140">上级:</td>
+              <td><select name="parentid">
+                  <option value="0">作为一级菜单</option>
+                     {$select_categorys}
+                </select></td>
+            </tr>
+            <tr>
+              <td>名称:</td>
+              <td><input type="text" class="input" name="name" value="{$data.name}"></td>
+            </tr>
+            <tr style="display:none;">
+              <td>项目:</td>
+              <td><input type="text" class="input" name="app" id="app" value=""></td>
+            </tr>
+            <tr style="display:none;">
+              <td>模块:</td>
+              <td><input type="text" class="input" name="model" id="model" value=""></td>
+            </tr>
+            <tr style="display:none;">
+              <td>方法:</td>
+              <td><input type="text" class="input" name="action" id="action" value=""></td>
+            </tr>
+            <tr>
+              <td>链接:</td>
+              <td><input type="text" class="input length_5" name="data" value="{$data.data}">
+                例:g=admin&amp;m=menu&amp;a=add；外部链接以http://开头</td>
+            </tr>
+            <tr>
+              <td>备注:</td>
+              <td><textarea name="remark" rows="5" cols="57">{$data.remark}</textarea></td>
+            </tr>
+            <tr>
+              <td>状态:</td>
+              <td><select name="status">
+                  <option value="1" <eq name="data.status" value="1">selected</eq>>显示</option>
+                  <option value="0" <eq name="data.status" value="0">selected</eq>>不显示</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td>类型:</td>
+              <td><select name="type">
+                  <option value="1" <eq name="data.type" value="1">selected</eq>>权限认证+菜单</option>
+                   <option value="0" <eq name="data.type" value="0">selected</eq>>只作为菜单</option>
+                </select>
+                注意：“权限认证+菜单”表示加入后台权限管理，纯碎是菜单项请不要选择此项。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="">
+        <div class="btn_wrap_pd">
+          <button class="btn btn_submit mr10 J_ajax_submit_btn" type="submit">修改</button>
+          <input type="hidden" name="id" value="{$data.id}" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+</body>
+</html>

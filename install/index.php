@@ -288,6 +288,8 @@ helllo;
         exit();
 
     case '5':
+    	$ip = get_client_ip();
+    	$host=$_SERVER['HTTP_HOST'];
         include_once ("./templates/s5.php");
         @touch('./install.lock');
         exit();

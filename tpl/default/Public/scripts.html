@@ -1,0 +1,42 @@
+<script src="__TMPL__Public/js/jquery.min.js"></script>
+      <script src="__TMPL__Public/js/bootstrap.js"></script>
+      <script src="__TMPL__Public/js/jquery.parallax.js"></script> 
+      <script src="__TMPL__Public/js/modernizr-2.6.2.min.js"></script> 
+      <script src="__TMPL__Public/js/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+      <script src="__TMPL__Public/js/jquery.nivo.slider.pack.js"></script>
+      <script src="__TMPL__Public/js/jquery.prettyPhoto.js"></script>
+      <script src="__TMPL__Public/js/superfish.js"></script>
+      <script src="__TMPL__Public/js/tweetMachine.js"></script>
+      <script src="__TMPL__Public/js/tytabs.js"></script>
+      <script src="__TMPL__Public/js/jquery.gmap.min.js"></script>
+      <script src="__TMPL__Public/js/circularnav.js"></script>
+      <script src="__TMPL__Public/js/jquery.sticky.js"></script>
+      <script src="__TMPL__Public/js/jflickrfeed.js"></script>
+      <script src="__TMPL__Public/js/imagesloaded.pkgd.min.js"></script>
+      <script src="__TMPL__Public/js/waypoints.min.js"></script>
+      <script src="__TMPL__Public/js/spectrum.js"></script>
+      <script src="__TMPL__Public/js/switcher.js"></script>
+      <script src="__TMPL__Public/js/custom.js"></script>
+      
+      <script>
+   
+      
+      $(function(){
+    	  
+    	  $("#menu-header li a").each(function() {
+              //设置样式
+            //  alert($(this)[0].href + "::" + window.location.toString());
+				if ($(this)[0].href+"/" == window.location.toString() || $(this)[0].href == window.location.toString()) {
+					if($(this).parent().parent().is($("#menu-header"))){
+						$(this)[0].id="current";
+					}else{
+						$(this).parents(".hasChild").children('a')[0].id="current";
+					}
+					return false;
+				}
+			});
+
+    	  
+      });
+      
+      </script>

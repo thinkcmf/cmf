@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+   <!-- head -->
+   <include file="Public:head"/>
+   <!-- head -->
+   <body class="page">
+      <div class="wrap">
+        <!-- Header start -->
+        <include file="Public:header" />
+         <!-- Header End -->  
+         <!-- Content Start -->
+         <div id="main">
+            <!-- Title, Breadcrumb Start-->
+            <div class="breadcrumb-wrapper">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                        <h2 class="title">404 页面未找到</h2>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                        <div class="breadcrumbs pull-right">
+                           <ul>
+                              <li>你的位置:</li>
+                              <li><a href="#">404</a></li>
+                              <li>404 Not Found</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Title, Breadcrumb End-->
+            <!-- Main Content start-->
+            <div class="content">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h2 class="text-center">哎呀... 页面没找到 !!!</h2>
+                        <div id="not-found">
+                           <h2>404 <i class="icon-question-sign"></i></h2>
+                        </div>
+                        <div class="back-home">
+                           <p>你请求的页面未找到 <a href="{$site_host}" tppabs="{$sp_host}">戳这里</a>回到主页
+                           </p>
+                           <!-- Search Widget Start -->
+                           <div class="widget search-form">
+                              <div class="input-group">
+                                 <input type="text" value="Search..." onfocus="if(this.value=='Search...')this.value='';" onblur="if(this.value=='')this.value='Search...';" class="search-input form-control">
+                                 <span class="input-group-btn">
+                                 <button type="submit" class="subscribe-btn btn"><i class="icon-search"></i></button>
+                                 </span>
+                              </div>
+                              <!-- /input-group -->
+                           </div>
+                           <!-- Search Widget End -->
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Main Content end-->
+         </div>
+         <!-- Content End -->
+          <!-- Footer Start -->
+         <include file="Public:footer"/>
+         <!-- Footer End -->
+         <!-- Scroll To Top --> 
+         <a href="#" class="scrollup"><i class="icon-angle-up"></i></a>
+      </div>
+      <!-- Wrap End -->
+      <!-- switcher start -->
+      <include file="Public:switcher"/>
+      <!-- switcher start -->
+       <!-- The Scripts -->
+      <include file="Public:scripts"/>
+      <!-- The Scripts -->
+   </body>

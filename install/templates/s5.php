@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <title><?php echo $Title; ?> - <?php echo $Powered; ?></title>
 <link rel="stylesheet" href="./css/install.css?v=9.0" />
+<script src="js/jquery.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -17,6 +18,18 @@
     </div>
   </section>
 </div>
+
 <?php require './templates/footer.php';?>
+<script>
+$(function(){
+	$.ajax({
+	type: "POST",
+	url: "http://www.thinkcmf.com/service/installinfo.php",
+	data: {host:'<?php echo $host;?>',ip:'<?php echo $ip?>'},
+	dataType: 'json',
+	success: function(){}
+	});
+});
+</script>
 </body>
 </html>

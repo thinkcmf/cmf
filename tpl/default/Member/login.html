@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+<!-- head -->
+<include file="Public:head"/>
+<!-- head -->
+   <body class="blog">
+      <div class="wrap">
+        <!-- Head start -->
+        <include file="Public:header" />
+        <!-- Head End -->
+         <!-- Content Start -->
+         <div id="main">
+            <!-- Title, Breadcrumb Start-->
+            <div class="breadcrumb-wrapper">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                        <h2 class="title">登录</h2>
+                     </div>
+                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                        <div class="breadcrumbs pull-right">
+                           <ul>
+                              <li>You are here:</li>
+                              <li><a href="index.html" tppabs="#">Home</a></li>
+                              <li>登录</li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- Title, Breadcrumb End-->
+            <!-- Main Content start-->
+            <div class="content">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-lg-3 col-md-8 col-sm-6 col-xs-12" id="contact-form">
+                        {$contact.post_content}
+                        <div class="divider"></div>
+                        <form method="post" action="{:u('index/dologin')}">
+                           <fieldset>
+                              <div class="row">
+                                 <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
+                                    <label>账号: <span>*</span></label>
+                                    <input class="form-control" id="name" name="name" type="text" value="" required>
+                                 </div>
+                                 <div class="col-lg-12 col-md-6 col-sm-6 col-xs-12">
+                                    <label>密码: <span>*</span></label>
+                                    <input class="form-control" type="password" id="passwd" name="passwd" value="">
+                                 </div>
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <label>验证码: <span>*</span></label>
+                                    <input class="form-control" type=text id="verify" name="verify" value="" required>
+                                    
+                                 </div>
+                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                 	 <label>&nbsp;</label>
+                                 	{:sp_verifycode_img()}
+                                 </div>
+                              </div>
+                           </fieldset>
+                           <button class="btn-normal btn-color submit  bottom-pad" type="submit">确定</button>
+                           <div class="clearfix">
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+                  <!-- <div class="row">
+                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h3 class="title">Our Location</h3>
+                        <div id="maps" class="google-maps">
+                        </div>
+                        Left Section End
+                     </div>
+                  </div> -->
+                  <div class="divider"></div>
+               </div>
+            </div>
+            <!-- Main Content end-->
+         </div>
+         <!-- Content End -->
+         <!-- Footer Start -->
+         <include file="Public:footer"/>
+         <!-- Footer End -->
+         <!-- Scroll To Top --> 
+         <a href="#" class="scrollup"><i class="icon-angle-up"></i></a>
+      </div>
+      <!-- Wrap End -->
+      <!-- switcher start -->
+      <include file="Public:switcher"/>
+      <!-- switcher start -->
+      <!-- The Scripts -->
+      <include file="Public:scripts"/>
+      <!-- The Scripts -->
+   </body>
+</html>
