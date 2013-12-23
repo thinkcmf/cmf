@@ -607,7 +607,7 @@ CREATE TABLE `sp_users` (
   `last_login_time` datetime NOT NULL,
   `create_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `user_activation_key` varchar(60) NOT NULL DEFAULT '',
-  `user_status` int(11) NOT NULL DEFAULT '0',
+  `user_status` int(11) NOT NULL DEFAULT '1',
   `display_name` varchar(250) NOT NULL DEFAULT '',
   `role_id` smallint(6) DEFAULT NULL,
   PRIMARY KEY (`ID`),
