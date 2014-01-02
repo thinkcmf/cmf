@@ -1,5 +1,9 @@
 <?php
 
+include 'auto.php';
+if(IS_SAE)
+header("Location: index_sae.php");
+
 if (file_exists('./install.lock')) {
     echo '
 		<html>

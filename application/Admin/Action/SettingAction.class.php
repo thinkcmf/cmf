@@ -26,8 +26,11 @@ class SettingAction extends AdminbaseAction {
 			}
 			
 			$home_configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$home_configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$home_configs["URL_MODEL"]=$_POST['options']['urlmode'];
+			$home_configs["URL_HTML_SUFFIX"]=$_POST['options']['html_suffix'];
 			
-			sp_save_var($home_config_file, $home_configs);
+			sp_save_var($home_config_file, $home_configs);//sae use same function
 			
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);

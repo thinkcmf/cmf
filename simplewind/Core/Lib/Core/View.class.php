@@ -148,11 +148,11 @@ class View {
             $theme  =   C('DEFAULT_THEME');
             // 获取当前主题的模版路径
             if(1==C('APP_GROUP_MODE')){ // 独立分组模式
-                define('THEME_PATH',   dirname(BASE_LIB_PATH).'/'.$group.basename(TMPL_PATH).'/'.$theme);
-                define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.C('APP_GROUP_PATH').'/'.$group.basename(TMPL_PATH).'/'.$theme);
+                defined('THEME_PATH')?"":define('THEME_PATH',   dirname(BASE_LIB_PATH).'/'.$group.basename(TMPL_PATH).'/'.$theme);
+                defined('APP_TMPL_PATH')?"":define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.C('APP_GROUP_PATH').'/'.$group.basename(TMPL_PATH).'/'.$theme);
             }else{ 
-                define('THEME_PATH',   TMPL_PATH.$group.$theme);
-                define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.basename(TMPL_PATH).'/'.$group.$theme);
+                defined('THEME_PATH')?"":define('THEME_PATH',   TMPL_PATH.$group.$theme);
+                defined('APP_TMPL_PATH')?"":define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.basename(TMPL_PATH).'/'.$group.$theme);
             }
             return $template;
         }

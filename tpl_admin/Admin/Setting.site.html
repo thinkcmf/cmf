@@ -29,6 +29,7 @@
 			<ul class="J_tabs_nav">
 				<li class="current"><a href="javascript:;;">网站信息</a></li>
 				<li class=""><a href="javascript:;;">SEO设置</a></li>
+				<li class=""><a href="javascript:;;">URL设置</a></li>
 			</ul>
 		</div>
 		<form class="J_ajaxForms" name="myform" id="myform" action="{:u('setting/site')}" method="post">
@@ -107,6 +108,37 @@
 							</tbody>
 						</table>
 					</div>
+				</div>
+				<div style="display: none">
+					<div class="table_list">
+						<table cellpadding="0" cellspacing="0" class="table_form" width="100%">
+							<tbody>
+								<tr>
+									<td>url模式：</td>
+									<td>
+										<php>$urlmodes=array(
+											"0"=>"普通模式",
+											"1"=>"PATHINFO模式",
+											"2"=>"REWRITE模式"
+										);</php>
+										<select name="options[urlmode]">
+											<foreach name="urlmodes" item="vo">
+												<php>$urlmode_selected=$key==$urlmode?"selected":"";</php>
+												<option value="{$key}" {$urlmode_selected}>{$vo}</option>
+											</foreach>
+										</select>
+										<span class="must_red">*&nbsp;&nbsp;如果你开启的是REWRITE模式，请确保服务器支持REWRITE；</span>
+									</td>
+								</tr>
+								<tr>
+									<td>URL伪静态后缀：</td>
+									<td><input type="text" class="input" name="options[html_suffix]" value="{$html_suffix}"><span class="must_red">*&nbsp;&nbsp;如果设置则开启URL伪静态；</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+
 				</div>
 			</div>
 			<div class="btn_wrap">

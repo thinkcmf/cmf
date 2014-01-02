@@ -88,7 +88,7 @@ foreach($folder as $dir){
 ?>   
       </table>
     </div>
-    <div class="bottom tac"> <a href="./index.php?step=2" class="btn">重新检测</a><a href="./index.php?step=3" class="btn">下一步</a> </div>
+    <div class="bottom tac"> <a href="<?php echo $_SERVER['PHP_SELF']; ?>?step=2" class="btn">重新检测</a><a href="<?php echo $_SERVER['PHP_SELF']; ?>?step=3" class="btn">下一步</a> </div>
   </section>
 </div>
 <?php require './templates/footer.php';?>

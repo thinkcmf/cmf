@@ -13,6 +13,8 @@ class AdminbaseAction extends AppframeAction {
 		C("TMPL_ACTION_SUCCESS",$admintpl_path.C("SP_ADMIN_TMPL_ACTION_SUCCESS"));
 		C("TMPL_ACTION_ERROR",$admintpl_path.C("SP_ADMIN_TMPL_ACTION_ERROR"));
 		parent::__construct();
+		$time=time();
+		$this->assign("js_debug",APP_DEBUG?"?v=$time":"");
 	}
 
     function _initialize() {
@@ -21,15 +23,15 @@ class AdminbaseAction extends AppframeAction {
     	if(isset($_SESSION['ADMIN_ID'])){
     		$id=$_SESSION['ADMIN_ID'];
     		$user=$users_obj->where("ID=$id")->find();
+    		if(!$this->check_access($user['role_id'])){
+    			$this->error("您没有访问权限！");
+    			exit();
+    		}
     		$this->assign("admin",$user);
     	}else{
     		$this->error("您还没有登录！",U("admin/public/login"));
     	}
-    	
-        $this->initMenu();
-        
-        $time=time();
-        $this->assign("js_debug",APP_DEBUG?"?v=$time":"");
+    	$this->initMenu();
     }
 
     /**
@@ -38,10 +40,9 @@ class AdminbaseAction extends AppframeAction {
      * @param type $jumpUrl
      * @param type $ajax 
      */
-    public function success($message, $jumpUrl = '', $ajax = false) {
+    public function success($message = '', $jumpUrl = '', $ajax = false) {
         parent::success($message, $jumpUrl, $ajax);
         $text = "应用：" . GROUP_NAME . ",模块：" . MODULE_NAME . ",方法：" . ACTION_NAME . "<br>提示语：" . $message;
-        $this->addLogs($text);
     }
 
     /**
@@ -52,7 +53,7 @@ class AdminbaseAction extends AppframeAction {
      * @param string $content 输出内容
      * 此方法作用在于实现后台模板直接存放在各自项目目录下。例如Admin项目的后台模板，直接存放在Admin/Tpl/目录下
      */
-    public function display($templateFile = '', $charset = '', $contentType = '', $content = '') {
+    public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
         parent::display($this->parseTemplate($templateFile), $charset, $contentType);
     }
     
@@ -66,9 +67,11 @@ class AdminbaseAction extends AppframeAction {
     public function parseTemplate($template='') {
     	$tmpl_path=C("SP_ADMIN_TMPL_PATH");
     	$app_name=APP_NAME==basename(dirname($_SERVER['SCRIPT_FILENAME'])) && ''==__APP__?'':APP_NAME.'/';
+    	// 获取当前主题名称
+    	$theme      =    C('SP_ADMIN_DEFAULT_THEME');
     	if(is_file($template)) {
     		$group  =   defined('GROUP_NAME')?GROUP_NAME.'/':'';
-    		$theme  =   C('SP_ADMIN_DEFAULT_THEME');
+    		
     		// 获取当前主题的模版路径
     		if(1==C('APP_GROUP_MODE')){ // 独立分组模式
     			define('THEME_PATH',   dirname(BASE_LIB_PATH).'/'.$group.basename($tmpl_path).'/'.$theme."/");
@@ -81,8 +84,7 @@ class AdminbaseAction extends AppframeAction {
     	}
     	$depr       =   C('TMPL_FILE_DEPR');
     	$template   =   str_replace(':', $depr, $template);
-    	// 获取当前主题名称
-    	$theme      =    C('SP_ADMIN_DEFAULT_THEME');
+    	
     	// 获取当前模版分组
     	$group      =   defined('GROUP_NAME')?GROUP_NAME.'/':'';
     	//$group      =   '';
@@ -120,7 +122,7 @@ class AdminbaseAction extends AppframeAction {
     /**
      * 初始化后台菜单
      */
-    private function initMenu() {
+    public function initMenu() {
         $Menu = F("Menu");
         if (!$Menu) {
             D("Menu")->menu_cache();
@@ -196,6 +198,23 @@ class AdminbaseAction extends AppframeAction {
             $str = self::current_pos($r['parentid']);
         }
         return $str . $r['name'] . ' > ';
+    }
+    
+    private function check_access($roleid){
+    	
+    		//如果用户角色是1，则无需判断
+    		if($roleid == 1){
+    			return true;
+    		}
+    		$access_obj = M("Access");
+    		
+    		$group=GROUP_NAME;
+    		$model=MODULE_NAME;
+    		$action=ACTION_NAME;
+    		
+    		$count = $access_obj->where ( "role_id=$roleid and g='$group' and m='$model' and a='$action'")->count();
+    		
+    		return $count;
     }
 }
 

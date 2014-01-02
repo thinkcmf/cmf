@@ -9,22 +9,28 @@ class ListAction extends HomeBaseAction {
 	public function index() {
 		$term=sp_get_term($_GET['id']);
 		$tplname=$term["list_tpl"];
-    	$theme=C("DEFAULT_THEME");
-    	
-    	$themepath=SPAPP_PATH.C("APP_GROUP_PATH")."/".GROUP_NAME."/".C("DEFAULT_V_LAYER")."/".$theme."/";
-    	$tplpath=$themepath.$tplname.C("TMPL_TEMPLATE_SUFFIX");
-    	
-    	$defaultpl=$themepath."list".C("TMPL_TEMPLATE_SUFFIX");
-    	
-    	if(file_exists($tplpath)){
-    		
-    	}else if(file_exists($defaultpl)){
-    		$tplname="list";
-    	}else{
-    		$tplname="404";
-    	}
-    	
+    	$tplname=sp_get_apphome_tpl($tplname, "list");
+    	$this->assign($term);
+    	$this->assign('cat_id', intval($_GET['id']));
     	$this->display(":$tplname");
 	}
+	
+	public function nav_index(){
+		$navcatname="文章分类";
+		$datas=sp_get_terms("field:term_id,name");
+		$navrule=array(
+				"action"=>"List/index",
+				"param"=>array(
+						"id"=>"term_id"
+				),
+				"label"=>"name");
+		echo sp_get_nav4admin($navcatname,$datas,$navrule);
+		
+	}
+	
+	public function test(){
+		print_r($_GET);
+	}
+	
 }
 ?>

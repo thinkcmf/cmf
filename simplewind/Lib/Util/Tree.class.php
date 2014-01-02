@@ -284,9 +284,10 @@ class Tree {
      * @param $style 目录样式 默认 filetree 可增加其他样式如'filetree treeview-famfamfam'
      * @param $currentlevel 计算当前层级，递归使用 适用改函数时不需要用该参数
      * @param $recursion 递归使用 外部调用时为FALSE
+     * @param $dropdown 有子元素时li的class
      */
     
-    function get_treeview_menu($myid,$effected_id='example', $str="<span class='file'>\$name</span>", $str2="<span class='folder'>\$name</span>", $showlevel = 0,  $ul_class="" ,$li_class="" , $style='filetree ', $currentlevel = 1, $recursion=FALSE) {
+    function get_treeview_menu($myid,$effected_id='example', $str="<span class='file'>\$name</span>", $str2="<span class='folder'>\$name</span>", $showlevel = 0,  $ul_class="" ,$li_class="" , $style='filetree ', $currentlevel = 1, $recursion=FALSE, $dropdown='hasChild') {
     	
     	$child = $this->get_child($myid);
     	if (!defined('EFFECTED_INIT')) {
@@ -304,7 +305,7 @@ class Tree {
     		
     		@extract($a);
     		if ($showlevel > 0 && is_array($this->get_child($a['id']))){
-    			$floder_status = " class='hasChild $li_class'";
+    			$floder_status = " class='$dropdown $li_class'";
     		}else{
     			$floder_status = " class='$li_class'";;
     		}

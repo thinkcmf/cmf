@@ -1,0 +1,96 @@
+<?php	return array (
+  'app' => 'Admin',
+  'model' => 'Extension',
+  'action' => 'default',
+  'data' => '',
+  'type' => '0',
+  'status' => '1',
+  'name' => '扩展工具',
+  'icon' => 'cloud',
+  'remark' => '',
+  'listorder' => '30',
+  'items' => 
+  array (
+    0 => 
+    array (
+      'app' => 'api',
+      'model' => 'oauthadmin',
+      'action' => 'setting',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => '第三方登录',
+      'icon' => 'leaf',
+      'remark' => '',
+      'listorder' => '4',
+    ),
+    1 => 
+    array (
+      'app' => 'Admin',
+      'model' => 'Menu',
+      'action' => 'add',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => '幻灯片',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '1',
+      'items' => 
+      array (
+        0 => 
+        array (
+          'app' => 'Admin',
+          'model' => 'Slide',
+          'action' => 'index',
+          'data' => '',
+          'type' => '1',
+          'status' => '1',
+          'name' => '幻灯片管理',
+          'icon' => '',
+          'remark' => '',
+          'listorder' => '0',
+        ),
+        1 => 
+        array (
+          'app' => 'Admin',
+          'model' => 'Slidecat',
+          'action' => 'index',
+          'data' => '',
+          'type' => '1',
+          'status' => '1',
+          'name' => '幻灯片分类',
+          'icon' => '',
+          'remark' => '',
+          'listorder' => '0',
+        ),
+      ),
+    ),
+    2 => 
+    array (
+      'app' => 'Admin',
+      'model' => 'ad',
+      'action' => 'index',
+      'data' => '',
+      'type' => '1',
+      'status' => '1',
+      'name' => '网站广告',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '2',
+    ),
+    3 => 
+    array (
+      'app' => 'Admin',
+      'model' => 'Link',
+      'action' => 'index',
+      'data' => '',
+      'type' => '0',
+      'status' => '1',
+      'name' => '友情链接',
+      'icon' => '',
+      'remark' => '',
+      'listorder' => '3',
+    ),
+  ),
+);?>

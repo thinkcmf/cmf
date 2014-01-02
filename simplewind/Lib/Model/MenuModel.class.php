@@ -174,9 +174,12 @@ class MenuModel extends CommonModel {
                 if ($child && $Level <= 3) {
                     $ret[$id . $name]['items'] = $child;
                 }
+               
             }
+            return $ret;
         }
-        return $ret;
+       
+        return false;
     }
 
     /**
@@ -198,7 +201,7 @@ class MenuModel extends CommonModel {
      * 后台有更新/编辑则删除缓存
      * @param type $data
      */
-    public function _before_write($data) {
+    public function _before_write(&$data) {
         parent::_before_write($data);
         F("Menu", NULL);
     }
@@ -207,6 +210,17 @@ class MenuModel extends CommonModel {
     public function _after_delete($data, $options) {
         parent::_after_delete($data, $options);
         $this->_before_write($data);
+    }
+    
+    public function menu($parentid, $with_self = false){
+    	//父节点ID
+    	$parentid = (int) $parentid;
+    	$result = $this->where(array('parentid' => $parentid))->select();
+    	if ($with_self) {
+    		$result2[] = $this->where(array('id' => $parentid))->find();
+    		$result = array_merge($result2, $result);
+    	}
+    	return $result;
     }
 
 }

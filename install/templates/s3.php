@@ -131,7 +131,7 @@
         var dbName = $('#dbname').val();
         var dbPort = $('#dbport').val();
         data={'dbHost':dbHost,'dbUser':dbUser,'dbPwd':dbPwd,'dbName':dbName,'dbPort':dbPort};
-        var url =  "./index.php?step=3&testdbpwd=1";
+        var url =  "<?php echo $_SERVER['PHP_SELF']; ?>?step=3&testdbpwd=1";
         $.ajax({
             type: "POST",
             url: url,

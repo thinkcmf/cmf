@@ -63,7 +63,7 @@
 		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.tid}" ></td>
 		            <td><input name='listorders[{$vo.tid}]' class="input mr5"  type='text' size='3' value='{$vo.listorder}'></td>
 		            <td><a>{$vo.tid}</a></td>
-		            <td><a target="_blank">
+		            <td><a href="{:U('portal/article/index',array('id'=>$vo['tid']))}" target="_blank">
 		            	<span style="" >{$vo.post_title}</span></a>
 		            </td>
 		            <td>0</td>

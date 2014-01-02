@@ -65,17 +65,16 @@ class NavAction extends AdminbaseAction {
 			if ($this->nav->create()) {
 				$result=$this->nav->add();
 				if ($result) {
-					$this->success("添加成功！", U("nav/index"));
-					$parentid=empty($_POST['parentid'])?"0":$_POST['parentid'];
+					$parentid = $_POST['parentid']==0?"0":$_POST['parentid'];
 					if(empty($parentid)){
-						$data['path']="0";
+						$data['path']="0-$result";
 					}else{
 						$parent=$this->nav->where("id=$parentid")->find();
-						
 						$data['path']=$parent[path]."-$result";
 					}
 					$data['id']=$result;
 					$this->nav->save($data);
+					$this->success("添加成功！", U("nav/index"));
 				} else {
 					$this->error("添加失败！");
 				}
@@ -112,6 +111,7 @@ class NavAction extends AdminbaseAction {
 			
 			$cats=$this->navcat->select();
 			$this->assign("navcats",$cats);
+			$this->assign('navs', $this->select());
 			$this->assign("navcid",$cid);
 			$this->display();
 		}
@@ -126,7 +126,7 @@ class NavAction extends AdminbaseAction {
 		if (IS_POST) {
 			$parentid=empty($_POST['parentid'])?"0":$_POST['parentid'];
 			if(empty($parentid)){
-				$_POST['path']="0";
+				$_POST['path']="0-".$_POST['id'];
 			}else{
 				$parent=$this->nav->where("id=$parentid")->find();
 			
@@ -173,10 +173,26 @@ class NavAction extends AdminbaseAction {
 			$cats=$this->navcat->select();
 			$this->assign("navcats",$cats);
 			
-			
-			
 			$nav=$this->nav->where("id=$id")->find();
+			$nav['hrefold'] = stripslashes($nav['href']);
+			$href = unserialize($nav['hrefold']);
+			if(empty($href)){
+				if($nav['hrefold'] == "home"){
+					$href = __ROOT__."/";
+				}else{
+					$href = $nav['hrefold'];
+				}
+			}else{
+				$default_app = strtolower(C("DEFAULT_GROUP"));
+				$href = U($href['action'],$href['param']);
+				$g = C("VAR_GROUP");
+				$href = preg_replace("/\/$default_app\//", "/",$href);
+				$href = preg_replace("/$g=$default_app&/", "",$href);
+			}
+			
+			$nav['href'] = $href;
 			$this->assign($nav);
+			$this->assign('navs', $this->select());
 			$this->assign("navcid",$cid);
 			$this->display();
 		}
@@ -208,6 +224,36 @@ class NavAction extends AdminbaseAction {
 		} else {
 			$this->error("删除失败！");
 		}
+	}
+	
+	/**
+	 * select nav
+	 */
+	
+	private function select(){
+		$apps=Dir::getList(SPAPP);
+		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
+		$navs=array();
+		foreach ($apps as $a){
+		
+			if(is_dir(SPAPP.$a)){
+				if(!(strpos($a, ".") === 0)){
+					$navfile=SPAPP.$a."/nav.php";
+					$app=$a;
+					if(file_exists($navfile)){
+						$navgeturls=include $navfile;
+						foreach ($navgeturls as $url){
+							//echo U("$app/$url");
+							$nav= file_get_contents($host.U("$app/$url"));
+							$nav=json_decode($nav,true);
+							$navs[]=$nav;
+						}
+					}
+					
+				}
+			}
+		}
+		return $navs;
 	}
 	
 }

@@ -10,6 +10,7 @@ return array(
 	    'Pclzip' => LIB_PATH.'Util/Pclzip.class.php',
 	    //UploadFile
 	    "UploadFile" => LIB_PATH.'Util/UploadFile.class.php',
+		"CloudUploadFile" => LIB_PATH.'Util/CloudUploadFile.class.php',
 	    //文件操作类 Dir
 	    "Dir" => LIB_PATH.'Util/Dir.class.php',
 	    //树

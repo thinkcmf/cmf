@@ -51,7 +51,7 @@ ThinkCMF 免责声明
   2、您一旦安装使用ThinkCMF，即被视为完全理解并接受本协议的各项条款，在享有上述条款授予的权力的同时，受到相关的约束和限制。</pre>
     
     </div>
-    <div class="bottom tac"> <a href="./index.php?step=2" class="btn">接 受</a> </div>
+    <div class="bottom tac"> <a href="<?php echo $_SERVER['PHP_SELF']; ?>?step=2" class="btn">接 受</a> </div>
   </div>
 </div>
 <?php require './templates/footer.php';?>

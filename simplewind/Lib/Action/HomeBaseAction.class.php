@@ -1,6 +1,11 @@
 <?php
 class HomeBaseAction extends AppframeAction {
 	
+	public function __construct() {
+		$this->set_action_success_error_tpl();
+		parent::__construct();
+	}
+	
 	function _initialize() {
 		
 		parent::_initialize();
@@ -26,7 +31,7 @@ class HomeBaseAction extends AppframeAction {
 	 * @param string $content 模板输出内容
 	 * @return mixed
 	 */
-	public function display($templateFile='',$charset='',$contentType='',$content='') {
+	public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
 		//echo $this->parseTemplate($templateFile);
 		parent::display($this->parseTemplate($templateFile), $charset, $contentType);
 	}
@@ -40,23 +45,42 @@ class HomeBaseAction extends AppframeAction {
 	public function parseTemplate($template='') {
 		$tmpl_path=C("SP_TMPL_PATH");
 		$app_name=APP_NAME==basename(dirname($_SERVER['SCRIPT_FILENAME'])) && ''==__APP__?'':APP_NAME.'/';
+		
+		// 获取当前主题名称
+		$theme      =    C('SP_DEFAULT_THEME');
+		if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
+			$t = C('VAR_TEMPLATE');
+			if (isset($_GET[$t])){
+				$theme = $_GET[$t];
+			}elseif(cookie('think_template')){
+				$theme = cookie('think_template');
+			}
+			if(!file_exists($tmpl_path."/".$theme)){
+				$theme  =   C('SP_DEFAULT_THEME');
+			}
+			cookie('think_template',$theme,864000);
+		}
+		
 		if(is_file($template)) {
 			$group  =   defined('GROUP_NAME')?GROUP_NAME.'/':'';
-			$theme  =   C('SP_DEFAULT_THEME');
+			
 			// 获取当前主题的模版路径
 			if(1==C('APP_GROUP_MODE')){ // 独立分组模式
-				define('THEME_PATH',   dirname(BASE_LIB_PATH).'/'.$group.basename($tmpl_path).'/'.$theme."/");
-				define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.C('APP_GROUP_PATH').'/'.$group.basename($tmpl_path).'/'.$theme."/");
+				//define('THEME_PATH',   dirname(BASE_LIB_PATH).'/'.$group.basename($tmpl_path).'/'.$theme."/");
+				//define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.C('APP_GROUP_PATH').'/'.$group.basename($tmpl_path).'/'.$theme."/");
+				define('THEME_PATH',   $tmpl_path.$theme."/");
+				define('APP_TMPL_PATH',__ROOT__.'/'.basename($tmpl_path).'/'.$theme."/");
 			}else{
-				define('THEME_PATH',   $tmpl_path.$group.$theme."/");
-				define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.basename($tmpl_path).'/'.$group.$theme."/");
+				//define('THEME_PATH',   $tmpl_path.$group.$theme."/");
+				//define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.basename($tmpl_path).'/'.$group.$theme."/");
+				define('THEME_PATH',   $tmpl_path.$theme."/");
+				define('APP_TMPL_PATH',__ROOT__.'/'.$app_name.basename($tmpl_path).'/'.$theme."/");
 			}
 			return $template;
 		}
 		$depr       =   C('TMPL_FILE_DEPR');
 		$template   =   str_replace(':', $depr, $template);
-		// 获取当前主题名称
-		$theme      =    C('SP_DEFAULT_THEME');
+		
 		// 获取当前模版分组
 		$group      =   defined('GROUP_NAME')?GROUP_NAME.'/':'';
 		//$group      =   '';
@@ -85,4 +109,31 @@ class HomeBaseAction extends AppframeAction {
 		}
 		return THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
 	}
+	
+	
+	private function set_action_success_error_tpl(){
+		$theme      =    C('SP_DEFAULT_THEME');
+		if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
+			if(cookie('think_template')){
+				$theme = cookie('think_template');
+			}
+		}
+		$tpl_path=C("SP_TMPL_PATH").$theme."/";
+		$defaultjump=THINK_PATH.'Tpl/dispatch_jump.tpl';
+		$action_success=$tpl_path.C("SP_TMPL_ACTION_SUCCESS").C("TMPL_TEMPLATE_SUFFIX");
+		$action_error=$tpl_path.C("SP_TMPL_ACTION_ERROR").C("TMPL_TEMPLATE_SUFFIX");
+		if(file_exists($action_success)){
+			C("TMPL_ACTION_SUCCESS",$action_success);
+		}else{
+			C("TMPL_ACTION_SUCCESS",$defaultjump);
+		}
+		
+		if(file_exists($action_error)){
+			C("TMPL_ACTION_ERROR",$action_error);
+		}else{
+			C("TMPL_ACTION_ERROR",$defaultjump);
+		}
+	}
+	
+	
 }

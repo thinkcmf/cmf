@@ -13,6 +13,10 @@ class CheckcodeAction extends Action {
         if ($checkcode->code_len > 8 || $checkcode->code_len < 2) {
             $checkcode->code_len = 4;
         }
+        //设置验证码字符库
+        if(isset($_GET['charset'])){
+        	$checkcode->charset = trim($_GET['charset']);
+        }
         //强制验证码不得小于4位
         if($checkcode->code_len < 4){
             $checkcode->code_len = 4;

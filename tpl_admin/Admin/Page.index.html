@@ -61,13 +61,13 @@
 		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.ID}"></td>
 		            <td><a>{$vo.ID}</a></td>
 		            <td>
-		            	<a><span>{$vo.post_title}</span></a>
+		            	<a href="{:U('portal/page/index',array('id'=>$vo['ID']))}" target="_blank"><span>{$vo.post_title}</span></a>
 		            </td>
 		            <td>0</td>
 		            <td>admin</td>
 		            <td>{$vo.post_date}</td>
 		            <td>
-		            	<a target="_self" href="{:U('post/edit',array('id'=>$vo[ID]))}" target="_blank" >修改</a>|
+		            	<a target="_self" href="{:U('page/edit',array('id'=>$vo[ID]))}" target="_blank" >修改</a>|
 		            	<a href="{:U('page/delete',array('id'=>$vo[ID]))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>

@@ -175,6 +175,110 @@ class MenuAction extends AdminbaseAction {
             $this->display();
         }
     }
+    
+    
+    public function export_menu(){
+    	$menu_obj=new MenuModel();
+    	$rootmenus=$menu_obj->menu(0);
+    	$apps=Dir::getList(SPAPP);
+    	foreach ($apps as $a){
+    		if(is_dir(SPAPP.$a)){
+    			if(!(strpos($a, ".") === 0)){
+    				$menudir=SPAPP.$a."/Menu";
+    				Dir::del($menudir);
+    			}
+    		}
+    	}
+    	foreach ($rootmenus as $m){
+    		$rootmenu=$m;
+    		$this->generate_submenu($rootmenu,$m);
+    		$app=ucfirst($m['app']);
+    		$menudir=SPAPP.$app."/Menu";
+    		$model=ucfirst($m['model']);
+    		$action=ucfirst($m['action']);
+    		$menuname="$model.$action.php";
+    		file_put_contents($menudir."/".$menuname, "<?php\treturn " . var_export($rootmenu, true) . ";?>");
+    	}
+    	$this->display();
+    }
+    
+    public function dev_import_menu(){
+    	$menus=F("Menu");
+    	if(!empty($menus)){
+    		$table_menu=C('DB_PREFIX')."menu";
+    		$this->Menu->execute("TRUNCATE TABLE $table_menu;");
+    		 
+    		foreach($menus as $menu){
+    			$this->Menu->add($menu);
+    		}
+    	}
+    	
+    	$this->display();
+    }
+    
+    public function import_menu(){
+    	$apps=Dir::getList(SPAPP);
+    	foreach ($apps as $a){
+    		if(is_dir(SPAPP.$a)){
+    			if(!(strpos($a, ".") === 0)){
+    				$menudir=SPAPP.$a."/Menu";
+    				$menus=scandir($menudir);
+    				if(count($menus)){
+    					foreach ($menus as $mf){
+    						$rootmenudatas=include   $menudir."/$mf";
+    						
+    						print_r($rootmenudatas);
+    						if(!empty($rootmenudatas)){
+    							$data=$rootmenudatas;
+    							$data['parentid']=0;
+    							unset($data['items']);
+    							print_r($data);
+    							$id=$this->Menu->add($data);
+    							if(!empty($rootmenudatas['items'])){
+    								$this->import_submenu($rootmenudatas['items'],$id);
+    							}
+    						}
+    						
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+    
+    private function import_submenu($submenus,$parentid){
+    	foreach($submenus as $sm){
+    		$data=$sm;
+    		$data['parentid']=$parentid;
+    		unset($data['items']);
+    		$id=$this->Menu->add($data);
+    		if(!empty($sm['items'])){
+    				$this->import_submenu($sm['items'],$id);
+    		}else{
+    			return;
+    		}
+    	}
+    }
+    
+    private function generate_submenu(&$rootmenu,$m){
+    	$parentid=$m['id'];
+    	$rm=$this->Menu->menu($parentid);
+    	unset($rootmenu['id']);
+    	unset($rootmenu['parentid']);
+    	if(count($rm)){
+    		
+    		$count=count($rm);
+    		for($i=0;$i<$count;$i++){
+    			$this->generate_submenu($rm[$i],$rm[$i]);
+    			
+    		}
+    		$rootmenu['items']=$rm;
+    		
+    	}else{
+    		return ;
+    	}
+    	
+    }
 
 }
 

@@ -57,37 +57,10 @@ body fieldset legend {
           <td>
           	<div  style="text-align: center;"><input type='hidden' name='smeta[thumb]' id='thumb' value=''>
 			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','content','12','b6ba209759e147124653ac77362ef2bd');return false;">
-			<img src='__ROOT__/statics/images/icon/upload-pic.png' id='thumb_preview' width='135' height='113' style='cursor:hand' /></a><input type="button" class="btn" onclick="crop_cut_thumb($('#thumb').val());return false;" value="裁减图片"> 
+			<img src='__ROOT__/statics/images/icon/upload-pic.png' id='thumb_preview' width='135' height='113' style='cursor:hand' /></a>
+			<!-- <input type="button" class="btn" onclick="crop_cut_thumb($('#thumb').val());return false;" value="裁减图片"> -->
             <input type="button"  class="btn" onclick="$('#thumb_preview').attr('src','__ROOT__/statics/images/icon/upload-pic.png');$('#thumb').val('');return false;" value="取消图片">
-            <script type="text/javascript">
-            function crop_cut_thumb(id){
-			if ( id =='' || id == undefined ) {
-                      isalert('请先上传缩略图！');
-                      return false;
-                    }
-                    var catid = $('input[name="info[catid]"]').val();
-                    if(catid == '' ){
-                        isalert('请选择栏目ID！');
-                        return false;
-                    }
-                    Wind.use('artDialog','iframeTools',function(){
-                      art.dialog.open(GV.DIMAUB+'index.php?a=public_imagescrop&m=Content&g=Contents&catid='+catid+'&picurl='+encodeURIComponent(id)+'&input=thumb&preview=thumb_preview', {
-                        title:'裁减图片', 
-                        id:'crop',
-                        ok: function () {
-                            var iframe = this.iframe.contentWindow;
-                            if (!iframe.document.body) {
-                                 alert('iframe还没加载完毕呢');
-                                 return false;
-                            }
-                            iframe.uploadfile();
-                            return false;
-                        },
-                        cancel: true
-                      });
-                    });
-            	};
-				</script></div>
+            </div>
 			</td>
         </tr>
         <tr>
@@ -128,8 +101,12 @@ body fieldset legend {
               </td>
             </tr>
             <tr>
+              <th width="80">模版</th>
+              <td><input type='text' name='smeta[template]'  value="{$smeta.template|default='page'}" style='width:280px'   class='input' placeholder='请输入模版'></td>
+            </tr>
+            <tr>
               <th width="80">关键词</th>
-              <td><input type='text' name='info[keywords]' id='keywords' value='' style='width:280px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
+              <td><input type='text' name='post[post_keywords]' id='keywords' value='' style='width:280px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
             </tr>
             <tr>
               <th width="80">摘要 </th>

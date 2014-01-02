@@ -37,28 +37,46 @@ class OauthadminAction extends AdminbaseAction {
 		if($_POST){
 			$h='$_SERVER["HTTP_HOST"]';
 			extract($_POST);
+			if(IS_SAE){
+				$call_back = 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=';
+				$data = array(
+					'THINK_SDK_QQ' => array(
+						'APP_KEY'    => '{$qq_key}',
+						'APP_SECRET' => '{$qq_sec}',
+						'CALLBACK'   => $call_back . 'qq',
+					),
+					'THINK_SDK_SINA' => array(
+						'APP_KEY'    => '{$sina_key}', 
+						'APP_SECRET' => '{$sina_sec}',
+						'CALLBACK'   => $call_back . 'sina',
+					),
+				);
+				$kv = new SaeKV();
+				$ret = $kv->init();
+				$result = $kv->set('THINKSDK_CONFIG', serialize($data));
+			}else{
 			$con =  <<<OAUTH
 <?php
-define('URL_CALLBACK', 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=');
+defined('OAUTH_URL_CALLBACK') or define('OAUTH_URL_CALLBACK', 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=');
 return array(
 	'THINK_SDK_QQ' => array(
 		'APP_KEY'    => '$qq_key',
 		'APP_SECRET' => '$qq_sec',
-		'CALLBACK'   => URL_CALLBACK . 'qq',
+		'CALLBACK'   => OAUTH_URL_CALLBACK . 'qq',
 	),
 	'THINK_SDK_SINA' => array(
 		'APP_KEY'    => '$sina_key', 
 		'APP_SECRET' => '$sina_sec',
-		'CALLBACK'   => URL_CALLBACK . 'sina',
+		'CALLBACK'   => OAUTH_URL_CALLBACK . 'sina',
 	),
 );
 ?>
 OAUTH;
-			
 			$fp = fopen($oauth_config_file, 'wb');
 			chmod($oauth_config_file, 0777);
 			$result	= fwrite($fp, trim($con));
 			@fclose($fp);
+			}
 			if($result) $this->success("更新成功！");
 			else $this->error("更新失败！");
 			exit;

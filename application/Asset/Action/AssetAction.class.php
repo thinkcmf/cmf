@@ -22,7 +22,7 @@ class AssetAction extends AdminbaseAction {
 
     function _initialize() {
         //parent::_initialize();
-        import('UploadFile');
+       import('CloudUploadFile');
         //默认图片类型
         $this->imgext = array('jpg', 'gif', 'png', 'bmp', 'jpeg');
         //当前登陆用户名 0 表示游客
@@ -36,7 +36,6 @@ class AssetAction extends AdminbaseAction {
      * 通过swf上传成功以后回调处理时会调用swfupload_json方法增加cookies！
      */
     public function swfupload() {
-    	
         if (IS_POST) {
 			
             //filename,filesize,filepath,uploadtime,status,meta,suffix
@@ -48,10 +47,13 @@ class AssetAction extends AdminbaseAction {
             $module = strtolower($this->_post("module"));
 			
             //上传处理类
-            $upload = new UploadFile();
-            $upload->maxSize  = 11048576 ;	// 设置附件上传大小 <1M
-            $upload->allowExts  = array('jpg','png','gif');// 设置附件上传类型
-            $upload->saveRule = 'uniqid';
+            $config=array(
+				'allowExts' => array('jpg','gif','png'),
+				'savePath' => './'. C("UPLOADPATH"),
+				'maxSize' => 11048576,
+				'saveRule' => 'uniqid',
+			);
+			$upload = new UploadFile($config);
             //如果允许上传的文件类型为空，启用网站配置的 uploadallowext
             //允许上传的文件类型，直接使用网站配置的。20120708
            /*  if ($isadmin) {
@@ -88,42 +90,14 @@ class AssetAction extends AdminbaseAction {
             $upload->thumbMaxHeight = $this->_post("thumb_height"); */
 
             //上传目录 可以单独写个方法，根据栏目ID生成相对于栏目目录附件
-            $this->filepath = $upload->savePath ="./". C("UPLOADPATH");
 
             //开始上传
             if ($upload->upload()) {
                 //上传成功
                 $info = $upload->getUploadFileInfo();
                 //写入附件数据库信息
-                $status = 1;
-                if (1) {
-                    if (in_array($info[0]['extension'], array("jpg", "png", "jpeg", "gif"))) {
-                        // 附件ID 附件网站地址 图标(图片时为1) 文件名
-                        echo "$status," . __ROOT__."/" .C("UPLOADPATH"). $info[0]['savename'].",".'1,'.$info[0]['name'];
-                        exit;
-                    } else {
-                        $fileext = $info[0]['extension'];
-                        if ($fileext == 'zip' || $fileext == 'rar')
-                            $fileext = 'rar';
-                        elseif ($fileext == 'doc' || $fileext == 'docx')
-                            $fileext = 'doc';
-                        elseif ($fileext == 'xls' || $fileext == 'xlsx')
-                            $fileext = 'xls';
-                        elseif ($fileext == 'ppt' || $fileext == 'pptx')
-                            $fileext = 'ppt';
-                        elseif ($fileext == 'flv' || $fileext == 'swf' || $fileext == 'rm' || $fileext == 'rmvb')
-                            $fileext = 'flv';
-                        else
-                            $fileext = 'do';
-
-                        echo "$status," . $Attachment->filehttp . "," . $fileext . "," . str_replace(array("\\", "/"), "", $info[0]['name']);
-                        exit;
-                    }
-                } else {
-                    //删除已经上传的图片，这里逻辑还要优化
-                    @unlink($info[0]['savepath'] . $info[0]['savename']);
-                    exit("0,上传成功，但写库失败！");
-                }
+				echo "1," . C("TMPL_PARSE_STRING.__UPLOAD__").$info[0]['savename'].",".'1,'.$info[0]['name'];
+				exit;
             } else {
                 //上传失败，返回错误
                 exit("0," . $upload->getErrorMsg());

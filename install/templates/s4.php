@@ -28,7 +28,7 @@ var n=0;
     var data = <?php echo json_encode($_POST);?>;
     $.ajaxSetup ({ cache: false });
     function reloads(n) {
-        var url =  "./index.php?step=4&install=1&n="+n;
+        var url =  "<?php echo $_SERVER['PHP_SELF']; ?>?step=4&install=1&n="+n;
         $.ajax({
             type: "POST",		
             url: url,
@@ -54,7 +54,7 @@ var n=0;
         });
     }
     function gonext(){
-        window.location.href='./index.php?step=5';
+        window.location.href='<?php echo $_SERVER['PHP_SELF']; ?>?step=5';
     }
     $(document).ready(function(){
         reloads(n);

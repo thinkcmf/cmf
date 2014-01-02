@@ -34,7 +34,22 @@
             </tr>
             <tr>
               <td>地址:</td>
-              <td><textarea name="href" rows="5" cols="57">{$remark}</textarea></td>
+              <td>
+					<input type="radio" name="nav" id="outlink">
+	              	<input type="text" class="input" name="href" id="outlink_input" value="http://" />
+	              	
+					<input type="radio" name="nav" id="selecturl">
+	              	<select name="href" id="selecthref">
+	                  <option disabled="disabled" checked="checked">默认</option>
+	                  <option value="home">&nbsp;&nbsp;&nbsp;&nbsp;首页</option>
+	                  <foreach name="navs" item="vo">
+		            	<option disabled="disabled">{$vo.name}</option>
+		            	<foreach name="vo['items']" item="voo">
+		            		<option value='{$voo.rule}'>&nbsp;&nbsp;&nbsp;&nbsp;{$voo.label}</option>
+		            	</foreach>
+		              </foreach>
+	                </select>
+              </td>
             </tr>
             <tr>
               <td>打开方式:</td>
@@ -77,7 +92,29 @@ $(function(){
 		location.href=location.href+"&cid="+$(this).val();
 	});
 	
-	
+	$("#selecthref").click(function(){
+		$('#outlink_input').removeAttr('name');
+		$('#selecturl').attr({'checked':'checked', 'name':'href'});
+	});
+	$("input[name='href']").click(function(){
+		$('#selecthref').removeAttr('name');
+		$('#outlink').attr({'checked':'checked', 'name':'href'});
+	});
+	/*
+	Wind.use('ajaxForm','artDialog','iframeTools', function () {
+	 	$("#href_input").click(function(){
+	 		art.dialog.open("{:u('nav/select')}", {
+                title: "选择链接地址",
+                close: function () {
+        			var checked_v = art.dialog.data('checked_v');
+        			if (checked_v !== undefined) $('#href_input').val(checked_v);
+        			var checked_u = art.dialog.data('checked_u');
+        			if (checked_u !== undefined) $('#u_input').val(checked_u);
+        		}
+            },false);
+		});
+    });
+	*/
 });
 </script>
 

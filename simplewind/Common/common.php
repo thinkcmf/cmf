@@ -37,7 +37,8 @@ function sp_clear_cache(){
 		$dirs = array ();
 		// runtime/
 		$rootdirs = scandir ( RUNTIME_PATH );
-		$noneed_clear=array(".","..","Data");
+		//$noneed_clear=array(".","..","Data");
+		$noneed_clear=array(".","..");
 		$rootdirs=array_diff($rootdirs, $noneed_clear);
 		foreach ( $rootdirs as $dir ) {
 			
@@ -57,8 +58,9 @@ function sp_clear_cache(){
 				}
 			}
 		}
+		$dirtool=new Dir("");
 		foreach ( $dirs as $dir ) {
-			Dir::del ( $dir );
+			$dirtool->del ( $dir );
 		}
 	
 }
@@ -67,8 +69,13 @@ function sp_clear_cache(){
  * 保存变量
  */
 function sp_save_var($path,$value){
-	if(file_exists($path)){
-		file_put_contents($path, strip_whitespace("<?php\treturn " . var_export($value, true) . ";?>"));
+	if(IS_SAE){
+		$kv = new SaeKV();
+		$ret = $kv->init();
+		$kv->delete('DYNAMIC_CONFIG');
+		$ret = $kv->set('DYNAMIC_CONFIG', serialize($value));
+	}else{
+		file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
 	}
 }
 
@@ -266,6 +273,7 @@ function initupload($module, $catid, $args, $userid, $groupid = '8', $isadmin = 
  * @param $ul_class 内部ul样式 默认空  可增加其他样式如'sub-menu'
  * @param $li_class 内部li样式 默认空  可增加其他样式如'menu-item'
  * @param $style 目录样式 默认 filetree 可增加其他样式如'filetree treeview-famfamfam'
+ * @param $dropdown 有子元素时li的class
  * $id="main";
  $effected_id="mainmenu";
  $filetpl="<a href='\$href'><span class='file'>\$label</span></a>";
@@ -295,20 +303,44 @@ function initupload($module, $catid, $args, $userid, $groupid = '8', $isadmin = 
  </li>
  <li class="hasChildren" id='6'><span class='file'>ss</span></li>
  </ul>
-
  */
-function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='file'>\$label</span>",$foldertpl="<span class='folder'>\$label</span>",$ul_class="" ,$li_class="" ,$style="filetree",$showlevel=6){
-	$nav_obj=new NavModel();
-	if($id=="main"){
-		$navcat_obj=new NavCatModel();
-		$main=$navcat_obj->where("active=1")->find();
-		$id=$main['navcid'];
+function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='file'>\$label</span>",$foldertpl="<span class='folder'>\$label</span>",$ul_class="" ,$li_class="" ,$style="filetree",$showlevel=6,$dropdown='hasChild'){
+	$site_nav=F("site_nav_".$id);
+	if(empty($site_nav)){
+		$nav_obj=new NavModel();
+		if($id=="main"){
+			$navcat_obj=new NavCatModel();
+			$main=$navcat_obj->where("active=1")->find();
+			$id=$main['navcid'];
+		}
+		$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
+		foreach ($navs as $key=>$nav){
+			$href=$nav['href'];
+			$hrefold=$href;
+			$href=unserialize(stripslashes($nav['href']));
+			if(empty($href)){
+				if($hrefold=="home"){
+					$href=__ROOT__."/";
+				}else{
+					$href=$hrefold;
+				}
+			}else{
+				$default_app=strtolower(C("DEFAULT_GROUP"));
+				$href=U($href['action'],$href['param']);
+				$g=C("VAR_GROUP");
+				$href=preg_replace("/\/$default_app\//", "/",$href);
+				$href=preg_replace("/$g=$default_app&/", "",$href);
+			}
+			$nav['href']=$href;
+			$navs[$key]=$nav;
+		}
+		F("site_nav",$navs);
 	}
-	$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
+	
 	import("Tree");
 	$tree = new Tree();
 	$tree->init($navs);
-	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE);
+	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE, $dropdown);
 
 }
 
@@ -334,4 +366,114 @@ function sp_getcontent_imgs($content){
 	}
 	phpQuery::$documents=null;
 	return $imgs_data;
+}
+
+/*
+ * 作用：写入新消息
+ * 参数：$from	发送者id
+ * 		$to		消息接受者id
+ * 		$content  消息内容
+ * 		$targetid 相应数据表中的id的值
+ * 		$mestype可选值：topic_comment(话题评论)、topic_answer(话题回复)、topic_collect(话题收藏)、topic_love(喜欢)
+ */
+function insertMes($from, $to, $content, $targetid, $mestype){
+	$data = array(
+			'mes_from'	=> $from,
+			'mes_to'	=> $to,
+			'mes_content' => $content,
+			'post_time'	=> time(),
+			'target_id'	=> $targetid,
+			'mes_type'	=> $mestype,
+			'mes_status'=> '2', //未读
+	);
+	return M('Message')->add($data);
+}
+
+/*
+ * 作用：查看用户消息
+ * 参数：$uid	查询用户id
+ * 		$status		消息接受者id
+ * 		$mestype可选值：topic_comment(话题评论)、topic_answer(话题回复)、topic_collect(话题收藏)、topic_love(喜欢)
+ * 注意：查询时仅限于members,message,topic三张表，因此只能查询三张表中的信息
+ */
+function getMes($uid, $type, $status=2){
+	$DbPre = C('DB_PREFIX');
+	$topic_comment = M()->query('select a.*,b.user_login_name,b.ID,c.topic_id,c.topic_cid,c.title
+    								from '.$DbPre.'message a
+    								left join '.$DbPre.'members b
+    								on a.mes_from=b.ID
+    								left join '.$DbPre.'topic c
+    								on a.target_id=c.topic_id
+    								where a.mes_status='.$status.' and mes_type=\''.$type.'\' and a.mes_to='.$uid
+									.' order by a.post_time desc');
+	return $topic_comment;
+}
+
+//获取站内消息数量
+function getMesNum(){
+	if(!isset($_SESSION["MEMBER_id"])) return;
+	return M('Message')->where('mes_status=2 and mes_to='.$_SESSION["MEMBER_id"])->count();
+}
+/**
+ * 
+ * @param unknown_type $navcatname
+ * @param unknown_type $datas
+ * @param unknown_type $navrule
+ * @return string
+ */
+function sp_get_nav4admin($navcatname,$datas,$navrule){
+	$nav['name']=$navcatname;
+	$nav['urlrule']=$navrule;
+	foreach($datas as $t){
+		$urlrule=array();
+		$group=strtolower(GROUP_NAME)==strtolower(C("DEFAULT_GROUP"))?"":GROUP_NAME."/";
+		$action=$group.$navrule['action'];
+		$urlrule['action']=GROUP_NAME."/".$navrule['action'];
+		$urlrule['param']=array();
+		if(isset($navrule['param'])){
+			foreach ($navrule['param'] as $key=>$val){
+				$urlrule['param'][$key]=$t[$val];
+			}
+		}
+		
+		$nav['items'][]=array(
+				"label"=>$t[$navrule['label']],
+				"url"=>U($action,$urlrule['param']),
+				"rule"=>serialize($urlrule)
+		);
+	}
+	return json_encode($nav);
+}
+
+function sp_get_apphome_tpl($tplname,$default_tplname,$default_theme=""){
+	$theme      =    C('SP_DEFAULT_THEME');
+	if(C('TMPL_DETECT_THEME')){// 自动侦测模板主题
+		$t = C('VAR_TEMPLATE');
+		if (isset($_GET[$t])){
+			$theme = $_GET[$t];
+		}elseif(cookie('think_template')){
+			$theme = cookie('think_template');
+		}
+	}
+	$theme=empty($default_theme)?$theme:$default_theme;
+	$themepath=C("SP_TMPL_PATH").$theme."/".GROUP_NAME."/";
+	$tplpath=$themepath.$tplname.C("TMPL_TEMPLATE_SUFFIX");
+	$defaultpl=$themepath.$default_tplname.C("TMPL_TEMPLATE_SUFFIX");
+	if(file_exists($tplpath)){
+	}else if(file_exists($defaultpl)){
+		$tplname=$default_tplname;
+	}else{
+		$tplname="404";
+	}
+	return $tplname;
+}
+
+//面包屑导航
+function sp_bread_nav($nav_id){
+	$navTable = M('Nav');
+	$path = $navTable->where("id=$nav_id")->getField('path');
+	if(!$path) return array();
+	$path = str_replace('-',',',$path);
+	$bread_path = $navTable->where("id in ($path)")->order('id')->select();
+	return $bread_path;
 }

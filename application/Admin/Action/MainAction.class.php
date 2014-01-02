@@ -1,6 +1,10 @@
 <?php
 class MainAction extends AdminbaseAction {
+	
+	function _initialize() {
+	}
     public function index(){
+    	
     	//服务器信息
     	$info = array(
     			'操作系统' => PHP_OS,

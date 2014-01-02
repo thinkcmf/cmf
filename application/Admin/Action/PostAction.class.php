@@ -21,6 +21,7 @@ class PostAction extends AdminbaseAction {
 	$terms_obj=new TermsModel();
 	
 	 if (IS_POST) {
+	 	$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
 	 	$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
 	 	$_POST['post']['smeta']=json_encode($_POST['smeta']);
             $result=$this->posts_obj->add($_POST['post']);
@@ -51,6 +52,7 @@ class PostAction extends AdminbaseAction {
 		$terms_obj=new TermsModel();
 		
 		if (IS_POST) {
+			$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			$result=$this->posts_obj->save($_POST['post']);
 			//echo($this->posts_obj->getLastSql());die;
@@ -93,7 +95,7 @@ class PostAction extends AdminbaseAction {
 		$this->assign("term",$term);
 		
 		$where_ands=empty($term_id)?array("a.status=$status"):array("a.term_id = $term_id and a.status=$status");
-		
+		$_GET['term']=$_REQUEST['term'];
 		$fields=array(
 				'start_time'=> array("field"=>"post_date","operator"=>">"),
 				'end_time'  => array("field"=>"post_date","operator"=>"<"),

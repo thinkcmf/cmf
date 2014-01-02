@@ -5,8 +5,6 @@
  */
 class AppframeAction extends Action {
 
-    //各种缓存 比如当前登陆用户信息等
-    public static $Cache = array();
 
     function _initialize() {
         //消除所有的magic_quotes_gpc转义
@@ -88,120 +86,23 @@ class AppframeAction extends Action {
         }
     }
 
-    /**
-     *  初始化当前登录用户信息
-     */
-    final protected function initUser() {
-        //当然登陆用户ID
-        $usDb = service("Passport")->isLogged();
-        if ($usDb == false) {
-            return false;
-        }
 
-        self::$Cache['uid'] = (int) $usDb['userid'];
-        self::$Cache['username'] = $usDb['username'];
-        $this->assign("uid", self::$Cache['uid']);
-        $this->assign("username", self::$Cache['username']);
-        $User = $usDb;
 
-        self::$Cache['User'] = $User;
-        $this->assign("User", self::$Cache['User']);
-        unset($usDb);
-        return true;
+    
+    //分页
+    protected function page($Total_Size = 1, $Page_Size = 0, $Current_Page = 1, $listRows = 6, $PageParam = '', $PageLink = '', $Static = FALSE) {
+    	import('Page');
+    	if ($Page_Size == 0) {
+    		$Page_Size = C("PAGE_LISTROWS");
+    	}
+    	if (empty($PageParam)) {
+    		$PageParam = C("VAR_PAGE");
+    	}
+    	$Page = new Page($Total_Size, $Page_Size, $Current_Page, $listRows, $PageParam, $PageLink, $Static);
+    	$Page->SetPager('default', '{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}', array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+    	return $Page;
     }
 
-    /**
-     * 初始化站点配置信息
-     */
-    final protected function initSite() {
-        $Config = F("Config");
-        self::$Cache['Config'] = $Config;
-        /**
-         * 模块绑定域名相关
-         * 前台模板，比如JS调用，建议使用 {$config_siteurl}，因为如果模块有绑定域名
-         * 使用{$config.siteurl}会造成JS跨域等等问题。
-         */
-        if (C("APP_SUB_DOMAIN")) {
-            $config_siteurl = (is_ssl() ? 'https://' : 'http://') .C("APP_SUB_DOMAIN") . "/";
-            //用于在程序中调用
-            define("CONFIG_SITEURL_MODEL", $config_siteurl);
-            $this->assign("config_siteurl", $config_siteurl);
-        } else {
-            $config_siteurl = $Config['siteurl'];
-            define("CONFIG_SITEURL_MODEL", $config_siteurl);
-            $this->assign("config_siteurl", $config_siteurl);
-        }
-        //去除敏感信息
-        unset($Config['mail_password'],$Config['ftphost'],$Config['ftpuppat'],$Config['ftpuser'],$Config['ftppassword']);
-        $this->assign("Config", $Config);
-        //分配当前操作名到模板  使用$Think.ACTION_NAME有时会有意外情况
-        $appinfo = array(
-            "action" => ACTION_NAME,
-            "group" => GROUP_NAME,
-            "module" => MODULE_NAME
-        );
-        $this->assign("appinfo", $appinfo);
-    }
-
-    /**
-     * 初始化模型 
-     */
-    final protected function initModel() {
-        if (!F("Model")) {
-            D("Model")->model_cache();
-        }
-        //栏目缓存
-        if (!F("Category")) {
-            D("Category")->category_cache();
-        }
-        //20120615 增加
-        if (!is_file(RUNTIME_PATH . "content_output.class.php")) {
-            import("Cacheapi");
-            $Cache = new Cacheapi();
-            $Cache->model_content_cache();
-        }
-        //会员相关必要缓存
-        if(!F("Model_Member") || !F("Member_group")) {
-            D("Model")->MemberModelCache();
-            D("Member_group")->Membergroup_cache();
-        }
-    }
-
-    /**
-     * Cookie 设置、获取、删除 
-     */
-    final static public function cookie($name, $value = '', $option = null) {
-        return SiteCookie($name, $value, $option);
-    }
-
-    /**
-     * 写入操作日志
-     * @param type $info 操作说明
-     * @param type $status 状态,1为写入，2为更新，3为删除
-     * @param type $data 数据
-     * @param type $options 条件
-     */
-    final public function addLogs($info, $status = 1, $data = array(), $options = array()) {
-        $uid = self::$Cache['uid'];
-        if (!$uid) {
-            return false;
-        }
-        $data = serialize($data);
-        $options = serialize($options);
-        $get = $_SERVER['HTTP_REFERER'];
-        $post = "";
-        M("Operationlog")->add(array(
-            "uid" => $uid,
-            "time" => date("Y-m-d H:i:s"),
-            "ip" => get_client_ip(),
-            "status" => $status,
-            "info" => $info,
-            "data" => $data,
-            "options" => $options,
-            "get" => $get,
-            "post" => $post
-        ));
-    }
 
     /**
      * 验证码验证
