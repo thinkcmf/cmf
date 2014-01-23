@@ -34,7 +34,7 @@ class NavAction extends AdminbaseAction {
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
 		foreach ($result as $r) {
 			$r['str_manage'] = '<a href="' . U("nav/add", array("parentid" => $r['id'],"cid"=>$r['cid'])) . '">添加子菜单</a> | <a href="' . U("nav/edit", array("id" => $r['id'],"parentid"=>$r['parentid'],"cid"=>$r['cid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("nav/delete", array("id" => $r['id'])) . '">删除</a> ';
-			$r['status'] = $r['status'] ? "显示" : "不显示";
+			$r['status'] = $r['status'] ? "显示" : "隐藏";
 			$array[] = $r;
 		}
 	
@@ -60,8 +60,45 @@ class NavAction extends AdminbaseAction {
 	 *  添加
 	 */
 	public function add() {
-		if (IS_POST) {
+		$cid=$_REQUEST['cid'];
+		$result = $this->nav->where("cid=$cid")->order(array("listorder" => "ASC"))->select();
+		import("Tree");
+		$tree = new Tree();
+		$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
+		$tree->nbsp = '&nbsp;';
+		$parentid=$this->_get("parentid");
+		foreach ($result as $r) {
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+			$r['status'] = $r['status'] ? "显示" : "隐藏";
+			$r['selected'] = $r['id']==$parentid?"selected":"";
+			$array[] = $r;
+		}
 			
+		$tree->init($array);
+		$str = "<tr>
+				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+				<td>\$id</td>
+				<td >\$spacer\$label</td>
+			    <td>\$status</td>
+				<td>\$str_manage</td>
+			</tr>";
+		$str="<option value='\$id' \$selected>\$spacer\$label</option>";
+		$nav_trees = $tree->get_tree(0, $str);
+		$this->assign("nav_trees", $nav_trees);
+			
+			
+		$cats=$this->navcat->select();
+		$this->assign("navcats",$cats);
+		$this->assign('navs', $this->_select());
+		$this->assign("navcid",$cid);
+		$this->display();
+	}
+	
+	/**
+	 *  添加
+	 */
+	public function add_post() {
+		if (IS_POST) {
 			if ($this->nav->create()) {
 				$result=$this->nav->add();
 				if ($result) {
@@ -81,39 +118,6 @@ class NavAction extends AdminbaseAction {
 			} else {
 				$this->error($this->nav->getError());
 			}
-		} else {
-			$cid=$_REQUEST['cid'];
-			$result = $this->nav->where("cid=$cid")->order(array("listorder" => "ASC"))->select();
-			import("Tree");
-			$tree = new Tree();
-			$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
-			$tree->nbsp = '&nbsp;';
-			$parentid=$this->_get("parentid");
-			foreach ($result as $r) {
-				$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
-				$r['status'] = $r['status'] ? "显示" : "不显示";
-				$r['selected'] = $r['id']==$parentid?"selected":"";
-				$array[] = $r;
-			}
-			
-			$tree->init($array);
-			$str = "<tr>
-				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
-				<td>\$id</td>
-				<td >\$spacer\$label</td>
-			    <td>\$status</td>
-				<td>\$str_manage</td>
-			</tr>";
-			$str="<option value='\$id' \$selected>\$spacer\$label</option>";
-			$nav_trees = $tree->get_tree(0, $str);
-			$this->assign("nav_trees", $nav_trees);
-			
-			
-			$cats=$this->navcat->select();
-			$this->assign("navcats",$cats);
-			$this->assign('navs', $this->select());
-			$this->assign("navcid",$cid);
-			$this->display();
 		}
 	}
 	
@@ -123,17 +127,76 @@ class NavAction extends AdminbaseAction {
 	 *  编辑
 	 */
 	public function edit() {
+		$cid=$_REQUEST['cid'];
+		$id=$this->_get("id");
+		$result = $this->nav->where("cid=$cid and id!=$id")->order(array("listorder" => "ASC"))->select();
+		import("Tree");
+		$tree = new Tree();
+		$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
+		$tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		$parentid=$this->_get("parentid");
+		foreach ($result as $r) {
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+			$r['status'] = $r['status'] ? "显示" : "隐藏";
+			$r['selected'] = $r['id']==$parentid?"selected":"";
+			$array[] = $r;
+		}
+		
+		$tree->init($array);
+		$str = "<tr>
+				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+				<td>\$id</td>
+				<td >\$spacer\$label</td>
+			    <td>\$status</td>
+				<td>\$str_manage</td>
+			</tr>";
+		$str="<option value='\$id' \$selected>\$spacer\$label</option>";
+		$nav_trees = $tree->get_tree(0, $str);
+		$this->assign("nav_trees", $nav_trees);
+		
+		
+		$cats=$this->navcat->select();
+		$this->assign("navcats",$cats);
+			
+		$nav=$this->nav->where("id=$id")->find();
+		$nav['hrefold'] = stripslashes($nav['href']);
+		$href = unserialize($nav['hrefold']);
+		if(empty($href)){
+			if($nav['hrefold'] == "home"){
+				$href = __ROOT__."/";
+			}else{
+				$href = $nav['hrefold'];
+			}
+		}else{
+			$default_app = strtolower(C("DEFAULT_GROUP"));
+			$href = U($href['action'],$href['param']);
+			$g = C("VAR_GROUP");
+			$href = preg_replace("/\/$default_app\//", "/",$href);
+			$href = preg_replace("/$g=$default_app&/", "",$href);
+		}
+			
+		$nav['href'] = $href;
+		$this->assign($nav);
+		$this->assign('navs', $this->_select());
+		$this->assign("navcid",$cid);
+		$this->display();
+	}
+	
+	/**
+	 *  编辑
+	 */
+	public function edit_post() {
 		if (IS_POST) {
 			$parentid=empty($_POST['parentid'])?"0":$_POST['parentid'];
 			if(empty($parentid)){
 				$_POST['path']="0-".$_POST['id'];
 			}else{
 				$parent=$this->nav->where("id=$parentid")->find();
-			
+					
 				$_POST['path']=$parent[path]."-".$_POST['id'];
 			}
 			if ($this->nav->create()) {
-				if ($this->nav->save($_POST)) {
+				if ($this->nav->save($_POST) !== false) {
 					$this->success("保存成功！", U("nav/index"));
 				} else {
 					$this->error("保存失败！");
@@ -141,60 +204,6 @@ class NavAction extends AdminbaseAction {
 			} else {
 				$this->error($this->nav->getError());
 			}
-		} else {
-			$cid=$_REQUEST['cid'];
-			$id=$this->_get("id");
-			$result = $this->nav->where("cid=$cid and id!=$id")->order(array("listorder" => "ASC"))->select();
-			import("Tree");
-			$tree = new Tree();
-			$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
-			$tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			$parentid=$this->_get("parentid");
-			foreach ($result as $r) {
-				$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
-				$r['status'] = $r['status'] ? "显示" : "不显示";
-				$r['selected'] = $r['id']==$parentid?"selected":"";
-				$array[] = $r;
-			}
-				
-			$tree->init($array);
-			$str = "<tr>
-				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
-				<td>\$id</td>
-				<td >\$spacer\$label</td>
-			    <td>\$status</td>
-				<td>\$str_manage</td>
-			</tr>";
-			$str="<option value='\$id' \$selected>\$spacer\$label</option>";
-			$nav_trees = $tree->get_tree(0, $str);
-			$this->assign("nav_trees", $nav_trees);
-				
-				
-			$cats=$this->navcat->select();
-			$this->assign("navcats",$cats);
-			
-			$nav=$this->nav->where("id=$id")->find();
-			$nav['hrefold'] = stripslashes($nav['href']);
-			$href = unserialize($nav['hrefold']);
-			if(empty($href)){
-				if($nav['hrefold'] == "home"){
-					$href = __ROOT__."/";
-				}else{
-					$href = $nav['hrefold'];
-				}
-			}else{
-				$default_app = strtolower(C("DEFAULT_GROUP"));
-				$href = U($href['action'],$href['param']);
-				$g = C("VAR_GROUP");
-				$href = preg_replace("/\/$default_app\//", "/",$href);
-				$href = preg_replace("/$g=$default_app&/", "",$href);
-			}
-			
-			$nav['href'] = $href;
-			$this->assign($nav);
-			$this->assign('navs', $this->select());
-			$this->assign("navcid",$cid);
-			$this->display();
 		}
 	}
 	
@@ -230,7 +239,7 @@ class NavAction extends AdminbaseAction {
 	 * select nav
 	 */
 	
-	private function select(){
+	private function _select(){
 		$apps=Dir::getList(SPAPP);
 		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
 		$navs=array();

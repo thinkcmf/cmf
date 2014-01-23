@@ -20,6 +20,8 @@ return array(
 		"Input" => LIB_PATH.'Util/Input.class.php',
 	    //Url地址
 	    "Url" => LIB_PATH.'Util/Url.class.php',
+		
+		"Curl" => LIB_PATH.'Util/Curl.class.php',
 	    
 	    //评论处理类
 	    "Comment" => APP_PATH.C("APP_GROUP_PATH")."/Comments/Util/Comment.class.php",
@@ -31,5 +33,9 @@ return array(
 	
 		//标签库
 		"TagLibSpadmin"=>LIB_PATH.'Taglib/TagLibSpadmin.class.php',
+		//Hook
+		"Hook"=>LIB_PATH.'Util/Hook.class.php',
+		//PHPZip
+		"phpzip"=>LIB_PATH.'Util/phpzip.php',
 );
 ?>

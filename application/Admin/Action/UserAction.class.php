@@ -22,6 +22,12 @@ class UserAction extends AdminbaseAction{
 	
 	
 	function add(){
+		$roles=$this->role_obj->where("status=1")->select();
+		$this->assign("roles",$roles);
+		$this->display();
+	}
+	
+	function add_post(){
 		if(IS_POST){
 			if ($this->users_obj->create()) {
 				if ($this->users_obj->add()) {
@@ -32,32 +38,35 @@ class UserAction extends AdminbaseAction{
 			} else {
 				$this->error($this->users_obj->getError());
 			}
-				
-		}else{
-			$roles=$this->role_obj->where("status=1")->select();
-			$this->assign("roles",$roles);
-			$this->display();
 		}
-	
 	}
 	
 	
 	function edit(){
+		$id=intval($this->_get("id"));
+		$roles=$this->role_obj->where("status=1")->select();
+		$this->assign("roles",$roles);
+			
+		$user=$this->users_obj->where("ID=$id")->find();
+		$this->assign($user);
+		$this->display();
+	}
+	
+	function edit_post(){
 		if (IS_POST) {
-			if ($this->ad_obj->create()) {
-				if ($this->ad_obj->save()) {
-					$this->success("保存成功！", U("ad/index"));
+			if(empty($_POST['user_pass'])){
+				unset($_POST['user_pass']);
+			}
+			if ($this->users_obj->create()) {
+				$result=$this->users_obj->save();
+				if ($result!==false) {
+					$this->success("保存成功！");
 				} else {
 					$this->error("保存失败！");
 				}
 			} else {
-				$this->error($this->ad_obj->getError());
+				$this->error($this->users_obj->getError());
 			}
-		} else {
-			$id=$this->_get("id");
-			$ad=$this->ad_obj->where("ad_id=$id")->find();
-			$this->assign($ad);
-			$this->display();
 		}
 	}
 	
@@ -66,9 +75,13 @@ class UserAction extends AdminbaseAction{
 	 */
 	function delete(){
 		$id = (int) $this->_get("id");
-		$data['user_status']=0;
-		$data['ID']=$id;
-		if ($this->users_obj->save($data)) {
+		if($id==1){
+			$this->error("最高管理员不能删除！");
+		}
+		$uid=get_current_admin_id();
+		$posts_obj=new PostsModel();
+		$posts_obj->where("post_author='$uid'")->save(array("post_author"=>1));
+		if ($this->users_obj->where("ID=$id")->delete()) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");
@@ -77,22 +90,24 @@ class UserAction extends AdminbaseAction{
 	
 	
 	function userinfo(){
-			if (IS_POST) {
-				if ($this->users_obj->create()) {
-					if ($this->users_obj->save()) {
-						$this->success("保存成功！");
-					} else {
-						$this->error("保存失败！");
-					}
+		$id=get_current_admin_id();
+		$user=$this->users_obj->where("ID='$id'")->find();
+		$this->assign($user);
+		$this->display();
+	}
+	
+	function userinfo_post(){
+		if (IS_POST) {
+			if ($this->users_obj->create()) {
+				if ($this->users_obj->save()!==false) {
+					$this->success("保存成功！");
 				} else {
-					$this->error($this->users_obj->getError());
+					$this->error("保存失败！");
 				}
 			} else {
-				$id=get_current_admin_id();
-				$user=$this->users_obj->where("ID='$id'")->find();
-				$this->assign($user);
-				$this->display();
+				$this->error($this->users_obj->getError());
 			}
+		}
 	}
 	
 	

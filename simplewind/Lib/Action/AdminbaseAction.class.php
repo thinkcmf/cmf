@@ -19,8 +19,8 @@ class AdminbaseAction extends AppframeAction {
 
     function _initialize() {
        parent::_initialize();
-       $users_obj=new UsersModel();
     	if(isset($_SESSION['ADMIN_ID'])){
+    		$users_obj=new UsersModel();
     		$id=$_SESSION['ADMIN_ID'];
     		$user=$users_obj->where("ID=$id")->find();
     		if(!$this->check_access($user['role_id'])){
@@ -29,9 +29,10 @@ class AdminbaseAction extends AppframeAction {
     		}
     		$this->assign("admin",$user);
     	}else{
-    		$this->error("您还没有登录！",U("admin/public/login"));
+    		//$this->error("您还没有登录！",U("admin/public/login"));
+    		header("Location:".U("admin/public/login"));
+    		exit();
     	}
-    	$this->initMenu();
     }
 
     /**
@@ -125,8 +126,9 @@ class AdminbaseAction extends AppframeAction {
     public function initMenu() {
         $Menu = F("Menu");
         if (!$Menu) {
-            D("Menu")->menu_cache();
+            $Menu=D("Menu")->menu_cache();
         }
+        return $Menu;
     }
 
     /**
@@ -206,15 +208,25 @@ class AdminbaseAction extends AppframeAction {
     		if($roleid == 1){
     			return true;
     		}
-    		$access_obj = M("Access");
+    		$role_obj=new RoleModel();
+    		$role=$role_obj->field("status")->where("id=$roleid")->find();
+    		if(!empty($role) && $role['status']==1){
+    			$group=GROUP_NAME;
+    			$model=MODULE_NAME;
+    			$action=ACTION_NAME;
+    			if(GROUP_NAME.MODULE_NAME.ACTION_NAME!="AdminIndexindex"){
+    				$access_obj = M("Access");
+    				$count = $access_obj->where ( "role_id=$roleid and g='$group' and m='$model' and a='$action'")->count();
+    				return $count;
+    			}else{
+    				return true;
+    			}
+    		}else{
+    			return false;
+    		}
     		
-    		$group=GROUP_NAME;
-    		$model=MODULE_NAME;
-    		$action=ACTION_NAME;
     		
-    		$count = $access_obj->where ( "role_id=$roleid and g='$group' and m='$model' and a='$action'")->count();
     		
-    		return $count;
     }
 }
 

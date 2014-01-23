@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ThinkCMF文档">
+<meta name="author" content="simplewind">
+
+<title>ThinkCMF Document &middot; Simplewind</title>
+
+<!-- Bootstrap core CSS -->
+<link href="./res/bootstrap.min.css" rel="stylesheet">
+
+<!-- Documentation extras -->
+<link href="./res/docs.css" rel="stylesheet">
+<link href="./res/pygments-manni.css" rel="stylesheet">
+<!--[if lt IE 9]><script src="./res/ie8-responsive-file-warning.js"></script><![endif]-->
+
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+
+<!-- Favicons -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="./res/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="./res/favicon.png">
+</head>
+<body>
+	<a class="sr-only" href="#content">Skip to main content</a>
+
+	<!-- Docs master nav -->
+	<header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+		<div class="container">
+			<div class="navbar-header">
+				<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="../" class="navbar-brand">SimpleCMF</a>
+			</div>
+			<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="index.html">首页</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+
+	<!-- Docs page layout -->
+	<div class="bs-header" id="content">
+		<div class="container">
+			<h1>SimpleCMF</h1>
+			<p>让程序更简单！</p>
+		</div>
+	</div>
+
+
+	<div class="container bs-docs-container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="bs-sidebar hidden-print" role="complementary">
+					<ul class="nav bs-sidenav">
+						<li>
+							<a href="#spcmf-preface">序言</a>
+							<ul class="nav">
+								<li><a href="#spcmf-preface-copyright-affirm">版权申明</a></li>
+								<li><a href="#spcmf-preface-author">作者和贡献者</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#spcmf-overview">概览</a>
+							<ul class="nav">
+								<li><a href="#spcmf-overview-briefintro">简介</a></li>
+								<li><a href="#spcmf-overview-getcmf">获取SimpleCMF</a></li>
+								<li><a href="#spcmf-overview-env">环境要求</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#spcmf-tpl">模板制作</a>
+							<ul class="nav">
+								<li><a href="#spcmf-tpl-structure">模板结构</a></li>
+								<li><a href="#spcmf-tpl-siteinfo">站点信息</a></li>
+								<li>
+									<a href="#spcmf-tpl-functions">模板函数</a>
+									<ul class="nav">
+										<li><a href="#spcmf-tpl-functions1">sp_getad($ad)</a></li>
+										<li><a href="#spcmf-tpl-functions2">sp_getslide($slide)</a></li>
+										<li><a href="#spcmf-tpl-functions3">sp_getlinks()</a></li>
+										<li><a href="#spcmf-tpl-functions4">sp_sql_posts($tag)</a></li>
+										<li><a href="#spcmf-tpl-functions5">sp_sql_post($tid,$tag)</a></li>
+										<li><a href="#spcmf-tpl-functions6">sp_sql_pages($tag)</a></li>
+										<li><a href="#spcmf-tpl-functions7">sp_sql_page($ID)</a></li>
+										<li><a href="#spcmf-tpl-functions8">sp_get_term($term_id)</a></li>
+										<li><a href="#spcmf-tpl-functions9">sp_get_terms($tag)</a></li>
+										<li><a href="#spcmf-tpl-functions10">sp_get_menu(...)</a></li>
+										<li><a href="#spcmf-tpl-functions11">sp_getcontent_imgs($content)</a></li>
+									</ul>
+								</li>
+								
+							</ul>
+						</li>
+
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-9" role="main">
+				<!-- 序言
+  ================================================== -->
+				<div class="bs-docs-section">
+					<div class="page-header">
+						<h1 id="spcmf-preface">序言</h1>
+					</div>
+
+					<h3 id="spcmf-preface-copyright-affirm">版权申明</h3>
+					<div class="bs-callout bs-callout-warning">
+						<p>
+						发布本资料须遵守开放出版许可协议 1.0 或者更新版本。<br>
+						未经版权所有者明确授权，禁止发行本文档及其被实质上修改的版本。 <br>
+						未经版权所有者事先授权，禁止将此作品及其衍生作品以标准（纸质）书籍形式发行。 <br>
+						如果有兴趣再发行或再版本手册的全部或部分内容，不论修改过与否，或者有任何问题，请联系版权所有者。<br>
+						</p>
+					</div>
+					
+					<h3 id="spcmf-preface-author">作者和贡献者</h3>
+					<div class="bs-callout bs-callout-info">
+						<p>
+							本手册内容由Dean撰写，以及文档小组的成员参与贡献。<br>
+							他们是Bob,luolaji,Codefans,Jack。<br>
+							并在此对所有参与手册纠错和建议的朋友表示感谢！<br>
+						</p>
+					</div>
+				</div>
+				
+				<!-- 概览
+  ================================================== -->
+				<div class="bs-docs-section">
+					<div class="page-header">
+						<h1 id="spcmf-overview">概览</h1>
+					</div>
+
+					<h3 id="spcmf-overview-briefintro">简介</h3>
+					<div class="bs-callout bs-callout-info">
+						<p>
+						发布本资料须遵守开放出版许可协议 1.0 或者更新版本。<br>
+						未经版权所有者明确授权，禁止发行本文档及其被实质上修改的版本。 <br>
+						未经版权所有者事先授权，禁止将此作品及其衍生作品以标准（纸质）书籍形式发行。 <br>
+						如果有兴趣再发行或再版本手册的全部或部分内容，不论修改过与否，或者有任何问题，请联系版权所有者。<br>
+						</p>
+					</div>
+					
+					<h3 id="spcmf-overview-getcmf">获取SimpleCMF</h3>
+					<div class="bs-callout bs-callout-info">
+						<p>
+							本手册内容由Dean撰写，以及文档小组的成员参与贡献。<br>
+							他们是Bob,luolaji,Codefans,Jack。<br>
+							并在此对所有参与手册纠错和建议的朋友表示感谢！<br>
+						</p>
+					</div>
+					
+					<h3 id="spcmf-overview-env">环境要求</h3>
+					<div class="bs-callout bs-callout-info">
+						<p>
+							SimpleCMF可以支持Windows/Unix服务器环境，需要PHP5.2.0以上版本支持，
+							可运行于包括Apache、IIS和nginx在内的多种WEB服务器和模式，支持Mysql、
+							MsSQL、PgSQL、Sqlite、Oracle、Ibase、Mongo以及PDO等多种数据库和连接。
+							框架本身没有什么特别模块要求，具体的应用系统运行环境要求视开发所涉及的模块。
+							SimpleCMF底层运行的内存消耗极低，而本身的文件大小也是轻量级的，因此不会出现
+							空间和内存占用的瓶颈。对于刚刚接触PHP或者SimpleCMF的新手，我们推荐使用集成开发
+							环境WAMPServer（wampserver是一个集成了Apache、PHP和MySQL的开发
+							套件，而且支持不同PHP版本、MySQL版本和Apache版本的切换）来使用SimpleCMF
+							进行本地开发和测试。
+						</p>
+					</div>
+				</div>
+
+
+				<!-- 模板制作================================================== -->
+				<div class="bs-docs-section">
+					<div class="page-header">
+						<h1 id="spcmf-tpl">
+							模板制作
+						</h1>
+					</div>
+					<h3 id="spcmf-tpl-structure">模板结构</h3>
+					<div class="highlight">
+						<pre>
+							<code class="html">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+	&lt;title&gt;Bootstrap 101 Template&lt;/title&gt;
+	&lt;!-- &lt;meta charset=&quot;utf-8&quot;&gt; --&gt;
+	&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html;charset=utf-8&quot;&gt;
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+	&lt;meta content=&quot;this is keywords content&quot; name=&quot;Keywords&quot;&gt;
+	&lt;meta name=&quot;description&quot; content=&quot;this is description content&quot; /&gt;
+	&lt;!-- Latest compiled and minified CSS --&gt;
+	&lt;link rel=&quot;stylesheet&quot; href=&quot;__ROOT__/statics/bootstrap/3.0.2/css/bootstrap.min.css&quot;&gt;
+	&lt;!-- Optional theme --&gt;
+	&lt;link rel=&quot;stylesheet&quot; href=&quot;__ROOT__/statics/bootstrap/3.0.2/css/bootstrap-theme.min.css&quot;&gt;
+	&lt;!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries --&gt;
+	&lt;!-- WARNING: Respond.js doesn't work if you view the page via file:// --&gt;
+	&lt;!--[if lt IE 9]&gt;
+	&lt;script src=&quot;https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js&quot;&gt;&lt;/script&gt;
+	&lt;script src=&quot;https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js&quot;&gt;&lt;/script&gt;
+	&lt;![endif]--&gt;
+	&lt;script&gt;
+	//全局变量
+	var GV = {
+		DIMAUB: &quot;__ROOT__/&quot;,
+		JS_ROOT: &quot;statics/js/&quot;,
+		TOKEN: &quot;{$__token__}&quot;
+	};
+	&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+	&lt;!-- your contents --&gt;
+	&lt;script src=&quot;__ROOT__/statics/js/wind.js&quot;&gt;&lt;/script&gt;
+	&lt;!-- jQuery (necessary for Bootstrap's JavaScript plugins) --&gt;
+	&lt;script src=&quot;__ROOT__/statics/js/jquery.js&quot;&gt;&lt;/script&gt;
+	&lt;!-- Latest compiled and minified JavaScript --&gt;
+	&lt;script src=&quot;__ROOT__/statics/bootstrap/3.0.2/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+	&lt;script src=&quot;__ROOT__/statics/js/frontend.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+							</code>
+						</pre>
+					</div>
+					<h3 id="spcmf-tpl-siteinfo">站点信息</h3>
+					<div class="highlight">
+						<pre>
+							<code class="html">
+site_name: 网站名称
+site_host: 网站域名
+site_root: 网站根目录（通常为/）
+site_icp:  网站备案信息
+site_admin_email: 站长邮箱
+site_tongji: 统计代码
+site_copyright: 版权信息
+site_seo_title: 网站seotitle
+site_seo_keywords: 网站seo keywords
+site_seo_description: 网站seo description
+模板调用方法：
+{$site_name}
+{$site_host}
+{$site_root}
+{$site_icp}
+{$site_admin_email}
+{$site_tongji}
+{$site_seo_title}
+{$site_seo_keywords}
+{$site_seo_description}
+							</code>
+						</pre>
+					</div>
+					
+				</div>
+
+
+				<!-- 模板函数================================================== -->
+				<div class="bs-docs-section">
+					<div class="page-header">
+						<h1 id="spcmf-tpl-functions">
+							 公共函数
+						</h1>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions1">sp_getad($ad)</h2>
+						<p>
+						 <i><b>功能：</b></i>根据广告名称获取广告内容<br>
+						 <i><b>应用范围：</b></i>全部范围<br>
+						<i><b>参数： </b></i>string $ad_name 广告名称<br>
+						<i><b>返回： </b></i>string $ad_content 广告内容<br>
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+						
+						<div class="bs-callout bs-callout-warning">
+							<h4>模块使用方法</h4>
+							<p>$ad_content=sp_getad($ad_name)</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions2">sp_getslide($slide)</h2>
+						<p>
+						<i><b>功能：</b></i>获取幻灯片<br>
+						 <i><b>应用范围：</b></i>全部范围<br>
+						<i><b>参数： </b></i>string $slide 幻灯片标识<br>
+						<i><b>返回： </b></i>array $result 以数组形式返回分类ID,分类名称,幻灯片ID,幻灯片URL等信息<br>
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getslide(string $slide)}</p>
+						</div>
+					</div>
+					
+					
+					<div>
+						<h2 id="spcmf-tpl-functions3">sp_getlinks()</h2>
+						<p>
+						获取所有友情连接<br>
+						@return array<br>
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions4">sp_sql_posts($tag)</h2>
+						<p>
+						/**<br>
+						 * @处理标签函数<br>
+						 * @以字符串方式传入,通过sp_param_lable函数解析为以下变量<br>
+						 * ids:调用指定ID的一个或多个数据,如 1,2,3<br>
+						 * cid:数据所在分类,可调出一个或多个分类数据,如 1,2,3 默认值为全部,在当前分类为:'.$cid.'<br>
+						 * field:调用post指定字段,如(id,post_title...) 默认全部<br>
+						 * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)<br>
+						 * order:推荐方式(post_date) (desc/asc/rand())<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions5">sp_sql_post($tid,$tag)</h2>
+						<p>
+						/**<br>
+						 * @param int $tid 分类表下的tid.<br>
+						 * @param string $tag <br>
+						 * @处理标签函数<br>
+						 * @以字符串方式传入,通过sp_param_lable函数解析为以下变量<br>
+						 * field:调用post指定字段,如(id,post_title...) 默认全部<br>
+						 * 如：field:post_title;<br>
+						 * @return array 返回指定id所有页面<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions6">sp_sql_pages($tag)</h2>
+						<p>
+						/**
+						 * @处理标签函数<br>
+						 * @以字符串方式传入,通过sp_param_lable函数解析为以下变量<br>
+						 * 返回符合条件的所有页面<br>
+						 * ids:调用指定ID的一个或多个数据,如 1,2,3<br>
+						 * field:调用post指定字段,如(id,post_title...) 默认全部<br>
+						 * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)<br>
+						 * order:推荐使用方式(post_date) (desc/asc/rand())<br>
+						 * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,ID;<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions7">sp_sql_page($ID)</h2>
+						<p>
+						/**<br>
+						 * @处理标签函数<br>
+						 * @以字符串方式传入,通过sp_param_lable函数解析为以下变量<br>
+						 * 返回指定ID=$ID的页面<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions8">sp_get_term($term_id)</h2>
+						<p>
+						/**<br>
+						 * 返回指定分类<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions9">sp_get_terms($tag)</h2>
+						<p>
+						/**<br>
+						 * @处理标签函数<br>
+						 * @以字符串方式传入,通过sp_param_lable函数解析为以下变量<br>
+						 * 返回符合条件的所有分类<br>
+						 * ids:调用指定ID的一个或多个数据,如 1,2,3<br>
+						 * field:调用post指定字段,如(id,post_title...) 默认全部<br>
+						 * limit:数据条数,默认值为10,可以指定从第几条开始,如3,8(表示共调用8条,从第3条开始)<br>
+						 * order:path (desc/asc/rand())<br>
+						 * 使用：ids:1,2;field:post_date,post_content;limit:10;order:post_date DESC,ID;<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions10">sp_get_menu(...)</h2>
+						<p>
+						
+/**<br>
+ * 返回指定id的菜单<br>
+ * 同上一类方法，jquery treeview 风格，可伸缩样式<br>
+ * @param $myid 表示获得这个ID下的所有子级<br>
+ * @param $effected_id 需要生成treeview目录数的id<br>
+ * @param $str 末级样式<br>
+ * @param $str2 目录级别样式<br>
+ * @param $showlevel 直接显示层级数，其余为异步显示，0为全部限制<br>
+ * @param $ul_class 内部ul样式 默认空  可增加其他样式如'sub-menu'<br>
+ * @param $li_class 内部li样式 默认空  可增加其他样式如'menu-item'<br>
+ * @param $style 目录样式 默认 filetree 可增加其他样式如'filetree treeview-famfamfam'<br>
+ * $id=&quot;main&quot;;<br>
+  $effected_id=&quot;mainmenu&quot;;<br>
+  $filetpl=&quot;&lt;a href='\$href'&gt;&lt;span class='file'&gt;\$label&lt;/span&gt;&lt;/a&gt;&quot;;<br>
+  $foldertpl=&quot;&lt;span class='folder'&gt;\$label&lt;/span&gt;&quot;;<br>
+  $ul_class=&quot;&quot; ;<br>
+  $li_class=&quot;&quot; ;<br>
+  $style=&quot;filetree&quot;;<br>
+  $showlevel=6;<br>
+  sp_get_menu($id,$effected_id,$filetpl,$foldertpl,$ul_class,$li_class,$style,$showlevel);<br>
+ * such as <br>
+  */
+ <div class="highlight">
+						<pre>
+							<code class="html">
+&lt;ul id=&quot;example&quot; class=&quot;filetree &quot;&gt;
+	&lt;li class=&quot;hasChildren&quot; id='1'&gt;&lt;span class='folder'&gt;test&lt;/span&gt;
+		&lt;ul&gt;
+			&lt;li class=&quot;hasChildren&quot; id='4'&gt;&lt;span class='folder'&gt;caidan2&lt;/span&gt;
+				&lt;ul&gt;
+					&lt;li class=&quot;hasChildren&quot; id='5'&gt;&lt;span class='folder'&gt;sss&lt;/span&gt;
+						&lt;ul&gt;
+							&lt;li id='3'&gt;&lt;span class='folder'&gt;test2&lt;/span&gt;&lt;/li&gt;
+						&lt;/ul&gt;
+					&lt;/li&gt;
+				&lt;/ul&gt;
+			&lt;/li&gt;
+		&lt;/ul&gt;
+	&lt;/li&gt;
+	&lt;li class=&quot;hasChildren&quot; id='6'&gt;&lt;span class='file'&gt;ss&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code> 
+</pre>
+</div>
+
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					<div>
+						<h2 id="spcmf-tpl-functions11">sp_getcontent_imgs($content)</h2>
+						<p>
+						/**<br>
+						 * @param string $content<br>
+						 * @return array<br>
+						 */
+						</p>
+	
+						<div class="bs-callout bs-callout-warning">
+							<h4>模板使用方法</h4>
+							<p>{:sp_getad('example_ad_name')}</p>
+						</div>
+					</div>
+					
+					
+					
+					
+				</div>
+
+				
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Footer
+    ================================================== -->
+	<footer class="bs-footer" role="contentinfo">
+		<div class="container">
+			<p>
+				Designed and built with all the love in the world by <a
+					href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a
+					href="http://twitter.com/fat" target="_blank">@fat</a>.
+			</p>
+			<p>
+				Code licensed under <a
+					href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache
+					License v2.0</a>, documentation under <a
+					href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+			</p>
+			<ul class="footer-links">
+				<li>Currently v3.0.2</li>
+				<li class="muted">&middot;</li>
+				<li><a href="../2.3.2/">Bootstrap 2.3.2 docs</a></li>
+				<li class="muted">&middot;</li>
+				<li><a href="http://blog.getbootstrap.com">Blog</a></li>
+				<li class="muted">&middot;</li>
+				<li><a
+					href="https://github.com/twbs/bootstrap/issues?state=open">Issues</a></li>
+				<li class="muted">&middot;</li>
+				<li><a href="https://github.com/twbs/bootstrap/releases">Releases</a></li>
+			</ul>
+		</div>
+	</footer>
+
+	<!-- JS and analytics only. -->
+	<!-- Bootstrap core JavaScript
+================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="./res/jquery-1.10.2.min.js"></script>
+	<script src="./res/bootstrap.js"></script>
+	<script src="./res/holder.js"></script>
+	<script src="./res/application.js"></script>
+
+
+</body>
+</html>

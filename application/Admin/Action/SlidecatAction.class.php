@@ -18,46 +18,48 @@ class SlidecatAction extends AdminbaseAction{
      *  添加
      */
     public function add() {
-        if (IS_POST) {
-            if ($this->slidecat_obj->create()) {
-                if ($this->slidecat_obj->add()) {
-                    $this->success("添加成功！", U("slidecat/index"));
-                } else {
-                    $this->error("添加失败！");
-                }
-            } else {
-                $this->error($this->slidecat_obj->getError());
-            }
-        } else {
-            $this->display();
-        }
+        $this->display();
     }
 	
+    /**
+     *  添加
+     */
+    public function add_post() {
+    	if (IS_POST) {
+    		if ($this->slidecat_obj->create()) {
+    			if ($this->slidecat_obj->add()) {
+    				$this->success("添加成功！", U("slidecat/index"));
+    			} else {
+    				$this->error("添加失败！");
+    			}
+    		} else {
+    			$this->error($this->slidecat_obj->getError());
+    		}
+    	}
+    }
 	function edit(){
+		$id=$this->_get("id");
+		$slidecat=$this->slidecat_obj->where("cid=$id")->find();
+		$this->assign($slidecat);
+		$this->display();
+	}
+	
+	function edit_post(){
 		if (IS_POST) {
-				if ($this->slidecat_obj->create()) {
-					if ($this->slidecat_obj->save()) {
-						$this->success("保存成功！", U("slidecat/index"));
-					} else {
-						$this->error("保存失败！");
-					}		
+			if ($this->slidecat_obj->create()) {
+				if ($this->slidecat_obj->save()!==false) {
+					$this->success("保存成功！", U("slidecat/index"));
 				} else {
-					$this->error($this->slidecat_obj->getError());
+					$this->error("保存失败！");
 				}
-		} else {
-			$id=$this->_get("id");
-			$slidecat=$this->slidecat_obj->where("cid=$id")->find();
-			$this->assign($slidecat);
-			$this->display();
+			} else {
+				$this->error($this->slidecat_obj->getError());
+			}
 		}
 	}
 	
 	
-	function delete(){
-		
-		
-		
-	}
+	function delete(){}
 	
 	
 }

@@ -5,9 +5,17 @@
 	<title>{$site_name}</title>
 	<meta name="keywords" content="{$site_seo_keywords}" />
 	<meta name="description" content="{$site_seo_description}">
+	<meta property="qc:admins" content="435104611401633566375" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <include file="Public:css" />
+    <style>
+ 		.slider-wrapper .slider .slide p,.slider-wrapper .slider .slide p a{height:auto !important;width:auto !important;}
+	</style>
+    <!--[if IE 9]>
+	<style>
+        .top-header .top-header-menu > ul.menu > li.dropdown > a::after{display:none;}
+	</style>
+	<![endif]-->
 </head>
 <body>
 <div class="wrapper">
@@ -178,7 +186,12 @@
                         <h3 class="section-title"><span>{$post.post_title|default='ThinkCMF'}</span></h3>
                         <div class="row">
                             <div class="col-md-4">
-                                <img src="{$pic.thumb|default='__TMPL__Public/images/prv/col-img-4.jpg'}"  alt="{$post_title}" class="img-responsive img-thumbnail">
+                            	<if condition="empty($pic[thumb])">
+                            		<img src="__TMPL__Public/images/prv/col-img-4.jpg"  alt="{$post_title}" class="img-responsive img-thumbnail">
+                            	<else/>
+                            		<img src="{$pic.thumb}"  alt="{$post_title}" class="img-responsive img-thumbnail">
+                            	</if>
+                                
                             </div>
                             <div class="col-md-8">
                             {$post.post_content|default='当你在后台添加后内容将自动被替换！'}
@@ -251,8 +264,8 @@
                                 <div class="col-md-3">
                                     <div class="w-box inverse">
                                         <div class="figure">
-                                            <img alt="" src="__UPLOAD__{$pic.thumb|default='__TMPL__Public/images/prv/wk-img-1.jpg'}" height="300" width="400" class="img-responsive">
-                                            <div class="figcaption bg-2"></div>
+                                            <img alt="" src="__UPLOAD__{$pic.thumb|default='__TMPL__Public/images/prv/wk-img-1.jpg'}"  class="img-responsive">
+                                            <!-- <div class="figcaption bg-2"></div> -->
                                             <div class="figcaption-btn">
                                                 <a href="__UPLOAD__{$pic.thumb}"  class="btn btn-xs btn-one theater"><i class="fa fa-plus-circle"></i> 大图</a>
                                                 <a href="{:u('article/index',array('id'=>$o['tid']))}" class="btn btn-xs btn-one"><i class="fa fa-link"></i> 详细</a>

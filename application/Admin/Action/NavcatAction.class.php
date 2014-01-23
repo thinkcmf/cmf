@@ -25,6 +25,13 @@ class NavcatAction extends AdminbaseAction {
 	 *  添加
 	 */
 	public function add() {
+		$this->display();
+	}
+	
+	/**
+	 *  添加
+	 */
+	public function add_post() {
 		if (IS_POST) {
 			if(empty($_POST['active'])){
 				$_POST['active']=0;
@@ -40,15 +47,23 @@ class NavcatAction extends AdminbaseAction {
 			} else {
 				$this->error($this->navcat->getError());
 			}
-		} else {
-			$this->display();
 		}
 	}
+	
 	/**
 	 * 编辑
 	 */
 	function edit(){
-		
+		$id=$this->_get("id");
+		$navcat=$this->navcat->where("navcid=$id")->find();
+		$this->assign($navcat);
+		$this->display();
+	}
+	
+	/**
+	 * 编辑
+	 */
+	function edit_post(){
 		if (IS_POST) {
 			if(empty($_POST['active'])){
 				$_POST['active']=0;
@@ -56,7 +71,7 @@ class NavcatAction extends AdminbaseAction {
 				$this->navcat->where("active=1")->save(array("active"=>0));
 			}
 			if ($this->navcat->create()) {
-				if ($this->navcat->save($_POST)) {
+				if ($this->navcat->save($_POST) !== false) {
 					$this->success("保存成功！", U("navcat/index"));
 				} else {
 					$this->error("保存失败！");
@@ -64,11 +79,6 @@ class NavcatAction extends AdminbaseAction {
 			} else {
 				$this->error($this->navcat->getError());
 			}
-		} else {
-			$id=$this->_get("id");
-			$navcat=$this->navcat->where("navcid=$id")->find();
-			$this->assign($navcat);
-			$this->display();
 		}
 	}
 	

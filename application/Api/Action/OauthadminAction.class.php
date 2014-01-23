@@ -10,9 +10,14 @@ class OauthadminAction extends AdminbaseAction {
 	
 	//用户列表
 	function index(){
-		$rst = M('OauthMember')->where("status=1")->select();
-		$this->assign('lists', $rst);
-		//dump($rst);die;
+		$count=M('OauthMember')->where("status=1")->count();
+		$page = $this->page($count, 20);
+		$lists = M("OauthMember")
+		->where("status=1")
+		->limit($page->firstRow . ',' . $page->listRows)
+		->select();
+		$this->assign("page", $page->show('Admin'));
+		$this->assign('lists', $lists);
 		$this->display();
 	}
 	
@@ -33,6 +38,11 @@ class OauthadminAction extends AdminbaseAction {
 	
 	//设置
 	function setting(){
+		$this->display();
+	}
+	
+	//设置
+	function setting_post(){
 		$oauth_config_file="conf/ThinkSDK.config.php";
 		if($_POST){
 			$h='$_SERVER["HTTP_HOST"]';
@@ -40,22 +50,22 @@ class OauthadminAction extends AdminbaseAction {
 			if(IS_SAE){
 				$call_back = 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=';
 				$data = array(
-					'THINK_SDK_QQ' => array(
-						'APP_KEY'    => '{$qq_key}',
-						'APP_SECRET' => '{$qq_sec}',
-						'CALLBACK'   => $call_back . 'qq',
-					),
-					'THINK_SDK_SINA' => array(
-						'APP_KEY'    => '{$sina_key}', 
-						'APP_SECRET' => '{$sina_sec}',
-						'CALLBACK'   => $call_back . 'sina',
-					),
+						'THINK_SDK_QQ' => array(
+								'APP_KEY'    => '{$qq_key}',
+								'APP_SECRET' => '{$qq_sec}',
+								'CALLBACK'   => $call_back . 'qq',
+						),
+						'THINK_SDK_SINA' => array(
+								'APP_KEY'    => '{$sina_key}',
+								'APP_SECRET' => '{$sina_sec}',
+								'CALLBACK'   => $call_back . 'sina',
+						),
 				);
 				$kv = new SaeKV();
 				$ret = $kv->init();
 				$result = $kv->set('THINKSDK_CONFIG', serialize($data));
 			}else{
-			$con =  <<<OAUTH
+				$con =  <<<OAUTH
 <?php
 defined('OAUTH_URL_CALLBACK') or define('OAUTH_URL_CALLBACK', 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=');
 return array(
@@ -65,22 +75,21 @@ return array(
 		'CALLBACK'   => OAUTH_URL_CALLBACK . 'qq',
 	),
 	'THINK_SDK_SINA' => array(
-		'APP_KEY'    => '$sina_key', 
+		'APP_KEY'    => '$sina_key',
 		'APP_SECRET' => '$sina_sec',
 		'CALLBACK'   => OAUTH_URL_CALLBACK . 'sina',
 	),
 );
 ?>
 OAUTH;
-			$fp = fopen($oauth_config_file, 'wb');
-			chmod($oauth_config_file, 0777);
-			$result	= fwrite($fp, trim($con));
-			@fclose($fp);
+				$fp = fopen($oauth_config_file, 'wb');
+				chmod($oauth_config_file, 0777);
+				$result	= fwrite($fp, trim($con));
+				@fclose($fp);
 			}
 			if($result) $this->success("更新成功！");
 			else $this->error("更新失败！");
 			exit;
+			}
 		}
-		$this->display();
-	}
 }

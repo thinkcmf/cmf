@@ -15,7 +15,7 @@ class AppframeAction extends Action {
        	$time=time();
         $this->assign("js_debug",APP_DEBUG?"?v=$time":"");
         if(APP_DEBUG){
-        	sp_clear_cache();
+        	//sp_clear_cache();
         }
     }
 

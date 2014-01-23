@@ -23,7 +23,8 @@ class TermAction extends AdminbaseAction {
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;';
 		foreach ($result as $r) {
 			$r['str_manage'] = '<a href="' . U("term/add", array("parent" => $r['term_id'])) . '">添加子类</a> | <a href="' . U("term/edit", array("id" => $r['term_id'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("term/delete", array("id" => $r['term_id'])) . '">删除</a> ';
-			$r['visit'] = "<a href='#'>访问</a>";
+			$url=U('portal/list/index',array('id'=>$r['term_id']));
+			$r['url'] = $url;
 			$r['taxonomys'] = $this->taxonomys[$r['taxonomy']];
 			$r['id']=$r['term_id'];
 			$r['parentid']=$r['parent'];
@@ -32,12 +33,12 @@ class TermAction extends AdminbaseAction {
 		
 		$tree->init($array);
 		$str = "<tr>
-				<td align='center'><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
-				<td align='center'>\$id</td>
-				<td >\$spacer\$name</td>
-    			<td align='center'>\$taxonomys</td>
-				<!--<td align='center'>\$visit</td>-->
-				<td align='center'>\$str_manage</td>
+					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td>\$id</td>
+					<td>\$spacer <a href='\$url' target='_blank'>\$name</a></td>
+	    			<td>\$taxonomys</td>
+					<td align='center'><a href='\$url' target='_blank'>访问</a></td>
+					<td>\$str_manage</td>
 				</tr>";
 		$taxonomys = $tree->get_tree(0, $str);
 		$this->assign("taxonomys", $taxonomys);
@@ -47,32 +48,48 @@ class TermAction extends AdminbaseAction {
 	
 	
 	function add(){
+	 	$parentid = (int) $this->_get("parent");
+	 	$tree = new PathTree();
+	 	$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
+	 	$tree->nbsp = '---';
+	 	$result = $this->terms_obj->order(array("path"=>"asc"))->select();
+	 	$tree->init($result);
+	 	$tree=$tree->get_tree();
+	 	$this->assign("terms",$tree);
+	 	$this->assign("parent",$parentid);
+	 	$this->display();
+	}
 	
-	 if (IS_POST) {
-            if ($this->terms_obj->create()) {
-                if ($this->terms_obj->add()) {
-                    $this->success("新增成功！",U("term/index"));
-                } else {
-                    $this->error("新增失败！");
-                }
-            } else {
-                $this->error($this->terms_obj->getError());
-            }
-        } else {
-        	$parentid = (int) $this->_get("parent");
-        	$tree = new PathTree();
-        	$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
-        	$tree->nbsp = '---';
-        	$result = $this->terms_obj->order(array("path"=>"asc"))->select();
-        	$tree->init($result);
-        	$tree=$tree->get_tree();
-        	$this->assign("terms",$tree);
-        	$this->assign("parent",$parentid);
-            $this->display();
-        }
+	function add_post(){
+		if (IS_POST) {
+			if ($this->terms_obj->create()) {
+				if ($this->terms_obj->add()) {
+					$this->success("新增成功！",U("term/index"));
+				} else {
+					$this->error("新增失败！");
+				}
+			} else {
+				$this->error($this->terms_obj->getError());
+			}
+		}
 	}
 	
 	function edit(){
+		$tree = new PathTree();
+		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
+		$tree->nbsp = '---';
+		$result = $this->terms_obj->order(array("path"=>"asc"))->select();
+		$tree->init($result);
+		$tree=$tree->get_tree();
+			
+		$id = (int) $this->_get("id");
+		$data=$this->terms_obj->where(array("term_id" => $id))->find();
+		$this->assign("terms",$tree);
+		$this->assign("data",$data);
+		$this->display();
+	}
+	
+	function edit_post(){
 		if (IS_POST) {
 			if ($this->terms_obj->create()) {
 				if ($this->terms_obj->save()!==false) {
@@ -83,19 +100,6 @@ class TermAction extends AdminbaseAction {
 			} else {
 				$this->error($this->terms_obj->getError());
 			}
-		} else {
-			$tree = new PathTree();
-			$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
-			$tree->nbsp = '---';
-			$result = $this->terms_obj->order(array("path"=>"asc"))->select();
-			$tree->init($result);
-			$tree=$tree->get_tree();
-			
-			$id = (int) $this->_get("id");
-			$data=$this->terms_obj->where(array("term_id" => $id))->find();
-			$this->assign("terms",$tree);
-			$this->assign("data",$data);
-			$this->display();
 		}
 	}
 	

@@ -1,0 +1,88 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <div class="nav">
+    <ul class="cc">
+      <li class="current"><a href="javascript:;">应用中心</a></li>
+    </ul>
+  </div>
+  <div class="h_a">搜索</div>
+  <form  method="post">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">时间：
+        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off">
+        <select class="select_2" name="posids"style="width:70px;">
+          <option value='' selected>全部</option>
+        </select>
+        <select class="select_2" name="searchtype" style="width:70px;">
+          <option value='0' >名称</option>
+        </select>
+                           关键字：
+        <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入关键字...">
+        <input type="submit" class="btn" value="搜索"/>
+        </span>
+      </div>
+    </div>
+  </form>
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%">
+        <colgroup>
+        <col width="40">
+        <col width="">
+        <col width="80">
+        <col width="90">
+        <col width="140">
+        <col width="120">
+        </colgroup>
+        <thead>
+	          <tr>
+	            <td>ID</td>
+	            <td>标题</td>
+	            <td>点击量</td>
+	            <td>发布人</td>
+	            <td><span>发布时间</span></td>
+	             <td>状态</td>
+	            <td>操作</td>
+	          </tr>
+        </thead>
+        	<php>$status=array("1"=>"已审核","0"=>"未审核");</php>
+        	<foreach name="posts" item="vo">
+	        	<tr>
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.tid}" ></td>
+		            <td><input name='listorders[{$vo.tid}]' class="input mr5"  type='text' size='3' value='{$vo.listorder}'></td>
+		            <td><a>{$vo.tid}</a></td>
+		            <td><a target="_blank">
+		            	<span style="" >{$vo.post_title}</span></a>
+		            </td>
+		            <td>0</td>
+		            <td>admin</td>
+		            <td>{$vo.post_date}</td>
+		            <td>{$status[$vo['post_status']]}</td>
+		            <td>
+		            	<a href="{:U('post/edit',array('term'=>$term['term_id'],'id'=>$vo[ID]))}" target="_blank" >修改</a>|
+		            	<a href="{:U('post/delete',array('term'=>$term['term_id'],'tid'=>$vo[tid]))}" class="J_ajax_del" >删除</a>
+					</td>
+	          	</tr>
+          </foreach>
+          </table>
+      <div class="p10"><div class="pages"> {$Page} </div> </div>
+     
+    </div>
+    <div>
+      <div class="btn_wrap_pd">
+      </div>
+    </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+<script>
+
+$(function () {
+	
+});
+
+</script>
+</body>
+</html>

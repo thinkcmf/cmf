@@ -4,13 +4,27 @@
  * 会员中心
  */
 class CenterAction extends HomeBaseAction {
+	function _initialize(){
+		parent::_initialize();
+		if(!isset($_SESSION["MEMBER_id"])){
+			$this->error('您还没有登录！', U('Member/index/index'));
+		}else if($_SESSION["MEMBER_status"] == 2 && C('SP_MEMBER_EMAIL_ACTIVE')=='true'){
+			$this->error('您的账号需要激活才能使用', U('Member/index/disable'));
+		}
+		if(!C('THIRD_UDER_ACCESS') && $_SESSION["MEMBER_type"]!='local'){ //第三方用户拥有低于本地帐户的权限
+			$this->error("您需要绑定本地账号才能获取更多权限！", U('Member/index/bang'));
+		}else{
+			$_SESSION["MEMBER_access"] = 'total';
+			if(isset($_SESSION['before_login_url'])){ //登陆前已指定跳转地址
+				$goUrl = $_SESSION['before_login_url'];
+				unset($_SESSION['before_login_url']);
+				$this->success("正在跳转...！", $goUrl);
+			}
+		}
+	}
     //会员中心
 	public function index() {
 		$memid = $_SESSION["MEMBER_id"];
-		if(!isset($_SESSION["MEMBER_id"])){
-			$this->error('您还没有登录！', U('Member/index/index'));
-			exit();
-		}
 		$DbPre = C('DB_PREFIX');
 		//个人信息
 		$user_info = M('Members')->where("ID=".$memid)->find();
@@ -33,7 +47,7 @@ class CenterAction extends HomeBaseAction {
 		$this->assign('mesComment', $count1=getMes($memid, 'topic_comment'));
 		$this->assign('mesAnswer', $count2=getMes($memid, 'topic_answer'));
 		$this->assign('mesCollect', $count3=getMes($memid, 'topic_collect'));
-		$this->assign('mesCount', count($count1)+count($count2)+count($count3));
+		$this->assign('mesCount', intval($count1 && count($count1))+intval($count2 && count($count2))+intval($count3 && count($count3)));
     	$this->display(':center');
     }
     

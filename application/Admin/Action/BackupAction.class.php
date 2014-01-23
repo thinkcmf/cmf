@@ -333,7 +333,7 @@ class BackupAction extends AdminbaseAction
             //循环将数据写入
             for ($j = 0; $j < $data_count; $j++)
             {
-                $record = array_map(array($this, 'dump_escape_string'), $data[$j]); //过滤非法字符
+                $record = array_map(array($this, '_dump_escape_string'), $data[$j]); //过滤非法字符
 
                 $tmp_dump_sql = $start_sql . " (" . $this->_implode_insert_values($record) . ");\r\n";
                 if (strlen($this->dump_sql) + strlen($tmp_dump_sql) > $sizelimit - 32)
@@ -349,7 +349,7 @@ class BackupAction extends AdminbaseAction
         return - 1;
     }
 
-    public function dump_escape_string($str)
+    private function _dump_escape_string($str)
     {
         return addslashes($str);
         //return $this->_database_mod->escape_string($str);

@@ -30,6 +30,13 @@ class SlideAction extends AdminbaseAction{
 	}
 	
 	function add(){
+		$categorys=$this->slidecat_obj->field("cid,cat_name")->where("cat_status!=0")->select();
+		$this->assign("categorys",$categorys);
+		$this->display();
+	}
+	
+	
+	function add_post(){
 		if(IS_POST){
 			if ($this->slide_obj->create()) {
 				if ($this->slide_obj->add()) {
@@ -41,19 +48,21 @@ class SlideAction extends AdminbaseAction{
 			} else {
 				$this->error($this->slide_obj->getError());
 			}
-			
-		}else{
-			$categorys=$this->slidecat_obj->field("cid,cat_name")->where("cat_status!=0")->select();
-			$this->assign("categorys",$categorys);
-			$this->display();
 		}
-		
+	}
+	function edit(){
+		$categorys=$this->slidecat_obj->field("cid,cat_name")->where("cat_status!=0")->select();
+		$id=$this->_get("id");
+		$slide=$this->slide_obj->where("slide_id=$id")->find();
+		$this->assign($slide);
+		$this->assign("categorys",$categorys);
+		$this->display();
 	}
 	
-	function edit(){
+	function edit_post(){
 		if(IS_POST){
 			if ($this->slide_obj->create()) {
-				if ($this->slide_obj->save()) {
+				if ($this->slide_obj->save()!==false) {
 					$this->success("保存成功！", U("slide/index"));
 				} else {
 					$this->error("保存失败！");
@@ -61,14 +70,7 @@ class SlideAction extends AdminbaseAction{
 			} else {
 				$this->error($this->slide_obj->getError());
 			}
-			
-		}else{
-			$categorys=$this->slidecat_obj->field("cid,cat_name")->where("cat_status!=0")->select();
-			$id=$this->_get("id");
-			$slide=$this->slide_obj->where("slide_id=$id")->find();
-			$this->assign($slide);
-			$this->assign("categorys",$categorys);
-			$this->display();
+				
 		}
 	}
 	
@@ -77,7 +79,7 @@ class SlideAction extends AdminbaseAction{
 		if(isset($_POST['ids'])){
 			$ids = implode(",", $_POST['ids']);
 			$data['slide_status']=0;
-			if ($this->slide_obj->where("slide_id in ($ids)")->save($data)) {
+			if ($this->slide_obj->where("slide_id in ($ids)")->save($data)!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");
@@ -86,7 +88,7 @@ class SlideAction extends AdminbaseAction{
 			$id = (int) $this->_get("id");
 			$data['slide_status']=0;
 			$data['slide_id']=$id;
-			if ($this->slide_obj->save($data)) {
+			if ($this->slide_obj->save($data)!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");

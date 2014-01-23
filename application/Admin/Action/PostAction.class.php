@@ -11,70 +11,89 @@ class PostAction extends AdminbaseAction {
 		$this->terms_relationship=new TermRelationshipsModel();
 	}
 	function index(){
-		$this->lists();
-		$this->getTree();
+		$this->_lists();
+		$this->_getTree();
 		$this->display();
 	}
 	
 	function add(){
-		$this->getTree();
-	$terms_obj=new TermsModel();
+		$this->_getTree();
+		$terms_obj=new TermsModel();
+		$term_id = (int) $this->_get("term");
+		$term=$terms_obj->where("term_id=$term_id")->find();
+		$this->assign("author","1");
+		$this->assign("term",$term);
+		$this->display();
+	}
 	
-	 if (IS_POST) {
-	 	$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
-	 	$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
-	 	$_POST['post']['smeta']=json_encode($_POST['smeta']);
-            $result=$this->posts_obj->add($_POST['post']);
-                if ($result) {
-                    //
-                    $_POST['term']['object_id']=$result;
-                    $result=$this->terms_relationship->add($_POST['term']);
-                    if ($result) {
-                    	$this->success("新增成功！");
-                    }else{
-                    	$this->error("归类失败！");
-                    }
-                } else {
-                    $this->error("新增失败！");
-                }
-           
-        } else {
-        	$term_id = (int) $this->_get("term");
-        	$term=$terms_obj->where("term_id=$term_id")->find();
-        	$this->assign("author","1");
-        	$this->assign("term",$term);
-            $this->display();
-        }
+	function add_post(){
+		$this->_getTree();
+		$terms_obj=new TermsModel();
+	
+		if (IS_POST) {
+			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
+				foreach ($_POST['photos_url'] as $key=>$url){
+					$photourl=substr($url, strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+					$_POST['smeta']['photo'][]=array("url"=>$photourl,"alt"=>$_POST['photos_alt'][$key]);
+				}
+			}
+			$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+			 
+			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
+			$_POST['post']['smeta']=json_encode($_POST['smeta']);
+			$_POST['post']['post_author']=get_current_admin_id();
+			$result=$this->posts_obj->add($_POST['post']);
+			if ($result) {
+				//
+				$_POST['term']['object_id']=$result;
+				$result=$this->terms_relationship->add($_POST['term']);
+				if ($result) {
+					$this->success("新增成功！");
+				}else{
+					$this->error("归类失败！");
+				}
+			} else {
+				$this->error("新增失败！");
+			}
+			 
+		}
 	}
 	
 	public function edit(){
 		header("file-type:text/html;charset=utf-8;");
 		$terms_obj=new TermsModel();
-		
+		$id=(int) $this->_get("id");
+		$term_id = (int) $this->_get("term");
+		if(empty($term_id)){
+			$term_id = D('TermRelationships')->getTermidByObject($id);
+		}
+		$term=$terms_obj->where("term_id=$term_id")->find();
+		$post=$this->posts_obj->where("ID=$id")->find();
+		$this->assign("post",$post);
+		$this->assign("smeta",json_decode($post['smeta'],true));
+		$this->assign("term",$term);
+		$this->display();
+	}
+	
+	public function edit_post(){
+		$terms_obj=new TermsModel();
 		if (IS_POST) {
-			$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
+				foreach ($_POST['photos_url'] as $key=>$url){
+					$photourl=substr($url, strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+					$_POST['smeta']['photo'][]=array("url"=>$photourl,"alt"=>$_POST['photos_alt'][$key]);
+				}
+			}
+			$_POST['smeta']['thumb'] = str_replace(C("TMPL_PARSE_STRING.__UPLOAD__"),'',$_POST['smeta']['thumb']);
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
+			unset($_POST['post']['post_author']);
 			$result=$this->posts_obj->save($_POST['post']);
 			//echo($this->posts_obj->getLastSql());die;
-			if ($result) {
+			if ($result!==false) {
 				$this->success("保存成功！");
 			} else {
 				$this->error("保存失败！");
 			}
-		} else {
-			$id=(int) $this->_get("id");
-			$term_id = (int) $this->_get("term");
-			if(empty($term_id)){
-				$term_id = D('TermRelationships')->getTermidByObject($id);
-			}
-			$term=$terms_obj->where("term_id=$term_id")->find();
-			$post=$this->posts_obj->where("ID=$id")->find();
-			$this->assign("post",$post);
-			$this->assign("smeta",(array)json_decode($post['smeta']));
-			
-			$this->assign("author","1");
-			$this->assign("term",$term);
-			$this->display();
 		}
 	}
 	
@@ -88,7 +107,7 @@ class PostAction extends AdminbaseAction {
 		}
 	}
 	
-	public function lists($status=1){
+	private  function _lists($status=1){
 		$terms_obj=new TermsModel();
 		$term_id =intval($_REQUEST["term"]);
 		$term=$terms_obj->where("term_id=$term_id")->find();
@@ -147,14 +166,21 @@ class PostAction extends AdminbaseAction {
 		->where($where)
 		->limit($page->firstRow . ',' . $page->listRows)
 		->order("a.listorder ASC")->select();
-			
+		$users_obj=new UsersModel();
+		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
+		$users=array();
+		foreach ($users_data as $u){
+			$users[$u['ID']]=$u;
+		}
+		$this->assign("users",$users);
 		$this->assign("Page", $page->show('Admin'));
 		$this->assign("current_page",$page->GetCurrentPage());
+		unset($_GET[C('VAR_URL_PARAMS')]);
 		$this->assign("formget",$_GET);
 		$this->assign("posts",$posts);
 	}
 	
-	private function getTree(){
+	private function _getTree(){
 		$term_id=$_REQUEST['term'];
 		$result = $this->terms_obj->order(array("listorder"=>"asc"))->select();
 		
@@ -260,8 +286,8 @@ class PostAction extends AdminbaseAction {
 	}
 	
 	function recyclebin(){
-		$this->lists(0);
-		$this->getTree();
+		$this->_lists(0);
+		$this->_getTree();
 		$this->display();
 	}
 	

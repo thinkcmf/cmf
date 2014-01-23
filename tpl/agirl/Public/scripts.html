@@ -5,6 +5,7 @@
 <script type="text/javascript" src="__TMPL__Public/js/jquery.mousewheel-3.0.6.pack.js" ></script>
 <script type="text/javascript" src="__TMPL__Public/js/jquery.cookie.js" ></script>
 <script type="text/javascript" src="__TMPL__Public/js/jquery.easing.js" ></script>
+<script type="text/javascript" src="__TMPL__Public/assets/lht/jquery-lht.min.1.0.js" ></script>
 
 <!--[if lt IE 9]>
     <script src="__TMPL__Public/js/html5shiv.js" ></script>
@@ -19,6 +20,7 @@
 <script type="text/javascript" src="__TMPL__Public/assets/easy-pie-chart/jquery.easypiechart.js" ></script>
 <script type="text/javascript" src="__TMPL__Public/assets/waypoints/waypoints.min.js" ></script>
 <script type="text/javascript" src="__TMPL__Public/js/jquery.wp.custom.js" ></script>
+<script type="text/javascript" src="__TMPL__Public/js/hammer.min.js" ></script>
 {$site_tongji}
 
 <script type="text/javascript">
@@ -28,5 +30,20 @@
 				$(this).parentsUntil("#main_nav>ul").addClass("active");
 			}
 		});
+		
+		Hammer(document.body).on("swipeleft",function(){
+			$("body").addClass("aside-menu-in");
+			$("#asideMenu").show();
+		});
+		
+		Hammer($("#asideMenu")[0]).on("swiperight",function(){
+			$("#asideMenu").hide();
+			$("body").removeClass("aside-menu-in");
+		});
+		Hammer(document.body).on("swiperight",function(){
+			$("#asideMenu").hide();
+			$("body").removeClass("aside-menu-in");
+		});
+		
 	});
 </script>

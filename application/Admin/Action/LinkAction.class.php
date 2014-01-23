@@ -2,7 +2,7 @@
 class LinkAction extends AdminbaseAction{
 	
 	protected $link_obj;
-	protected  $targets=array("_blank"=>"新标签页打开");
+	protected  $targets=array("_blank"=>"新标签页打开","_self"=>"本窗口打开");
 	
 	
 	function _initialize() {
@@ -17,6 +17,10 @@ class LinkAction extends AdminbaseAction{
 	}
 	
 	function add(){
+		$this->assign("targets",$this->targets);
+		$this->display();
+	}
+	function add_post(){
 		if(IS_POST){
 			if ($this->link_obj->create()) {
 				if ($this->link_obj->add()) {
@@ -27,18 +31,24 @@ class LinkAction extends AdminbaseAction{
 			} else {
 				$this->error($this->link_obj->getError());
 			}
-	
-		}else{
-			$this->assign("targets",$this->targets);
-			$this->display();
+		
 		}
-	
 	}
 	
+	
+	
 	function edit(){
+		$id=$this->_get("id");
+		$link=$this->link_obj->where("link_id=$id")->find();
+		$this->assign($link);
+		$this->assign("targets",$this->targets);
+		$this->display();
+	}
+	
+	function edit_post(){
 		if (IS_POST) {
 			if ($this->link_obj->create()) {
-				if ($this->link_obj->save()) {
+				if ($this->link_obj->save()!=false) {
 					$this->success("保存成功！");
 				} else {
 					$this->error("保存失败！");
@@ -46,13 +56,6 @@ class LinkAction extends AdminbaseAction{
 			} else {
 				$this->error($this->link_obj->getError());
 			}
-		} else {
-			$id=$this->_get("id");
-			$link=$this->link_obj->where("link_id=$id")->find();
-			$this->assign($link);
-			
-			$this->assign("targets",$this->targets);
-			$this->display();
 		}
 	}
 	

@@ -7,7 +7,6 @@
     <meta name="description"  content="{$seo_description}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <include file="Public:css" />
-
 </head>
 <body>
 <div class="wrapper">
@@ -24,7 +23,7 @@
 <php>
 $product=sp_sql_posts("cid:$cat_id;field:post_title,smeta,post_excerpt,tid;");
 </php>
-    <section class="slice bg-3 animate-hover-slide">
+    <div class="slice bg-3 animate-hover-slide">
         <div class="w-section inverse work">
             <div class="container">
                 
@@ -38,7 +37,7 @@ $product=sp_sql_posts("cid:$cat_id;field:post_title,smeta,post_excerpt,tid;");
                                     <img alt="" src="__UPLOAD__{$pic.thumb}"  class="img-responsive">
                                     <div class="figcaption bg-2"></div>
                                     <div class="figcaption-btn">
-                                        <a href="__TMPL__Public/images/prv/wk-img-1.jpg" class="btn btn-xs btn-one theater"><i class="fa fa-plus-circle"></i> 大图</a>
+                                        <a href="__UPLOAD__{$pic.thumb}" class="btn btn-xs btn-one theater"><i class="fa fa-plus-circle"></i> 大图</a>
                                         <a href="{:u('article/index',array('id'=>$vo['tid']))}" class="btn btn-xs btn-one"><i class="fa fa-link"></i> 详细</a>
                                     </div>
                                 </div>
@@ -59,7 +58,7 @@ $product=sp_sql_posts("cid:$cat_id;field:post_title,smeta,post_excerpt,tid;");
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
     <include file="Public:footer" />
     

@@ -10,6 +10,10 @@ function sp_password($pw){
 	return substr($decor,0,12).$mi.substr($decor,-4,4);
 }
 
+function sp_log($content,$file="log.txt"){
+	file_put_contents($file, $content,FILE_APPEND);
+}
+
 function sp_random_string($len = 6) {
 	$chars = array(
 			"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
@@ -31,7 +35,6 @@ function sp_random_string($len = 6) {
 /**
  * 清空缓存
  */
-
 function sp_clear_cache(){
 		import ( "ORG.Util.Dir" );
 		$dirs = array ();
@@ -55,6 +58,8 @@ function sp_clear_cache(){
 							}
 						}
 					}
+				}else{
+					@unlink($dir);
 				}
 			}
 		}
@@ -75,8 +80,9 @@ function sp_save_var($path,$value){
 		$kv->delete('DYNAMIC_CONFIG');
 		$ret = $kv->set('DYNAMIC_CONFIG', serialize($value));
 	}else{
-		file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
+		$ret = file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
 	}
+	return $ret;
 }
 
 /**
@@ -108,15 +114,18 @@ function sp_param_lable($tag = ''){
  */
 
 function get_site_options(){
-	$options_obj=new OptionsModel();
-	
-	$option=$options_obj->where("option_name='site_options'")->find();
-	if($option){
-		return (array)json_decode($option['option_value']);
-	}else{
-		return array();
+	$site_options = F("site_options");
+	if(empty($site_options)){
+		$options_obj = new OptionsModel();
+		$option = $options_obj->where("option_name='site_options'")->find();
+		if($option){
+			$site_options = (array)json_decode($option['option_value']);
+		}else{
+			$site_options = array();
+		}
+		F("site_options", $site_options);
 	}
-	
+	return $site_options;	
 }
 
 
@@ -304,45 +313,62 @@ function initupload($module, $catid, $args, $userid, $groupid = '8', $isadmin = 
  <li class="hasChildren" id='6'><span class='file'>ss</span></li>
  </ul>
  */
+
 function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='file'>\$label</span>",$foldertpl="<span class='folder'>\$label</span>",$ul_class="" ,$li_class="" ,$style="filetree",$showlevel=6,$dropdown='hasChild'){
-	$site_nav=F("site_nav_".$id);
-	if(empty($site_nav)){
-		$nav_obj=new NavModel();
-		if($id=="main"){
-			$navcat_obj=new NavCatModel();
-			$main=$navcat_obj->where("active=1")->find();
-			$id=$main['navcid'];
-		}
-		$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
-		foreach ($navs as $key=>$nav){
-			$href=$nav['href'];
-			$hrefold=$href;
-			$href=unserialize(stripslashes($nav['href']));
-			if(empty($href)){
-				if($hrefold=="home"){
-					$href=__ROOT__."/";
-				}else{
-					$href=$hrefold;
-				}
-			}else{
-				$default_app=strtolower(C("DEFAULT_GROUP"));
-				$href=U($href['action'],$href['param']);
-				$g=C("VAR_GROUP");
-				$href=preg_replace("/\/$default_app\//", "/",$href);
-				$href=preg_replace("/$g=$default_app&/", "",$href);
-			}
-			$nav['href']=$href;
-			$navs[$key]=$nav;
-		}
-		F("site_nav",$navs);
+	$navs=F("site_nav_".$id);
+	if(empty($navs)){
+		$navs=_sp_get_menu_datas($id);
 	}
 	
 	import("Tree");
 	$tree = new Tree();
 	$tree->init($navs);
 	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE, $dropdown);
-
 }
+function _sp_get_menu_datas($id){
+	$nav_obj=new NavModel();
+	if($id=="main"){
+		$navcat_obj=new NavCatModel();
+		$main=$navcat_obj->where("active=1")->find();
+		$id=$main['navcid'];
+	}
+	$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
+	foreach ($navs as $key=>$nav){
+		$href=$nav['href'];
+		$hrefold=$href;
+		$href=unserialize(stripslashes($nav['href']));
+		if(empty($href)){
+			if($hrefold=="home"){
+				$href=__ROOT__."/";
+			}else{
+				$href=$hrefold;
+			}
+		}else{
+			$default_app=strtolower(C("DEFAULT_GROUP"));
+			$href=U($href['action'],$href['param']);
+			$g=C("VAR_GROUP");
+			$href=preg_replace("/\/$default_app\//", "/",$href);
+			$href=preg_replace("/$g=$default_app&/", "",$href);
+		}
+		$nav['href']=$href;
+		$navs[$key]=$nav;
+	}
+	F("site_nav",$navs);
+	return $navs;
+}
+function sp_get_menu_tree($id="main"){
+	$navs=F("site_nav_".$id);
+	if(empty($navs)){
+		$navs=_sp_get_menu_datas($id);
+	}
+
+	import("Tree");
+	$tree = new Tree();
+	$tree->init($navs);
+	return $tree->get_tree_array(0, "");
+}
+
+
 
 /**
  * 11
@@ -476,4 +502,43 @@ function sp_bread_nav($nav_id){
 	$path = str_replace('-',',',$path);
 	$bread_path = $navTable->where("id in ($path)")->order('id')->select();
 	return $bread_path;
+}
+
+/*
+ * 作用：去除字符串中的指定字符
+ * 参数: $str, string, 待处理字符串
+ *       $chars, string, 需去掉的特殊字符
+ */
+function sp_strip_chars($str, $chars='?<*.>\'\"'){
+	return preg_replace('/['.$chars.']/is', '', $str);
+}
+
+//发送邮件
+function SendMail($address,$title,$message){
+	import("PHPMailer");
+	$mail=new PHPMailer();
+	// 设置PHPMailer使用SMTP服务器发送Email
+	$mail->IsSMTP();
+	$mail->IsHTML(true);
+	// 设置邮件的字符编码，若不指定，则为'UTF-8'
+	$mail->CharSet='UTF-8';
+	// 添加收件人地址，可以多次使用来添加多个收件人
+	$mail->AddAddress($address);
+	// 设置邮件正文
+	$mail->Body=$message;
+	// 设置邮件头的From字段。
+	$mail->From=C('SP_MAIL_ADDRESS');
+	// 设置发件人名字
+	$mail->FromName='ThinkCMF';
+	// 设置邮件标题
+	$mail->Subject=$title;
+	// 设置SMTP服务器。
+	$mail->Host=C('SP_MAIL_SMTP');
+	// 设置为"需要验证"
+	$mail->SMTPAuth=true;
+	// 设置用户名和密码。
+	$mail->Username=C('SP_MAIL_LOGINNAME');
+	$mail->Password=C('SP_MAIL_PASSWORD');
+	// 发送邮件。
+	return($mail->Send());
 }

@@ -1,0 +1,13 @@
+﻿application下已部署的应用：
+1.Admin
+后台管理应用
+2.Api
+公共接口
+3.Asset
+资源管理应用
+4.Protal
+门户应用
+5.Member
+用户管理应用
+7、Wx
+微信公共账号管理应用

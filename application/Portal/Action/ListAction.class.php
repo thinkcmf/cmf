@@ -28,9 +28,5 @@ class ListAction extends HomeBaseAction {
 		
 	}
 	
-	public function test(){
-		print_r($_GET);
-	}
-	
 }
 ?>

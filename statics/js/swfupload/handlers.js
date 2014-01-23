@@ -39,7 +39,6 @@ function att_show(serverData,file)
 		img = '<div class="get selected" id="aid-'+id+'"><a class="del" href="javascript:;">删除</a> <img onclick="att_cancel(this,'+id+',\'upload\')" width="87" height="98" src="'+GV.DIMAUB+'statics/images/ext/'+ext+'.png" data-id="'+id+'" data-path="'+src+'" alt="上传完成" title="'+filename+'"><input type="text" class="J_file_desc" name="flashatt['+id+'][desc]" placeholder="请输入描述" value="'+filename+'"  style="width:68px"></div>';
 	}
 	//设置附件标识
-	$.get(GV.DIMAUB+'index.php?a=swfupload_json&m=Attachments&g=Attachment&aid='+id+'&src='+src+'&filename='+filename);
 	$("#"+file.id).removeClass("J_empty").addClass("uploaded").html(img);
 	//设置已经选定附件
 	$('#att-status').append('|'+src);

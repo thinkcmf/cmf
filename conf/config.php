@@ -5,8 +5,5 @@ return array(
 		"UPLOADPATH"=>"data/upload/",
 		'URL_CASE_INSENSITIVE'  => true, //url不区分大小写
 		"URL_ROUTER_ON"=>true,
-		'URL_ROUTE_RULES'=>array(
-				'product/show/:type1/:type2/:type3'=>'Product/show',
-				'news/:id\d'=>"Post/test",
-		),
+		'URL_ROUTE_RULES'=>array(),
 );

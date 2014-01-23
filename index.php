@@ -4,6 +4,20 @@
  * 项目入口文件
  * Some rights reserved：www.simplewind.net
  */
+if (ini_get('magic_quotes_gpc')) {
+	function stripslashesRecursive(array $array){
+		foreach ($array as $k => $v) {
+			if (is_string($v)){
+				$array[$k] = stripslashes($v);
+			} else if (is_array($v)){
+				$array[$k] = stripslashesRecursive($v);
+			}
+		}
+		return $array;
+	}
+	$_GET = stripslashesRecursive($_GET);
+	$_POST = stripslashesRecursive($_POST);
+}
 //开启调试模式
 define("APP_DEBUG", false);
 //网站当前路径
@@ -21,14 +35,16 @@ define('SPSTATIC',   'statics/');
 //定义缓存存放路径
 define("RUNTIME_PATH", SITE_PATH . "/data/runtime/");
 //版本号
-define("SIMPLEWIND_CMF_VERSION", 'V1.0.4 20140121');
+define("SIMPLEWIND_CMF_VERSION", 'V1.1.0');
 
-//大小写忽略处理
-/* foreach (array("g", "m") as $v) {
-    if (isset($_GET[$v])) {
-        $_GET[$v] = ucwords($_GET[$v]);
-    }
-} */
+if(function_exists('saeAutoLoader') || isset($_SERVER['HTTP_BAE_ENV_APPID'])){
+	
+}else{
+	if(file_exists("install") && !file_exists("install/install.lock")){
+		header("Location:./install");
+		exit();
+	}
+}
 
 //载入框架核心文件
 define('THINK_PATH',SPAPP_PATH.'Core/');

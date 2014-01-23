@@ -1,5 +1,5 @@
 <?php
-$runtime_config = include "data/conf/config_sae.php";
+$runtime_config = include "conf/config_sae.php";
 $thinksdk = include "conf/ThinkSDK_sae.config.php";
 $sae = array(
     'DB_TYPE' => 'mysql',

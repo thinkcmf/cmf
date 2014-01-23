@@ -219,7 +219,7 @@ switch ($step) {
             		"site_seo_description":"$seo_description"
         }
 helllo;
-            mysql_query("UPDATE `{$dbPrefix}options` SET  `option_value` = '$site_options' WHERE option_name='site_options'");
+            mysql_query("INSERT INTO `{$dbPrefix}options` (option_value,option_name) VALUES ('$site_options','site_options')");
             /*mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$site_url' WHERE varname='siteurl' ");
             mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$sitefileurl' WHERE varname='sitefileurl' ");
             mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$seo_description' WHERE varname='siteinfo'");

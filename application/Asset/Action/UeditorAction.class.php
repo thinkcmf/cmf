@@ -5,7 +5,7 @@ class UeditorAction extends Action {
 		//上传处理类
 		$config=array(
 				'allowExts' => array('jpg','gif','png'),
-				'savePath' => './'. C("UPLOADPATH"),
+				'savePath' => './'. C("UPLOADPATH")."ueditor/",
 				'maxSize' => 11048576,
 				'saveRule' => 'uniqid',
 			);
@@ -19,11 +19,17 @@ class UeditorAction extends Action {
 			$info = $upload->getUploadFileInfo();
 			$title = $oriName = $info[0]['name'];
 			$state = 'SUCCESS';
-			$file = C("TMPL_PARSE_STRING.__UPLOAD__").$info[0]['savename'];
+			$file = C("TMPL_PARSE_STRING.__UPLOAD__")."ueditor/".$info[0]['savename'];
+			if(strpos($file, "https")===0 || strpos($file, "http")===0){
+				
+			}else{//local
+				$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
+				$file=$host.$file;
+			}
 		} else {
 			$state = $upload->getErrorMsg();
 		}
-		echo "{'url':'" . $file . "','title':'" . $title . "','original':'" . $oriName . "','state':'" . $state . "'}";
+		echo "{'url':'" .$file . "','title':'" . $title . "','original':'" . $oriName . "','state':'" . $state . "'}";
 	}
 	
 	public function imageManager(){

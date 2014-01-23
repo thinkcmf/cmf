@@ -459,6 +459,9 @@ select {
   margin: 0;
 	font-family: inherit;
 }
+.normal_select{/*same width with input*/
+	min-width:137px;
+}
 .input:focus,textarea:focus{
 	outline:2px solid #99d8f5;
 	border-color:#7bbff2;
@@ -601,18 +604,18 @@ select[size]{
 	margin-right:3px;
 	
 	color:#fff;
-	background-color:#24557d;
+	background-color:#1262B7;
 	border-color:#fff;
 }
 .pages a:hover{
 	color:#fff;
-	background-color:#24557d;
+	background-color:#1262B7;
 	border-color:#fff;
 	text-decoration:none;
 }
 .pages strong{
 	color:#fff;
-	background-color:#24557d;
+	background-color:#1262B7;
 	border-color:#fff;
 }
 .pages span{
@@ -665,7 +668,7 @@ select[size]{
 .tips_loading{
 	color:#cc3333;
 	padding-left:18px;
-	background:url(../images/admin/tips/tips_follow.png) -20px 2px no-repeat;
+	/* background:url(../images/admin/tips/tips_follow.png) -20px 2px no-repeat; */
 	display:inline-block;
 	line-height:18px;
 }
@@ -953,8 +956,11 @@ a:hover{
 	padding:0 15px;
 	text-align:center;
 }
-.nav li a:hover{
+.nav li a{
 	border-bottom:2px solid #aaa;
+}
+.nav li a:hover{
+	border-bottom:2px solid #266aae;
 	color:#333;
 	text-decoration:none;
 }
@@ -1518,6 +1524,7 @@ input:radio+span{
 	z-index:5;
 	_position: absolute;
 	_top: expression(documentElement . scrollTop +   documentElement . clientHeight-this . offsetHeight);
+	background: #fff;
 }
 .btn_wrap_pd{
 	padding:0 10px 10px;

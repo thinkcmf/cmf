@@ -8,18 +8,14 @@
 
 class OauthAction extends Action {
 	
-	function _initialize() {
-	}
+	function _initialize() {}
 	
 	//登录地址
 	public function login($type = null){
 		empty($type) && $this->error('参数错误');
-
 		//加载ThinkOauth类并实例化一个对象
 		import("ThinkSDK");
 		$sns  = ThinkOauth::getInstance($type);
-		
-		//die(OAUTH_URL_CALLBACK);
 		//跳转到授权页面
 		redirect($sns->getRequestCodeURL());
 	}
@@ -43,91 +39,113 @@ class OauthAction extends Action {
 		//调用方法，实例化SDK对象的时候直接作为构造函数的第二个参数传入
 		//如： $qq = ThinkOauth::getInstance('qq', $token);
 		$token = $sns->getAccessToken($code , $extend);
-		//die($token);
 		//获取当前登录用户信息
 		if(is_array($token)){
 			$user_info = A('Type', 'Event')->$type($token);
-			$OMember = M('OauthMember');
-			//账户是否已经存在
-			$rst = $OMember->where("_from='{$type}' and openid='{$token['openid']}' and status=1")->find();
-			if(isset($_SESSION["MEMBER_id"])){
-				//如果用户已经local账户登陆过，则表示要绑定第三方
-				if(!empty($rst)){
-					$this->error('该帐号已被本站其他账号绑定！',U("Member/center/index"));
-					exit();
+			if($_SESSION["MEMBER_type"] == 'local'){
+				self::_bang_handle($user_info, $type, $token);
+			}else{
+				self::_login_handle($user_info, $type, $token);
+			}
+		}else{
+			$this->success('登录失败！',U("Portal/index/index"));
+		}
+	}
+	
+	//绑定第三方账号
+	private function _bang_handle($user_info, $type, $token){
+		$OMember = M('OauthMember');
+		//账户是否已经存在
+		$rst = $OMember->where("_from='{$type}' and openid='{$token['openid']}' and status=1")->find();
+		if(!empty($rst)){
+			if($rst['lock_to_id'] != $_SESSION["MEMBER_id"]) $this->error('该帐号已被本站其他账号绑定！',U("Member/center/index"));
+			else $this->success('登陆成功！',U("Member/center/index"));
+		}
+		$data = array(
+				'_from' => $type,
+				'_name' => $user_info['name'],
+				'head_img' => $user_info['head'],
+				'create_time' => time(),
+				'lock_to_id' => $_SESSION["MEMBER_id"],
+				'last_login_time' => time(),
+				'last_login_ip' => get_client_ip(),
+				'login_times' => 1,
+				'status' => 1,
+				'access_token' => $token['access_token'],
+				'expires_date' => (int)(time()+$token['expires_in']),
+				'openid' => $token['openid'],
+		);
+		if($OMember->add($data)){
+			$this->success('账号绑定成功！',U("Member/center/index"));
+		}else{
+			$this->error('账号绑定失败！',U("Member/center/index"));
+		}
+	}
+	
+	//登陆
+	private function _login_handle($user_info, $type, $token){
+		$OMember = M('OauthMember');
+		$rst = $OMember->where("_from='{$type}' and openid='{$token['openid']}'")->find();
+		$return = array(0);
+		if($rst){
+			$rst2 = M('Members')->where('ID='.$rst['lock_to_id'])->find();
+			if($rst2){
+				if($rst2['user_status'] == '0' || $rst['user_status'] == '0')
+					$return = array(0,'您可能已经被列入黑名单，请联系网站管理员！');
+				else{
+					$type = 'local';
+					$_SESSION["MEMBER_status"] = $rst2['user_status'];
+					$return = array(1);
 				}
-				$data = array(
-						'_from' => $type,
-						'_name' => $user_info['name'],
-						'head_img' => $user_info['head'],
-						'create_time' => time(),
-						'lock_to_id' => $_SESSION["MEMBER_id"],
-						'last_login_time' => time(),
-						'last_login_ip' => get_client_ip(),
-						'login_times' => 1,
-						'status' => 1,
-						'access_token' => $token['access_token'],
-						'expires_date' => (int)(time()+$token['expires_in']),
-						'openid' => $token['openid'],
-				);
-				if($OMember->add($data)){
-					$this->success('账号绑定成功！',U("Member/center/index"));
-				}else{
-					$this->error('账号绑定失败！',U("Member/center/index"));
-				}
-			}else if($rst){
+			}else{
 				//数据库已经有该用户登录信息
-				$data=array(
+				$data = array(
 						'last_login_time' => time(),
 						'last_login_ip' => get_client_ip(),
 						'login_times' => $rst['login_times']+1,
 						'access_token' => $token['access_token'],
 						'expires_date' => (int)(time()+$token['expires_in']),
 				);
-				$OMember->where("_from='{$type}' and openid='{$token['openid']}'")->save($data);
-				$_SESSION["MEMBER_type"]=$type;
-				$_SESSION["MEMBER_id"]=$rst['lock_to_id'];
-				$_SESSION['MEMBER_name']=$rst["_name"];
-				$this->success('登录成功！',U("Member/center/index"));
-			}else if($OMember->where("_from='{$type}' and openid='{$token['openid']}' and status=0")->find()){
-				$this->error('您可能已经被列入黑名单，请联系网站管理员！',U("Portal/index/index"));
-			}else{
-				//本地用户中创建对应一条数据
-				$mem_insert = array(
-						'user_login_name' => $type.'游客',
-						'user_pic_assetid' => $user_info['head'],
-						'last_login_time' => time(),
-						'last_login_ip' => get_client_ip(),
-						'create_time' => time(),
-						'user_status' => '1',
-				);
-				$id = M("Members")->add($mem_insert);
-				//第三方用户表中创建数据
-				$data = array(
-						'_from' => $type,
-						'_name' => $user_info['name'],
-						'head_img' => $user_info['head'],
-						'create_time' => time(),
-						'lock_to_id' => $id,
-						'last_login_time' => time(),
-						'last_login_ip' => get_client_ip(),
-						'login_times' => 1,
-						'status' => 1,
-						'access_token' => $token['access_token'],
-						'expires_date' => (int)(time()+$token['expires_in']),
-						'openid' => $token['openid'],
-				);
-				if($OMember->add($data)){
-					$_SESSION["MEMBER_type"]=$type;
-					$_SESSION["MEMBER_id"]=$id;
-					$_SESSION['MEMBER_name']=$user_info['name'];
-					$this->success('登录成功！',U("Member/center/index"));
-				}else{
-					$this->error('用户信息获取失败！',U("Portal/index/index"));
-				}
+				if($OMember->where("_from='{$type}' and openid='{$token['openid']}'")->save($data))
+				$return[0] = $rst['lock_to_id'];
 			}
 		}else{
-			$this->success('登录失败！',U("Portal/index/index"));
+			//本地用户中创建对应一条数据
+			$mem_insert = array(
+					'user_login_name' => $type.'游客',
+					'user_pic_assetid' => $user_info['head'],
+					'last_login_time' => time(),
+					'last_login_ip' => get_client_ip(),
+					'create_time' => time(),
+					'user_status' => '1',
+			);
+			$id = M("Members")->add($mem_insert);
+			//第三方用户表中创建数据
+			$data = array(
+					'_from' => $type,
+					'_name' => $user_info['name'],
+					'head_img' => $user_info['head'],
+					'create_time' => time(),
+					'lock_to_id' => $id,
+					'last_login_time' => time(),
+					'last_login_ip' => get_client_ip(),
+					'login_times' => 1,
+					'status' => 1,
+					'access_token' => $token['access_token'],
+					'expires_date' => (int)(time()+$token['expires_in']),
+					'openid' => $token['openid'],
+			);
+			$OMember->add($data) && ($return = array($id));
+		}
+		if($return[0]){
+			$_SESSION["MEMBER_type"] = $type;
+			$_SESSION["MEMBER_id"] = $return[0];
+			$_SESSION['MEMBER_name'] = $user_info['name'];
+			if(!isset($return[1])) $return[1] = '登陆成功！';
+			$this->success($return[1], U("Member/center/index"));
+		}else{
+			if(!isset($return[1])) $return[1] = '登陆失败';
+			$this->error($return[1],U("Portal/index/index"));
 		}
 	}
 }

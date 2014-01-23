@@ -16,59 +16,78 @@ class MenuAction extends AdminbaseAction {
      *  显示菜单
      */
     public function index() {
+    	$_SESSION['admin_menu_index']="Menu/index";
         $result = $this->Menu->order(array("listorder" => "ASC"))->select();
         import("Tree");
         $tree = new Tree();
         $tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
         foreach ($result as $r) {
-            $r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
-            $r['status'] = $r['status'] ? "显示" : "不显示";
+            $r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+            $r['status'] = $r['status'] ? "显示" : "隐藏";
+            if(APP_DEBUG){
+            	$r['app']=$r['app']."/".$r['model']."/".$r['action'];
+            }
             $array[] = $r;
+            
         }
 
         $tree->init($array);
         $str = "<tr>
-	<td align='center'><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
-	<td align='center'>\$id</td>
-	<td >\$spacer\$name</td>
-                    <td align='center'>\$status</td>
-	<td align='center'>\$str_manage</td>
-	</tr>";
+					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td>\$id</td>
+        			<td>\$app</td>
+					<td>\$spacer\$name</td>
+				    <td>\$status</td>
+					<td>\$str_manage</td>
+				</tr>";
         $categorys = $tree->get_tree(0, $str);
         $this->assign("categorys", $categorys);
         $this->display();
+    }
+    
+    public function lists(){
+    	$_SESSION['admin_menu_index']="Menu/lists";
+    	$result = $this->Menu->order(array("app" => "ASC","model" => "ASC","action" => "ASC"))->select();
+    	$this->assign("menus",$result);
+    	$this->display();
     }
 
     /**
      *  添加
      */
     public function add() {
-        if (IS_POST) {
-            if ($this->Menu->create()) {
-                if ($this->Menu->add()) {
-                    $this->success("新增成功！", U("Menu/index"));
-                } else {
-                    $this->error("新增失败！");
-                }
-            } else {
-                $this->error($this->Menu->getError());
-            }
-        } else {
-            import("Tree");
-            $tree = new Tree();
-            $parentid = (int) $this->_get("parentid");
-            $result = $this->Menu->select();
-            foreach ($result as $r) {
-                $r['selected'] = $r['id'] == $parentid ? 'selected' : '';
-                $array[] = $r;
-            }
-            $str = "<option value='\$id' \$selected>\$spacer \$name</option>";
-            $tree->init($array);
-            $select_categorys = $tree->get_tree(0, $str);
-            $this->assign("select_categorys", $select_categorys);
-            $this->display();
-        }
+    	import("Tree");
+    	$tree = new Tree();
+    	$parentid = (int) $this->_get("parentid");
+    	$result = $this->Menu->select();
+    	foreach ($result as $r) {
+    		$r['selected'] = $r['id'] == $parentid ? 'selected' : '';
+    		$array[] = $r;
+    	}
+    	$str = "<option value='\$id' \$selected>\$spacer \$name</option>";
+    	$tree->init($array);
+    	$select_categorys = $tree->get_tree(0, $str);
+    	$this->assign("select_categorys", $select_categorys);
+    	$this->display();
+    }
+    
+    /**
+     *  添加
+     */
+    public function add_post() {
+    	if (IS_POST) {
+    		if ($this->Menu->create()) {
+    			if ($this->Menu->add()) {
+    				$to=empty($_SESSION['admin_menu_index'])?"Menu/index":$_SESSION['admin_menu_index'];
+    				$this->success("新增成功！", U($to));
+    			} else {
+    				$this->error("新增失败！");
+    			}
+    		} else {
+    			$this->error($this->Menu->getError());
+    		}
+    	}
     }
 
     /**
@@ -91,33 +110,38 @@ class MenuAction extends AdminbaseAction {
      *  编辑
      */
     public function edit() {
-        if (IS_POST) {
-            if ($this->Menu->create()) {
-                if ($this->Menu->save() !== false) {
-                    $this->success("更新成功！", U("Menu/index"));
-                } else {
-                    $this->error("更新失败！");
-                }
-            } else {
-                $this->error($this->Menu->getError());
-            }
-        } else {
-            import("Tree");
-            $tree = new Tree();
-            $id = (int) $this->_get("id");
-            $rs = $this->Menu->where(array("id" => $id))->find();
-            $result = $this->Menu->select();
-            foreach ($result as $r) {
-                $r['selected'] = $r['id'] == $rs['parentid'] ? 'selected' : '';
-                $array[] = $r;
-            }
-            $str = "<option value='\$id' \$selected>\$spacer \$name</option>";
-            $tree->init($array);
-            $select_categorys = $tree->get_tree(0, $str);
-            $this->assign("data", $rs);
-            $this->assign("select_categorys", $select_categorys);
-            $this->display();
+        import("Tree");
+        $tree = new Tree();
+        $id = (int) $this->_get("id");
+        $rs = $this->Menu->where(array("id" => $id))->find();
+        $result = $this->Menu->select();
+        foreach ($result as $r) {
+        	$r['selected'] = $r['id'] == $rs['parentid'] ? 'selected' : '';
+        	$array[] = $r;
         }
+        $str = "<option value='\$id' \$selected>\$spacer \$name</option>";
+        $tree->init($array);
+        $select_categorys = $tree->get_tree(0, $str);
+        $this->assign("data", $rs);
+        $this->assign("select_categorys", $select_categorys);
+        $this->display();
+    }
+    
+    /**
+     *  编辑
+     */
+    public function edit_post() {
+    	if (IS_POST) {
+    		if ($this->Menu->create()) {
+    			if ($this->Menu->save() !== false) {
+    				$this->success("更新成功！");
+    			} else {
+    				$this->error("更新失败！");
+    			}
+    		} else {
+    			$this->error($this->Menu->getError());
+    		}
+    	}
     }
 
     //排序
@@ -129,57 +153,11 @@ class MenuAction extends AdminbaseAction {
             $this->error("排序更新失败！");
         }
     }
-
-    //常用菜单
-    public function public_changyong() {
-        if (IS_POST) {
-            $menu = $this->_post("menu");
-            if(count($menu) > 15){
-                $this->error("常用菜单设置不宜超过15个！");
-            }
-            //先删除旧的
-            M("AdminPanel")->where(array("userid"=>  AppframeAction::$Cache['uid']))->delete();
-            foreach($menu as $k=>$menuid){
-                $info = M("Menu")->where(array("id"=>$menuid))->find();
-                if($info){
-                    $app = $info['app'];
-                    $model = $info['model'];
-                    $action = $info['action'];
-                    $url = U("$app/$model/$action",$info['data']."&menuid=$menuid");
-                    M("AdminPanel")->add(array(
-                        "menuid" => $menuid,
-                        "userid" => AppframeAction::$Cache['uid'],
-                        "name" => $info['name'],
-                        "url" => $url,
-                        "datetime" => time(),
-                    ));
-                }
-            }
-            $this->success("添加成功！");
-        } else {
-            $data = M("Menu")->where(array("type"=>1,"status"=>1))->select();
-            $Panel_data = M("AdminPanel")->where(array("userid"=>  AppframeAction::$Cache['uid']))->field("menuid")->select();
-            foreach($Panel_data as $r){
-                $Panel[] = $r['menuid'];
-            }
-            $dataArr = array();
-            $menuName = array();
-            $Module = F("Module");
-            foreach ($data as $k => $v) {
-                $dataArr[ucwords($v['app'])][] = $v;
-                $menuName[ucwords($v['app'])] = $Module[ucwords($v['app'])]['name'];
-            }
-            $this->assign("data", $dataArr);
-            $this->assign("panel", $Panel);
-            $this->assign("name",$menuName);
-            $this->display();
-        }
-    }
     
-    
-    public function export_menu(){
-    	$menu_obj=new MenuModel();
-    	$rootmenus=$menu_obj->menu(0);
+    public function spmy_export_menu(){
+    	$menus=$this->Menu->order(array("app" => "ASC","model" => "ASC","action" => "ASC"))->select();
+    	$menus_tree=array();
+    	
     	$apps=Dir::getList(SPAPP);
     	foreach ($apps as $a){
     		if(is_dir(SPAPP.$a)){
@@ -189,20 +167,29 @@ class MenuAction extends AdminbaseAction {
     			}
     		}
     	}
-    	foreach ($rootmenus as $m){
-    		$rootmenu=$m;
-    		$this->generate_submenu($rootmenu,$m);
-    		$app=ucfirst($m['app']);
-    		$menudir=SPAPP.$app."/Menu";
-    		$model=ucfirst($m['model']);
-    		$action=ucfirst($m['action']);
-    		$menuname="$model.$action.php";
-    		file_put_contents($menudir."/".$menuname, "<?php\treturn " . var_export($rootmenu, true) . ";?>");
+    	
+    	foreach ($menus as $m){
+    		$mm=$m;
+    		unset($mm['app']);
+    		unset($mm['model']);
+    		unset($mm['id']);
+    		unset($mm['parentid']);
+    		$menus_tree[$m['app']][$m['model']][]=$mm;
     	}
-    	$this->display();
+    	foreach ($menus_tree as $app=>$models){
+    		$menudir=SPAPP.$app."/Menu";
+    		foreach ($models as $model =>$a){
+    			if(!file_exists($menudir)){
+    				mkdir($menudir);
+    			}
+    			file_put_contents($menudir."/$model.php", "<?php\treturn " . var_export($a, true) . ";?>");
+    		}
+    		
+    	}
+    	$this->display("export_menu");
     }
     
-    public function dev_import_menu(){
+    /* public function dev_import_menu(){
     	$menus=F("Menu");
     	if(!empty($menus)){
     		$table_menu=C('DB_PREFIX')."menu";
@@ -214,53 +201,74 @@ class MenuAction extends AdminbaseAction {
     	}
     	
     	$this->display();
-    }
+    } */
     
-    public function import_menu(){
-    	$apps=Dir::getList(SPAPP);
-    	foreach ($apps as $a){
-    		if(is_dir(SPAPP.$a)){
-    			if(!(strpos($a, ".") === 0)){
-    				$menudir=SPAPP.$a."/Menu";
-    				$menus=scandir($menudir);
-    				if(count($menus)){
-    					foreach ($menus as $mf){
-    						$rootmenudatas=include   $menudir."/$mf";
-    						
-    						print_r($rootmenudatas);
-    						if(!empty($rootmenudatas)){
-    							$data=$rootmenudatas;
-    							$data['parentid']=0;
-    							unset($data['items']);
-    							print_r($data);
-    							$id=$this->Menu->add($data);
-    							if(!empty($rootmenudatas['items'])){
-    								$this->import_submenu($rootmenudatas['items'],$id);
+    public function spmy_import_menu(){
+    	$apps=scandir(SPAPP);
+    	$error_menus=array();
+    	foreach ($apps as $app){
+    		if(is_dir(SPAPP.$app)){
+    			if(!(strpos($app, ".") === 0)){
+    				$menudir=SPAPP.$app."/Menu";
+    				$menu_files=scandir($menudir);
+    				if(count($menu_files)){
+    					foreach ($menu_files as $mf){
+    						if(!(strpos($mf, ".") === 0) && strpos($mf,".php")){//是php文件
+    							$mf_path=$menudir."/$mf";
+    							if(file_exists($mf_path)){
+    								$model=str_replace(".php", "", $mf);
+    								$menudatas=include   $mf_path;
+    								if(is_array($menudatas) && !empty($menudatas)){
+    									foreach ($menudatas as $menu){
+    										$action=$menu['action'];
+    										
+    										$where['app']=$app;
+    										$where['model']=$model;
+    										$where['action']=$action;
+    										$old_menu=$this->Menu->where($where)->find();
+    										if($old_menu){
+    											$newmenu=array_merge($old_menu,$menu);
+    											$result=$this->Menu->save($newmenu);
+    											if($result===false){
+    												$error_menus[]="$app/$model/$action";
+    											}
+    										}
+    									}
+    									/* $data=$menudatas;
+    									$data['parentid']=0;
+    									unset($data['items']);
+    									$id=$this->Menu->add($data);
+    									if(!empty($menudatas['items'])){
+    										$this->_import_submenu($rootmenudatas['items'],$id);
+    									} */
+    								}
     							}
+    							
     						}
-    						
     					}
     				}
     			}
     		}
     	}
+		$this->assign("errormenus",$error_menus);
+    	$this->display("import_menu");
     }
     
-    private function import_submenu($submenus,$parentid){
+    private function _import_submenu($submenus,$parentid){
     	foreach($submenus as $sm){
     		$data=$sm;
     		$data['parentid']=$parentid;
     		unset($data['items']);
     		$id=$this->Menu->add($data);
     		if(!empty($sm['items'])){
-    				$this->import_submenu($sm['items'],$id);
+    				$this->_import_submenu($sm['items'],$id);
     		}else{
     			return;
     		}
     	}
     }
     
-    private function generate_submenu(&$rootmenu,$m){
+    private function _generate_submenu(&$rootmenu,$m){
     	$parentid=$m['id'];
     	$rm=$this->Menu->menu($parentid);
     	unset($rootmenu['id']);
@@ -269,7 +277,7 @@ class MenuAction extends AdminbaseAction {
     		
     		$count=count($rm);
     		for($i=0;$i<$count;$i++){
-    			$this->generate_submenu($rm[$i],$rm[$i]);
+    			$this->_generate_submenu($rm[$i],$rm[$i]);
     			
     		}
     		$rootmenu['items']=$rm;
@@ -277,6 +285,87 @@ class MenuAction extends AdminbaseAction {
     	}else{
     		return ;
     	}
+    	
+    }
+    
+    
+    public function spmy_getactions(){
+    	$apps_r=array("Comment");
+    	$groups=explode(",", C("APP_GROUP_LIST"));
+    	$group_count=count($groups);
+    	$newmenus=array();
+    	$g=$this->_get("app");
+    	if(empty($g)){
+    		$g=$groups[0];
+    	}
+    	
+    	if(in_array($g, $groups)){
+    		if(is_dir(SPAPP.$g)){
+    			if(!(strpos($g, ".") === 0)){
+    				$actiondir=SPAPP.$g."/Action";
+    				$actions=scandir($actiondir);
+    				if(count($actions)){
+    					foreach ($actions as $mf){
+    						if(!(strpos($mf, ".") === 0)){
+    							if($g=="Admin"){
+    								$m=str_replace("Action.class.php", "",$mf);
+    								$noneed_models=array("Public","Index","Main");
+    								if(in_array($m, $noneed_models)){
+    									continue;
+    								}
+    							}else{
+    								if(strpos($mf,"adminAction.class.php")){
+    									$m=str_replace("Action.class.php", "",$mf);
+    								}else{
+    									continue;
+    								}
+    							}
+    							//echo $g."/".$m;
+    							$class=A($g."/".$m);
+    							$base_methods=get_class_methods("AdminbaseAction");
+    							$methods=get_class_methods($class);
+    							$methods=array_diff($methods, $base_methods);
+    							foreach ($methods as $a){
+    								if(!(strpos($a, "_") === 0) && !(strpos($a, "spmy_") === 0)){
+    									$where['app']=$g;
+    									$where['model']=$m;
+    									$where['action']=$a;
+    									$count=$this->Menu->where($where)->count();
+    									if(!$count){
+    										$data['parentid']=0;
+    										$data['app']=$g;
+    										$data['model']=$m;
+    										$data['action']=$a;
+    										$data['type']="1";
+    										$data['status']="0";
+    										$data['name']="未知";
+    										$data['listorder']="0";
+    										$result=$this->Menu->add($data);
+    										if($result!==false){
+    											$newmenus[]=   $g."/".$m."/".$a."";
+    										}
+    									}
+    								}
+    							}
+    						}
+    						 
+    		
+    					}
+    				}
+    			}
+    		}
+    		
+    		$index=array_search($g, $groups);
+    		$nextindex=$index+1;
+    		$nextindex=$nextindex>=$group_count?0:$nextindex;
+    		if($nextindex){
+    			$this->assign("nextapp",$groups[$nextindex]);
+    		}
+    		$this->assign("app",$g);
+    	}
+    	 
+    	$this->assign("newmenus",$newmenus);
+    	$this->display("getactions");
     	
     }
 

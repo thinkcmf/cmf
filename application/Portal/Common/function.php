@@ -50,7 +50,7 @@ function sp_sql_posts($tag){
 	$where=array();
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';
-	$limit = !empty($tag['limit']) ? $tag['limit'] : '10';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
 	$order = !empty($tag['order']) ? $tag['order'] : 'post_date';
 
 
@@ -90,7 +90,7 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}&nbsp;{list
 	$where=array();
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';
-	$limit = !empty($tag['limit']) ? $tag['limit'] : '10';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
 	$order = !empty($tag['order']) ? $tag['order'] : 'post_date';
 
 
@@ -172,7 +172,7 @@ function sp_sql_pages($tag){
 	$where=array();
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';
-	$limit = !empty($tag['limit']) ? $tag['limit'] : '10';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
 	$order = !empty($tag['order']) ? $tag['order'] : 'post_date';
 
 
@@ -227,6 +227,18 @@ function sp_get_term($term_id){
 	}
 }
 /**
+ * 8
+ * 返回指定分类下的子分类
+ */
+function sp_get_child_terms($term_id){
+
+	$term_id=intval($term_id);
+	$term_obj=new TermsModel();
+	$terms=$term_obj->where("status=1 and parent=$term_id")->select();
+	
+	return $terms;
+}
+/**
  * 9
  * @处理标签函数
  * @以字符串方式传入,通过sp_param_lable函数解析为以下变量
@@ -242,7 +254,7 @@ function sp_get_terms($tag){
 	$where=array();
 	$tag=sp_param_lable($tag);
 	$field = !empty($tag['field']) ? $tag['field'] : '*';
-	$limit = !empty($tag['limit']) ? $tag['limit'] : '10';
+	$limit = !empty($tag['limit']) ? $tag['limit'] : '';
 	$order = !empty($tag['order']) ? $tag['order'] : 'term_id';
 	
 	//根据参数生成查询条件
@@ -256,14 +268,3 @@ function sp_get_terms($tag){
 	$terms=$term_obj->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $terms;
 }
-
-//截取n个字符,$stripTags是否剥去html标签
-function cutStr($str,$n,$stripTags=true){
-	if($stripTags){
-		return mb_substr(strip_tags(htmlspecialchars_decode($str)),0,$n,'utf-8');
-	}else{
-		return mb_substr(htmlspecialchars_decode($str),0,$n,'utf-8');
-	}
-}
-
-

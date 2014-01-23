@@ -44,11 +44,7 @@
                                         <ul class="meta-list">
                                             <li>
                                                 <span>作者</span>
-                                                <span class="bold">{$user_login}</span>
-                                            </li>
-                                            <li>
-                                                <span>-</span>
-                                                <a href="#">{:date("Y-m-d",strtotime($article['post_date']))}</a>
+                                                <span class="bold">{$user_login} {$post_date}</span>
                                             </li>
                                         </ul>
                                         {$post_content}
@@ -62,8 +58,7 @@
         </div>
     </div>
     
-    <include file="Public:footer" />
-    
+<include file="Public:footer" />
 </div>
 
 <!-- JavaScript -->

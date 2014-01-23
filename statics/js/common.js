@@ -271,10 +271,9 @@
     }
     
     
-  //所有的还原操作，还原数据后刷新页面
-    if ($('a.J_ajax_restore').length) {
+    if ($('a.J_ajax_dialog_btn').length) {
         Wind.use('artDialog', function () {
-            $('.J_ajax_restore').on('click', function (e) {
+            $('.J_ajax_dialog_btn').on('click', function (e) {
                 e.preventDefault();
                 var $_this = this,
                     $this = $($_this),
@@ -283,7 +282,7 @@
                 art.dialog({
                     title: false,
                     icon: 'question',
-                    content: '确定要还原吗？',
+                    content: msg,
                     follow: $_this,
                     close: function () {
                         $_this.focus();; //关闭时让触发弹窗的元素获取焦点

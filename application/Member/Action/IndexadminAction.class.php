@@ -5,8 +5,15 @@
  */
 class IndexadminAction extends AdminbaseAction {
     function index(){
-    	$lists = M("Members")->where("user_status=1")->select();
+    	$count=M("Members")->where("user_status=1")->count();
+    	$page = $this->page($count, 20);
+    	$lists = M("Members")
+    	->where("user_status=1")
+    	->limit($page->firstRow . ',' . $page->listRows)
+    	->select();
     	$this->assign('lists', $lists);
+    	$this->assign("page", $page->show('Admin'));
+    	
     	$this->display(":index");
     }
     

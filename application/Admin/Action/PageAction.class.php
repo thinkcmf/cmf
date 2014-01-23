@@ -48,6 +48,14 @@ class PageAction extends AdminbaseAction {
 		
 		$posts=$this->posts_obj->where($where)->limit($page->firstRow . ',' . $page->listRows)->select();
 		
+		$users_obj=new UsersModel();
+		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
+		$users=array();
+		foreach ($users_data as $u){
+			$users[$u['ID']]=$u;
+		}
+		$this->assign("users",$users);
+		
 		$this->assign("Page", $page->show('Admin'));
 		$this->assign("formget",$_GET);
 		$this->assign("posts",$posts);
@@ -96,6 +104,14 @@ class PageAction extends AdminbaseAction {
 		
 		$posts=$this->posts_obj->where($where)->limit($page->firstRow . ',' . $page->listRows)->select();
 		
+		$users_obj=new UsersModel();
+		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
+		$users=array();
+		foreach ($users_data as $u){
+			$users[$u['ID']]=$u;
+		}
+		$this->assign("users",$users);
+		
 		$this->assign("Page", $page->show('Admin'));
 		$this->assign("formget",$_GET);
 		$this->assign("posts",$posts);
@@ -103,50 +119,53 @@ class PageAction extends AdminbaseAction {
 	}
 	
 	function add(){
+         $this->display();
+	}
 	
-	 	if (IS_POST) {
-	 	$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
-	 	$_POST['post']['smeta']=json_encode($_POST['smeta']);
-            $result=$this->posts_obj->add($_POST['post']);
-                if ($result) {
-                    $this->success("新增成功！");
-                } else {
-                    $this->error("新增失败！");
-                }
-           
-        } else {
-        	$this->assign("author","1");
-            $this->display();
-        }
+	function add_post(){
+		if (IS_POST) {
+			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
+			$_POST['post']['smeta']=json_encode($_POST['smeta']);
+			$_POST['post']['post_author']=get_current_admin_id();
+			$result=$this->posts_obj->add($_POST['post']);
+			if ($result) {
+				$this->success("新增成功！");
+			} else {
+				$this->error("新增失败！");
+			}
+		}
 	}
 	
 	public function edit(){
 		$terms_obj=new TermsModel();
-		
+		$term_id = (int) $this->_get("term");
+		$id=(int) $this->_get("id");
+		$term=$terms_obj->where("term_id=$term_id")->find();
+		$post=$this->posts_obj->where("ID=$id")->find();
+		$this->assign("post",$post);
+		$this->assign("smeta",(array)json_decode($post['smeta']));
+			
+		$this->assign("author","1");
+		$this->assign("term",$term);
+		$this->display();
+	}
+	
+	public function edit_post(){
+		$terms_obj=new TermsModel();
+	
 		if (IS_POST) {
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
+			unset($_POST['post']['post_author']);
 			$result=$this->posts_obj->save($_POST['post']);
-			if ($result) {
+			if ($result !== false) {
 				//
 				$this->success("保存成功！");
 				//$this->success(json_encode($_POST['meta']));
 			} else {
 				$this->error("保存失败！");
 			}
-			 
-		} else {
-			$term_id = (int) $this->_get("term");
-			$id=(int) $this->_get("id");
-			$term=$terms_obj->where("term_id=$term_id")->find();
-			$post=$this->posts_obj->where("ID=$id")->find();
-			$this->assign("post",$post);
-			$this->assign("smeta",(array)json_decode($post['smeta']));
-			
-			$this->assign("author","1");
-			$this->assign("term",$term);
-			$this->display();
 		}
-		}
+	}
 	
 	//排序
 	public function listorders() {
@@ -158,20 +177,6 @@ class PageAction extends AdminbaseAction {
 		}
 	}
 	
-	public function lists(){
-	$terms_obj=new TermsModel();
-	$term_id = (int) $this->_get("term");
-	$term=$terms_obj->where("term_id=$term_id")->find();
-	$this->assign("term",$term);
-	 
-	$sql="SELECT * FROM _prefix_term_relationships as a LEFT JOIN _prefix_posts  b ON a.object_id = b.ID where a.term_id=$term_id";
-	$sql = str_replace ( "_prefix_", C ( 'DB_PREFIX' ), $sql );
-	$posts=$this->terms_relationship->query($sql);
-	$this->assign("posts",$posts);
-	$this->display();
-	 	
-        	
-	}
 	
 	function delete(){
 		
@@ -210,6 +215,15 @@ class PageAction extends AdminbaseAction {
 	}
 	
 	function clean(){
+		
+		if(isset($_POST['ids'])){
+			$ids = implode(",", $_POST['ids']);
+			if ($this->posts_obj->where("ID in ($ids)")->delete()) {
+				$this->success("删除成功！");
+			} else {
+				$this->error("删除失败！");
+			}
+		}
 		if(isset($_GET['id'])){
 			$id = (int) $this->_get("id");
 			if ($this->posts_obj->delete($id)) {

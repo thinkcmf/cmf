@@ -81,7 +81,7 @@ function change_images(uploadid, returnid) {
     $.each(contents, function(i, n) {
         var ids = parseInt(Math.random() * 10000 + 10 * i);
         var filename = filenames[i].substr(0, filenames[i].indexOf('.'));
-        str += "<li id='image" + ids + "'><input type='text' name='" + returnid + "_url[]' value='" + n + "' style='width:310px;' ondblclick='image_priview(this.value);' class='input'> <input type='text' name='" + returnid + "_alt[]' value='" + filename + "' style='width:160px;' class='input' onfocus=\"if(this.value == this.defaultValue) this.value = ''\" onblur=\"if(this.value.replace(' ','') == '') this.value = this.defaultValue;\"> <a href=\"javascript:remove_div('image" + ids + "')\">移除</a> </li>";
+        str += "<li id='image" + ids + "'><input title='双击查看' type='text' name='" + returnid + "_url[]' value='" + n + "' style='width:310px;' ondblclick='image_priview(this.value);' class='input'> <input type='text' name='" + returnid + "_alt[]' value='" + filename + "' style='width:160px;' class='input' onfocus=\"if(this.value == this.defaultValue) this.value = ''\" onblur=\"if(this.value.replace(' ','') == '') this.value = this.defaultValue;\"> <a href=\"javascript:remove_div('image" + ids + "')\">移除</a> </li>";
     });
 
     $('#' + returnid).html(str);
@@ -200,41 +200,6 @@ function input_font_bold() {
     }
 }
 
-//移除相关文章
-function remove_relation(sid, id) {
-    var relation_ids = $('#relation').val();
-    if (relation_ids != '') {
-        $('#' + sid).remove();
-        var r_arr = relation_ids.split('|');
-        var newrelation_ids = '';
-        $.each(r_arr, function (i, n) {
-            if (n != id) {
-                if (i == 0) {
-                    newrelation_ids = n;
-                } else {
-                    newrelation_ids = newrelation_ids + '|' + n;
-                }
-            }
-        });
-        $('#relation').val(newrelation_ids);
-    }
-}
-
-//显示相关文章
-function show_relation(modelid, id) {
-    $.getJSON(GV.DIMAUB+"index.php?a=public_getjson_ids&m=Content&g=Contents&modelid=" + modelid + "&id=" + id, function (json) {
-        var newrelation_ids = '';
-        if (json.data == null) {
-            isalert('没有添加相关文章！');
-            return false;
-        }
-        $.each(json.data, function (i, n) {
-            newrelation_ids += "<li id='" + n.sid + "'>·<span>" + n.title + "</span><a href='javascript:;' class='close' onclick=\"remove_relation('" + n.sid + "'," + n.id + ")\"></a></li>";
-        });
-
-        $('#relation_text').html(newrelation_ids);
-    });
-}
 
 //图片上传回调
 function submit_images(uploadid, returnid) {
