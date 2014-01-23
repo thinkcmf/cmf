@@ -5,7 +5,7 @@
  * Some rights reserved：www.simplewind.net
  */
 //开启调试模式
-define("APP_DEBUG", true);
+define("APP_DEBUG", false);
 //网站当前路径
 define('SITE_PATH', getcwd());
 //项目名称，不可更改

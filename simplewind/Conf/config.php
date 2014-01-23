@@ -9,7 +9,7 @@ $configs= array(
 		'APP_TAGS_ON' => true, // 系统标签扩展开关
 		/* 标签库 */
 		'TAGLIB_BUILD_IN' => 'cx,spadmin',
-		'APP_GROUP_LIST'        => 'Admin,Portal,Asset,Api,Member,Topic,Wx',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
+		'APP_GROUP_LIST'        => 'Admin,Portal,Asset,Api,Member',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
 	    'APP_GROUP_MODE'        =>  1,  // 分组模式 0 普通分组 1 独立分组
 	    'APP_GROUP_PATH'        =>  '../application', // 分组目录 独立分组模式下面有效
  		'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
