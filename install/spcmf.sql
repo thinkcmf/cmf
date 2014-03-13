@@ -941,10 +941,10 @@ INSERT INTO `sp_menu` VALUES (493, 318, 'Wx', 'Menuadmin', 'delete', '', 1, 0, '
 INSERT INTO `sp_menu` VALUES (494, 318, 'Wx', 'Menuadmin', 'edit', '', 1, 0, '编辑微信菜单', '', '', 1000);
 INSERT INTO `sp_menu` VALUES (495, 305, 'Wx', 'Indexadmin', 'index', '', 1, 1, '账号信息', '', '', 0);
 INSERT INTO `sp_menu` VALUES (496, 319, 'Admin', 'Backup', 'index', '', 1, 1, '数据备份', '', '', 0);
-INSERT INTO `sp_menu` VALUES (497, 265, 'Admin', 'Ad', 'add_post', '', 1, 0, '添加广告', '', '', 0);
-INSERT INTO `sp_menu` VALUES (498, 265, 'Admin', 'Ad', 'edit_post', '', 1, 0, '编辑广告', '', '', 0);
-INSERT INTO `sp_menu` VALUES (499, 270, 'Admin', 'Link', 'add_post', '', 1, 0, '添加友情链接', '', '', 0);
-INSERT INTO `sp_menu` VALUES (500, 270, 'Admin', 'Link', 'edit_post', '', 1, 0, '编辑友情链接', '', '', 0);
+INSERT INTO `sp_menu` VALUES (497, 418, 'Admin', 'Ad', 'add_post', '', 1, 0, '提交添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (498, 419, 'Admin', 'Ad', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
+INSERT INTO `sp_menu` VALUES (499, 428, 'Admin', 'Link', 'add_post', '', 1, 0, '提交添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (500, 429, 'Admin', 'Link', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
 INSERT INTO `sp_menu` VALUES (501, 536, 'Admin', 'Menu', 'add_post', '', 1, 0, '提交添加', '', '', 0);
 INSERT INTO `sp_menu` VALUES (502, 434, 'Admin', 'Menu', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
 INSERT INTO `sp_menu` VALUES (503, 439, 'Admin', 'Nav', 'add_post', '', 1, 0, '提交添加', '', '', 0);
@@ -960,10 +960,10 @@ INSERT INTO `sp_menu` VALUES (512, 464, 'Admin', 'Rbac', 'roleedit_post', '', 1,
 INSERT INTO `sp_menu` VALUES (513, 465, 'Admin', 'Rbac', 'authorize_post', '', 1, 0, '提交设置', '', '', 0);
 INSERT INTO `sp_menu` VALUES (514, 284, 'Admin', 'Setting', 'site_post', '', 1, 0, '提交修改', '', '', 0);
 INSERT INTO `sp_menu` VALUES (515, 254, 'Admin', 'Setting', 'password_post', '', 1, 0, '提交修改', '', '', 0);
-INSERT INTO `sp_menu` VALUES (516, 264, 'Admin', 'Slide', 'add_post', '', 1, 0, '添加幻灯片', '', '', 0);
-INSERT INTO `sp_menu` VALUES (517, 264, 'Admin', 'Slide', 'edit_post', '', 1, 0, '编辑幻灯片', '', '', 0);
-INSERT INTO `sp_menu` VALUES (518, 268, 'Admin', 'Slidecat', 'add_post', '', 1, 0, '添加分类', '', '', 0);
-INSERT INTO `sp_menu` VALUES (519, 268, 'Admin', 'Slidecat', 'edit_post', '', 1, 0, '编辑分类', '', '', 0);
+INSERT INTO `sp_menu` VALUES (516, 469, 'Admin', 'Slide', 'add_post', '', 1, 0, '提交添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (517, 470, 'Admin', 'Slide', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
+INSERT INTO `sp_menu` VALUES (518, 472, 'Admin', 'Slidecat', 'add_post', '', 1, 0, '提交添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (519, 473, 'Admin', 'Slidecat', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
 INSERT INTO `sp_menu` VALUES (520, 475, 'Admin', 'Term', 'add_post', '', 1, 0, '提交添加', '', '', 0);
 INSERT INTO `sp_menu` VALUES (521, 476, 'Admin', 'Term', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
 INSERT INTO `sp_menu` VALUES (522, 478, 'Admin', 'User', 'add_post', '', 1, 0, '提交保存', '', '', 0);
@@ -979,9 +979,9 @@ INSERT INTO `sp_menu` VALUES (538, 308, 'Wx', 'Answeradmin', 'index_post', '', 1
 INSERT INTO `sp_menu` VALUES (536, 297, 'Admin', 'Menu', 'add', '', 1, 0, '添加菜单', '', '', 0);
 INSERT INTO `sp_menu` VALUES (539, 309, 'Wx', 'Answeradmin', 'fixed_post', '', 1, 0, '固定回答设置', '', '', 0);
 INSERT INTO `sp_menu` VALUES (541, 310, 'Wx', 'Answeradmin', 'robot_post', '', 1, 0, '机器人问题集设置', '', '', 0);
-INSERT INTO `sp_menu` VALUES (542, 495, 'Wx', 'Indexadmin', 'index_post', '', 1, 0, '账号信息修改提交', '', '', 0);
-INSERT INTO `sp_menu` VALUES (543, 492, 'Wx', 'Menuadmin', 'add_post', '', 1, 0, ' 添加微信菜单提交', '', '', 0);
-INSERT INTO `sp_menu` VALUES (544, 494, 'Wx', 'Menuadmin', 'edit_post', '', 1, 0, '提交编辑微信菜单', '', '', 0);
+INSERT INTO `sp_menu` VALUES (542, 495, 'Wx', 'Indexadmin', 'index_post', '', 1, 0, '提交修改', '', '', 0);
+INSERT INTO `sp_menu` VALUES (543, 492, 'Wx', 'Menuadmin', 'add_post', '', 1, 0, ' 提交添加', '', '', 0);
+INSERT INTO `sp_menu` VALUES (544, 494, 'Wx', 'Menuadmin', 'edit_post', '', 1, 0, '提交编辑', '', '', 0);
 
 INSERT INTO `sp_role` VALUES (1, '超级管理员', NULL, 1, '网站最高管理权限！', 1329633709, 1329633709, 0);
 
