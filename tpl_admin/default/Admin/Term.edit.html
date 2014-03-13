@@ -107,7 +107,7 @@
 											unset($list_tpls['list']);
 										</php>
 					              		<select  class="normal_select" name="list_tpl">
-					              			<option value="page">list{:C("TMPL_TEMPLATE_SUFFIX")}</option>
+					              			<option value="list">list{:C("TMPL_TEMPLATE_SUFFIX")}</option>
 					              			<foreach name="list_tpls" item="vo">
 					              				<php>$template_selected=$data[list_tpl]==$vo?"selected":"";</php>
 					              				<option value="{$vo}" {$template_selected}>{$vo}{:C("TMPL_TEMPLATE_SUFFIX")}</option>
@@ -123,7 +123,7 @@
 											unset($article_tpls['article']);
 										</php>
 					              		<select  class="normal_select" name="one_tpl">
-					              			<option value="page">article{:C("TMPL_TEMPLATE_SUFFIX")}</option>
+					              			<option value="article">article{:C("TMPL_TEMPLATE_SUFFIX")}</option>
 					              			<foreach name="article_tpls" item="vo">
 					              				<php>$template_selected=$data[one_tpl]==$vo?"selected":"";</php>
 					              				<option value="{$vo}" {$template_selected}>{$vo}{:C("TMPL_TEMPLATE_SUFFIX")}</option>
