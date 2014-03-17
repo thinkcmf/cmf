@@ -3,7 +3,7 @@ class PageAction extends AdminbaseAction {
 	protected $posts_obj;
 	function _initialize() {
 		parent::_initialize();
-		$this->posts_obj = new PostsModel();
+		$this->posts_obj =D("Posts");
 	}
 	function index(){
 		
@@ -48,7 +48,7 @@ class PageAction extends AdminbaseAction {
 		
 		$posts=$this->posts_obj->where($where)->limit($page->firstRow . ',' . $page->listRows)->select();
 		
-		$users_obj=new UsersModel();
+		$users_obj=D("Users");
 		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
 		$users=array();
 		foreach ($users_data as $u){
@@ -104,7 +104,7 @@ class PageAction extends AdminbaseAction {
 		
 		$posts=$this->posts_obj->where($where)->limit($page->firstRow . ',' . $page->listRows)->select();
 		
-		$users_obj=new UsersModel();
+		$users_obj=D("Users");
 		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
 		$users=array();
 		foreach ($users_data as $u){
@@ -124,22 +124,23 @@ class PageAction extends AdminbaseAction {
 	
 	function add_post(){
 		if (IS_POST) {
+			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			$_POST['post']['post_author']=get_current_admin_id();
 			$result=$this->posts_obj->add($_POST['post']);
 			if ($result) {
-				$this->success("新增成功！");
+				$this->success("添加成功！");
 			} else {
-				$this->error("新增失败！");
+				$this->error("添加失败！");
 			}
 		}
 	}
 	
 	public function edit(){
-		$terms_obj=new TermsModel();
-		$term_id = (int) $this->_get("term");
-		$id=(int) $this->_get("id");
+		$terms_obj = D("Terms");
+		$term_id = intval(I("get.term")); 
+		$id= intval(I("get.id"));
 		$term=$terms_obj->where("term_id=$term_id")->find();
 		$post=$this->posts_obj->where("ID=$id")->find();
 		$this->assign("post",$post);
@@ -151,9 +152,11 @@ class PageAction extends AdminbaseAction {
 	}
 	
 	public function edit_post(){
-		$terms_obj=new TermsModel();
+		$terms_obj = D("Terms");
 	
 		if (IS_POST) {
+			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
+			
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			unset($_POST['post']['post_author']);
 			$result=$this->posts_obj->save($_POST['post']);
@@ -169,7 +172,7 @@ class PageAction extends AdminbaseAction {
 	
 	//排序
 	public function listorders() {
-		$status = parent::listorders($this->terms_relationship);
+		$status = parent::_listorders($this->terms_relationship);
 		if ($status) {
 			$this->success("排序更新成功！");
 		} else {
@@ -191,7 +194,7 @@ class PageAction extends AdminbaseAction {
 			}
 		}else{
 			if(isset($_GET['id'])){
-				$id = (int) $this->_get("id");
+				$id = intval(I("get.id"));
 				$data=array("ID"=>$id,"post_status"=>"0");
 				if ($this->posts_obj->save($data)) {
 					$this->success("删除成功！");
@@ -204,7 +207,7 @@ class PageAction extends AdminbaseAction {
 	
 	function restore(){
 		if(isset($_GET['id'])){
-			$id = (int) $this->_get("id");
+			$id = intval(I("get.id"));
 			$data=array("ID"=>$id,"post_status"=>"1");
 			if ($this->posts_obj->save($data)) {
 				$this->success("还原成功！");
@@ -218,15 +221,15 @@ class PageAction extends AdminbaseAction {
 		
 		if(isset($_POST['ids'])){
 			$ids = implode(",", $_POST['ids']);
-			if ($this->posts_obj->where("ID in ($ids)")->delete()) {
+			if ($this->posts_obj->where("ID in ($ids)")->delete()!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");
 			}
 		}
 		if(isset($_GET['id'])){
-			$id = (int) $this->_get("id");
-			if ($this->posts_obj->delete($id)) {
+			$id = intval(I("get.id"));
+			if ($this->posts_obj->delete($id)!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");

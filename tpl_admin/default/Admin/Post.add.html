@@ -69,12 +69,6 @@ body fieldset legend {
           <td><input type="text" name="post[post_modified]" id="updatetime" value="{:date('Y-m-d H:i:s',time())}" size="21" class="input length_3 J_datetime "></td>
         </tr>
         <tr>
-          <td><b>允许评论</b></td>
-        </tr>
-        <tr>
-          <td><label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_1" checked value="1"> 允许评论</label><label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_0"  value="0"> 不允许评论</label></td>
-        </tr>
-        <tr>
           <td><b>状态</b></td>
         </tr>
         <tr>
@@ -109,7 +103,7 @@ body fieldset legend {
             </tr>
             <tr>
               <th width="80">关键词</th>
-              <td><input type='text' name='post[post_keywords]' id='keywords' value='{$post["post_keywords"]}' style='width:280px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
+              <td><input type='text' name='post[post_keywords]' id='keywords' value='' style='width:280px'   class='input' placeholder='请输入关键字'> 多关键词之间用空格隔开</td>
             </tr>
             <tr>
               <th width="80">摘要 </th>
@@ -118,13 +112,13 @@ body fieldset legend {
             <tr>
               <th width="80">内容</th>
               <td><span class="must_red">*</span><div id='content_tip'></div>
-              <script type="text/plain" id="content" name="post[post_content]">{$post.post_content}</script>
+              <script type="text/plain" id="content" name="post[post_content]"></script>
                 <script type="text/javascript">
                 //编辑器路径定义
                 var editorURL = GV.DIMAUB;
                 </script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_config.js{$js_debug}"></script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_all_min.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.config.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.all.min.js{$js_debug}"></script>
 				<script type="text/javascript">
     			var editorcontent;
                         UE.commands['attachments'] = {

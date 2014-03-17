@@ -7,7 +7,7 @@ class IndexadminAction extends AdminbaseAction {
 	
     function index(){
     	$config = M("WxConfig");
-    	$proto = $_SERVER['HTTPS'] ? 'https://':'http://';
+    	$proto = is_ssl() ? 'https://':'http://';
     	$rst['url'] = $proto.$_SERVER['HTTP_HOST'];
     	$this->assign('rst', $rst);
     	$this->display();

@@ -5,6 +5,8 @@
  * 修改日期: 2013-06-22
  */
 
+error_reporting(E_ERROR);
+
 include_once "api.config.php";
 include_once "api.class.php";
 include_once "api.functions.php";

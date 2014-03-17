@@ -1,8 +1,8 @@
 <admintpl file="header"/>
+<style>.expander{margin-left: -20px;}</style>
 </head>
 <body class="J_scroll_fixed">
 <div class="wrap J_check_wrap">
-  <admintpl file="nav"/>
   <div class="h_a">角色授权</div>
   <form class="J_ajaxForm" action="{:U('Rbac/authorize_post')}" method="post">
     <div class="table_full">
@@ -16,6 +16,7 @@
       <div class="btn_wrap_pd">
         <input type="hidden" name="roleid" value="{$roleid}" />
         <button class="btn btn_submit mr10 J_ajax_submit_btn" type="submit">授权</button>
+        <a class="btn" href="__URL__">返回</a>
       </div>
     </div>
   </form>

@@ -1,6 +1,11 @@
 <?php
+$bae_mc=new BaeMemcache();
+$runtime_config=$bae_mc->get("THINKCMF_DYNAMIC_CONFIG");
+$runtime_config=$runtime_config? unserialize($runtime_config) : array();
+
+
 //BAE下固定mysql配置
-return array(
+$bae = array(
     'DB_TYPE' => 'mysql',
 	'DB_DEPLOY_TYPE'=> 1,
 	'DB_RW_SEPARATE'=>true,
@@ -14,3 +19,5 @@ return array(
 		'__UPLOAD__'=>file_domain('data').'/upload/'
 	)
 );
+
+return  array_merge($bae, $runtime_config);

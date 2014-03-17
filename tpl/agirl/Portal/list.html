@@ -38,19 +38,20 @@
                     <div class="col-md-12">
                         <ul class="list-listings" style="width:100%">
                         	<php>
-                        		$lists = sp_sql_posts_paged("cid:$cat_id");
+                        		$lists = sp_sql_posts_paged("cid:$cat_id;order:post_date DESC;",10);
                         	</php>
                         	<volist name="lists['posts']" id="vo">
                         	<php>
-                        		$smeta = "__TMPL__Public/images/prv/tmp-img-2.jpg";
-                        		if(!empty($vo['smeta'])){
-                        			$arr = json_decode($vo['smeta'], true);
-                        			$smeta = $arr['thumb'] ? $arr['thumb'] : $smeta;
-                        		} 
+                        		$smeta=json_decode($vo['smeta'], true);
                         	</php>
                             <li>
                                 <div class="listing-image">
-                                    <img width="263" height="197" src="__UPLOAD__{$smeta}" class="img-responsive" alt="">
+                                	<if condition="!empty($smeta['thumb'])">
+                                		<img width="263" height="197" src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive" alt="">
+                                	<else/>
+                                		<img width="263" height="197" src="__TMPL__Public/images/default/list.jpg" class="img-responsive" alt="">
+                                	</if>
+                                    
                                 </div>
                                 <div class="listing-body">
                                     <h3><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>

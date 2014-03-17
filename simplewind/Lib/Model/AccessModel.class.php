@@ -29,6 +29,10 @@ class AccessModel extends CommonModel {
         $this->where(array("role_id" => $roleid))->delete();
         return $this->addAll($addauthorize);
     }
+    
+    protected function _before_write(&$data) {
+    	parent::_before_write($data);
+    }
 
 }
 

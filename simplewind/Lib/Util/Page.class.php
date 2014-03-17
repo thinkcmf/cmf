@@ -173,7 +173,10 @@ class Page {
     }
 
     public function GetCurrentPage() {
-        $this->Current_page = ($_GET [$this->PageParam] <= intval($this->Total_Pages) ? ($_GET [$this->PageParam] < 1 ? 1 : intval($_GET [$this->PageParam])) : intval($this->Total_Pages));
+    	$p=isset($_GET [$this->PageParam])?intval($_GET [$this->PageParam]):1;
+    	$p=$p < 1 ? 1 : $p;
+    	$total_pages=intval($this->Total_Pages);
+        $this->Current_page = ($p <=$total_pages? $p : $total_pages);
     }
 
     public function Pager($Page_tpl = '') {

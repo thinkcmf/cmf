@@ -32,7 +32,7 @@ class OauthAction extends Action {
 		//腾讯微博需传递的额外参数
 		$extend = null;
 		if($type == 'tencent'){
-			$extend = array('openid' => $this->_get('openid'), 'openkey' => $this->_get('openkey'));
+			$extend = array('openid' => I("get.openid"), 'openkey' => I("get.openkey"));
 		}
 	
 		//请妥善保管这里获取到的Token信息，方便以后API调用
@@ -58,10 +58,27 @@ class OauthAction extends Action {
 		//账户是否已经存在
 		$rst = $OMember->where("_from='{$type}' and openid='{$token['openid']}' and status=1")->find();
 		if(!empty($rst)){
-			if($rst['lock_to_id'] != $_SESSION["MEMBER_id"]) $this->error('该帐号已被本站其他账号绑定！',U("Member/center/index"));
-			else $this->success('登陆成功！',U("Member/center/index"));
+			$lock_to_id=$rst['lock_to_id'];
+			$members_model=M("Members");
+			$member=$members_model->field("user_pass")->where("ID='$lock_to_id'")->find();
+			
+			if(empty($member['user_pass'])){
+				//$where['_from']=$type;
+				//$where['openid']=$token['openid'];
+				$result=$OMember->where("_from='{$type}' and openid='{$token['openid']}'")->save(array("lock_to_id"=>$_SESSION["MEMBER_id"]));
+				if($result){
+					$members_model->where("ID='$lock_to_id'")->delete();
+					$this->success('绑定成功！',U("Member/center/index"));
+				}else{
+					echo $OMember->getLastSql();
+					//$this->error('账号绑定失败！',U("Member/center/index"));
+				}
+			}else{
+				$this->error('该帐号已被本站其他账号绑定！',U("Member/center/index"));
+			}
+			
 		}
-		$data = array(
+		/* $data = array(
 				'_from' => $type,
 				'_name' => $user_info['name'],
 				'head_img' => $user_info['head'],
@@ -79,7 +96,7 @@ class OauthAction extends Action {
 			$this->success('账号绑定成功！',U("Member/center/index"));
 		}else{
 			$this->error('账号绑定失败！',U("Member/center/index"));
-		}
+		} */
 	}
 	
 	//登陆
@@ -87,6 +104,7 @@ class OauthAction extends Action {
 		$OMember = M('OauthMember');
 		$rst = $OMember->where("_from='{$type}' and openid='{$token['openid']}'")->find();
 		$return = array(0);
+		$local_username="";
 		if($rst){
 			$rst2 = M('Members')->where('ID='.$rst['lock_to_id'])->find();
 			if($rst2){
@@ -95,7 +113,8 @@ class OauthAction extends Action {
 				else{
 					$type = 'local';
 					$_SESSION["MEMBER_status"] = $rst2['user_status'];
-					$return = array(1);
+					$return = array($rst['lock_to_id']);
+					$local_username=strpos($rst2['user_login_name'],"游客")?"":$rst2['user_login_name'];
 				}
 			}else{
 				//数据库已经有该用户登录信息
@@ -140,7 +159,7 @@ class OauthAction extends Action {
 		if($return[0]){
 			$_SESSION["MEMBER_type"] = $type;
 			$_SESSION["MEMBER_id"] = $return[0];
-			$_SESSION['MEMBER_name'] = $user_info['name'];
+			$_SESSION['MEMBER_name'] = empty($local_username)?$user_info['name']:$local_username;
 			if(!isset($return[1])) $return[1] = '登陆成功！';
 			$this->success($return[1], U("Member/center/index"));
 		}else{

@@ -1,5 +1,5 @@
 <?php
-class PostsModel extends Model {
+class PostsModel extends CommonModel {
 	/*
 	 * 表结构
 	 * ID:post的自增ID
@@ -413,5 +413,9 @@ class PostsModel extends Model {
 		}
 		
 		return $this->where ( "post_status != 'delete' and post_parent= '$post_parent' $post_type_strs" )->order("'$orderby' '$asc'")->count();
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 }

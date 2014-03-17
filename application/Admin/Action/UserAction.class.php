@@ -4,8 +4,8 @@ class UserAction extends AdminbaseAction{
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->users_obj = new  UsersModel();
-		$this->role_obj=new RoleModel();
+		$this->users_obj = D("Users");
+		$this->role_obj = D("Role");
 	}
 	function index(){
 		$users=$this->users_obj->where("user_status=1")->select();
@@ -30,7 +30,7 @@ class UserAction extends AdminbaseAction{
 	function add_post(){
 		if(IS_POST){
 			if ($this->users_obj->create()) {
-				if ($this->users_obj->add()) {
+				if ($this->users_obj->add()!==false) {
 					$this->success("添加成功！", U("user/index"));
 				} else {
 					$this->error("添加失败！");
@@ -43,7 +43,7 @@ class UserAction extends AdminbaseAction{
 	
 	
 	function edit(){
-		$id=intval($this->_get("id"));
+		$id= intval(I("get.id"));
 		$roles=$this->role_obj->where("status=1")->select();
 		$this->assign("roles",$roles);
 			
@@ -74,14 +74,14 @@ class UserAction extends AdminbaseAction{
 	 *  删除
 	 */
 	function delete(){
-		$id = (int) $this->_get("id");
+		$id = intval(I("get.id"));
 		if($id==1){
 			$this->error("最高管理员不能删除！");
 		}
 		$uid=get_current_admin_id();
-		$posts_obj=new PostsModel();
+		$posts_obj = D("Posts");
 		$posts_obj->where("post_author='$uid'")->save(array("post_author"=>1));
-		if ($this->users_obj->where("ID=$id")->delete()) {
+		if ($this->users_obj->where("ID=$id")->delete()!==false) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");

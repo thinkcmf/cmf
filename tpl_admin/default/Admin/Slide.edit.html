@@ -39,7 +39,6 @@ body fieldset legend {
 </head>
 <body class="J_scroll_fixed">
 <div class="wrap J_check_wrap">
-  <admintpl file="nav"/>
   <form name="myform" id="myform" action="{:U('slide/edit_post')}" method="post" class="J_ajaxForms" enctype="multipart/form-data">
   <div class="col-right">
     <div class="table_full">
@@ -50,38 +49,16 @@ body fieldset legend {
         <tr>
           <td>
           	<div  style="text-align: center;"><input type='hidden' name='slide_pic' id='thumb' value='{$slide_pic}'>
-			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','content','12','b6ba209759e147124653ac77362ef2bd');return false;">
-			<img src="{$slide_pic|default='__ROOT__/statics/images/icon/upload-pic.png'}" id='thumb_preview' width='135' height='113' style='cursor:hand' /></a>
+			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','','','');return false;">
+				<if condition="empty($slide_pic)">
+					<img src="__ROOT__/statics/images/icon/upload-pic.png" id='thumb_preview' width='135' height='113' style='cursor:hand' />
+				<else/>
+					<img src="{:sp_get_asset_upload_path($slide_pic)}" id='thumb_preview' width='135' height='113' style='cursor:hand' />
+				</if>
+				
+			</a>
             <input type="button"  class="btn" onclick="$('#thumb_preview').attr('src','__ROOT__/statics/images/icon/upload-pic.png');$('#thumb').val('');return false;" value="取消图片">
-            <script type="text/javascript">
-            function crop_cut_thumb(id){
-			if ( id =='' || id == undefined ) {
-                      isalert('请先上传缩略图！');
-                      return false;
-                    }
-                    var catid = $('input[name="info[catid]"]').val();
-                    if(catid == '' ){
-                        isalert('请选择栏目ID！');
-                        return false;
-                    }
-                    Wind.use('artDialog','iframeTools',function(){
-                      art.dialog.open(GV.DIMAUB+'index.php?a=public_imagescrop&m=Content&g=Contents&catid='+catid+'&picurl='+encodeURIComponent(id)+'&input=thumb&preview=thumb_preview', {
-                        title:'裁减图片', 
-                        id:'crop',
-                        ok: function () {
-                            var iframe = this.iframe.contentWindow;
-                            if (!iframe.document.body) {
-                                 alert('iframe还没加载完毕呢');
-                                 return false;
-                            }
-                            iframe.uploadfile();
-                            return false;
-                        },
-                        cancel: true
-                      });
-                    });
-            	};
-				</script></div>
+            </div>
 			</td>
         </tr>
         
@@ -98,7 +75,7 @@ body fieldset legend {
               	<select name="slide_cid" class="normal_select">
                   <option value="0">默认分类</option>
                   <foreach name="categorys" item="vo">
-                  	<php>$cid_selected=$slide_cid==$vo[cid]?"selected":"";</php>
+                  	<php>$cid_selected=$slide_cid==$vo['cid']?"selected":"";</php>
                   	<option value="{$vo.cid}" {$cid_selected}>{$vo.cat_name}</option>
                   </foreach>
                 </select>
@@ -244,16 +221,16 @@ $(function () {
 								        content: data.info,
 										button:[
 											{
-												name: '继续添加？',
+												name: '继续编辑？',
 												callback:function(){
 													reloadPage(window);
 													return true;
 												},
 												focus: true
 											},{
-												name: '关闭',
+												name: '返回列表',
 												callback:function(){
-													//window.close();
+													location.href="__URL__";
 													return true;
 												}
 											}

@@ -40,7 +40,7 @@ class CollectadminAction extends AdminbaseAction {
 	
 	//用户列表
 	public function userlist(){
-		$rst = M('WxUser')->where( 'status=1' )->order("id desc")->select();
+		$rst = M('WxUser')->where('status=1')->order("id desc")->select();
 		$this->assign('rst', $rst);
 		$this->display();
 	}

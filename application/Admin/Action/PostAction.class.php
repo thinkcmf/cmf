@@ -6,9 +6,9 @@ class PostAction extends AdminbaseAction {
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->posts_obj = new PostsModel();
-		$this->terms_obj = new TermsModel();
-		$this->terms_relationship=new TermRelationshipsModel();
+		$this->posts_obj = D("Posts");
+		$this->terms_obj = D("Terms");
+		$this->terms_relationship = D("TermRelationships");
 	}
 	function index(){
 		$this->_lists();
@@ -18,9 +18,8 @@ class PostAction extends AdminbaseAction {
 	
 	function add(){
 		$this->_getTree();
-		$terms_obj=new TermsModel();
-		$term_id = (int) $this->_get("term");
-		$term=$terms_obj->where("term_id=$term_id")->find();
+		$term_id = intval(I("get.term"));
+		$term=$this->terms_obj->where("term_id=$term_id")->find();
 		$this->assign("author","1");
 		$this->assign("term",$term);
 		$this->display();
@@ -28,16 +27,14 @@ class PostAction extends AdminbaseAction {
 	
 	function add_post(){
 		$this->_getTree();
-		$terms_obj=new TermsModel();
-	
 		if (IS_POST) {
 			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
 				foreach ($_POST['photos_url'] as $key=>$url){
-					$photourl=substr($url, strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+					$photourl=sp_asset_relative_url($url);
 					$_POST['smeta']['photo'][]=array("url"=>$photourl,"alt"=>$_POST['photos_alt'][$key]);
 				}
 			}
-			$_POST['smeta']['thumb'] = substr($_POST['smeta']['thumb'], strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			 
 			$_POST['post']['post_date']=date("Y-m-d H:i:s",time());
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
@@ -48,12 +45,12 @@ class PostAction extends AdminbaseAction {
 				$_POST['term']['object_id']=$result;
 				$result=$this->terms_relationship->add($_POST['term']);
 				if ($result) {
-					$this->success("新增成功！");
+					$this->success("添加成功！");
 				}else{
 					$this->error("归类失败！");
 				}
 			} else {
-				$this->error("新增失败！");
+				$this->error("添加失败！");
 			}
 			 
 		}
@@ -61,13 +58,12 @@ class PostAction extends AdminbaseAction {
 	
 	public function edit(){
 		header("file-type:text/html;charset=utf-8;");
-		$terms_obj=new TermsModel();
-		$id=(int) $this->_get("id");
-		$term_id = (int) $this->_get("term");
+		$id=  intval(I("get.id"));
+		$term_id = intval(I("get.term"));
 		if(empty($term_id)){
 			$term_id = D('TermRelationships')->getTermidByObject($id);
 		}
-		$term=$terms_obj->where("term_id=$term_id")->find();
+		$term=$this->terms_obj->where("term_id=$term_id")->find();
 		$post=$this->posts_obj->where("ID=$id")->find();
 		$this->assign("post",$post);
 		$this->assign("smeta",json_decode($post['smeta'],true));
@@ -76,15 +72,14 @@ class PostAction extends AdminbaseAction {
 	}
 	
 	public function edit_post(){
-		$terms_obj=new TermsModel();
 		if (IS_POST) {
 			if(!empty($_POST['photos_alt']) && !empty($_POST['photos_url'])){
 				foreach ($_POST['photos_url'] as $key=>$url){
-					$photourl=substr($url, strlen(C("TMPL_PARSE_STRING.__UPLOAD__")));
+					$photourl=sp_asset_relative_url($url);
 					$_POST['smeta']['photo'][]=array("url"=>$photourl,"alt"=>$_POST['photos_alt'][$key]);
 				}
 			}
-			$_POST['smeta']['thumb'] = str_replace(C("TMPL_PARSE_STRING.__UPLOAD__"),'',$_POST['smeta']['thumb']);
+			$_POST['smeta']['thumb'] = sp_asset_relative_url($_POST['smeta']['thumb']);
 			$_POST['post']['smeta']=json_encode($_POST['smeta']);
 			unset($_POST['post']['post_author']);
 			$result=$this->posts_obj->save($_POST['post']);
@@ -99,7 +94,7 @@ class PostAction extends AdminbaseAction {
 	
 	//排序
 	public function listorders() {
-		$status = parent::listorders($this->terms_relationship);
+		$status = parent::_listorders($this->terms_relationship);
 		if ($status) {
 			$this->success("排序更新成功！");
 		} else {
@@ -108,13 +103,16 @@ class PostAction extends AdminbaseAction {
 	}
 	
 	private  function _lists($status=1){
-		$terms_obj=new TermsModel();
-		$term_id =intval($_REQUEST["term"]);
-		$term=$terms_obj->where("term_id=$term_id")->find();
-		$this->assign("term",$term);
+		$term_id=0;
+		if(!empty($_REQUEST["term"])){
+			$term_id=intval($_REQUEST["term"]);
+			$term=$this->terms_obj->where("term_id=$term_id")->find();
+			$this->assign("term",$term);
+			$_GET['term']=$term_id;
+		}
 		
 		$where_ands=empty($term_id)?array("a.status=$status"):array("a.term_id = $term_id and a.status=$status");
-		$_GET['term']=$_REQUEST['term'];
+		
 		$fields=array(
 				'start_time'=> array("field"=>"post_date","operator"=>">"),
 				'end_time'  => array("field"=>"post_date","operator"=>"<"),
@@ -165,8 +163,8 @@ class PostAction extends AdminbaseAction {
 		->join(C ( 'DB_PREFIX' )."posts b ON a.object_id = b.ID")
 		->where($where)
 		->limit($page->firstRow . ',' . $page->listRows)
-		->order("a.listorder ASC")->select();
-		$users_obj=new UsersModel();
+		->order("a.listorder ASC,b.post_modified DESC")->select();
+		$users_obj = D("Users");
 		$users_data=$users_obj->field("ID,user_login")->where("user_status=1")->select();
 		$users=array();
 		foreach ($users_data as $u){
@@ -181,7 +179,7 @@ class PostAction extends AdminbaseAction {
 	}
 	
 	private function _getTree(){
-		$term_id=$_REQUEST['term'];
+		$term_id=empty($_REQUEST['term'])?0:intval($_REQUEST['term']);
 		$result = $this->terms_obj->order(array("listorder"=>"asc"))->select();
 		
 		$tree = new Tree();
@@ -205,7 +203,7 @@ class PostAction extends AdminbaseAction {
 	
 	function delete(){
 		if(isset($_GET['tid'])){
-			$tid = (int) $this->_get("tid");
+			$tid = intval(I("get.tid"));
 			$data['status']=0;
 			if ($this->terms_relationship->where("tid=$tid")->save($data)) {
 				$this->success("删除成功！");
@@ -235,10 +233,10 @@ class PostAction extends AdminbaseAction {
 				$IDs[]=$id["object_id"];
 			}
 			$IDs=join(",", $IDs);
-			if ( $this->posts_obj->where("ID in ($IDs)")->save($data)) {
-				$this->success("取消审核成功！");
+			if ( $this->posts_obj->where("ID in ($IDs)")->save($data)!==false) {
+				$this->success("审核成功！");
 			} else {
-				$this->error("取消审核失败！");
+				$this->error("审核失败！");
 			}
 		}
 		if(isset($_POST['ids']) && $_GET["uncheck"]){
@@ -271,12 +269,11 @@ class PostAction extends AdminbaseAction {
 				}
 			}
 		}else{
-			$terms_obj=new TermsModel();
-			$parentid = (int) $this->_get("parent");
+			$parentid = intval(I("get.parent"));
 			$tree = new PathTree();
 			$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 			$tree->nbsp = '---';
-			$result =$terms_obj->order(array("path"=>"asc"))->select();
+			$result =$this->terms_obj->order(array("path"=>"asc"))->select();
 			$tree->init($result);
 			$tree=$tree->get_tree();
 			$this->assign("terms",$tree);
@@ -297,24 +294,24 @@ class PostAction extends AdminbaseAction {
 			$tids= implode(",", array_keys($_POST['ids']));
 			$data=array("post_status"=>"0");
 			$status=$this->terms_relationship->where("tid in ($tids)")->delete();
-			if($status){
+			if($status!==false){
 				$status=$this->posts_obj->where("ID in ($ids)")->delete();
 			}
 			
-			if ($status) {
+			if ($status!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");
 			}
 		}else{
 			if(isset($_GET['id'])){
-				$id = (int) $this->_get("id");
-				$tid = (int) $this->_get("tid");
+				$id = intval(I("get.id"));
+				$tid = intval(I("get.tid"));
 				$status=$this->terms_relationship->where("tid = $tid")->delete();
-				if($status){
+				if($status!==false){
 					$status=$this->posts_obj->where("ID=$id")->delete();
 				}
-				if ($status) {
+				if ($status!==false) {
 					$this->success("删除成功！");
 				} else {
 					$this->error("删除失败！");
@@ -325,7 +322,7 @@ class PostAction extends AdminbaseAction {
 	
 	function restore(){
 		if(isset($_GET['id'])){
-			$id = (int) $this->_get("id");
+			$id = intval(I("get.id"));
 			$data=array("tid"=>$id,"status"=>"1");
 			if ($this->terms_relationship->save($data)) {
 				$this->success("还原成功！");

@@ -20,7 +20,7 @@ class AdminbaseAction extends AppframeAction {
     function _initialize() {
        parent::_initialize();
     	if(isset($_SESSION['ADMIN_ID'])){
-    		$users_obj=new UsersModel();
+    		$users_obj= D("Users");
     		$id=$_SESSION['ADMIN_ID'];
     		$user=$users_obj->where("ID=$id")->find();
     		if(!$this->check_access($user['role_id'])){
@@ -30,8 +30,13 @@ class AdminbaseAction extends AppframeAction {
     		$this->assign("admin",$user);
     	}else{
     		//$this->error("您还没有登录！",U("admin/public/login"));
-    		header("Location:".U("admin/public/login"));
-    		exit();
+    		if(IS_AJAX){
+    			$this->error("您还没有登录！",U("admin/public/login"));
+    		}else{
+    			header("Location:".U("admin/public/login"));
+    			exit();
+    		}
+    		
     	}
     }
 
@@ -112,7 +117,10 @@ class AdminbaseAction extends AppframeAction {
     	}elseif(false === strpos($template, '/')){
     		$template = MODULE_NAME . $depr . $template;
     	}
-    	return THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
+    	$templateFile=THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
+    	if(!is_file($templateFile))
+    		throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
+    	return $templateFile;
     }
 
     //扩展方法，当用户没有权限操作，用于记录日志的扩展方法
@@ -134,7 +142,7 @@ class AdminbaseAction extends AppframeAction {
     /**
      *  排序 排序字段为listorders数组 POST 排序字段为：listorder
      */
-    protected function listorders($model) {
+    protected function _listorders($model) {
         if (!is_object($model)) {
             return false;
         }
@@ -208,7 +216,7 @@ class AdminbaseAction extends AppframeAction {
     		if($roleid == 1){
     			return true;
     		}
-    		$role_obj=new RoleModel();
+    		$role_obj= D("Role");
     		$role=$role_obj->field("status")->where("id=$roleid")->find();
     		if(!empty($role) && $role['status']==1){
     			$group=GROUP_NAME;

@@ -135,8 +135,8 @@ $(function () {
 function calcTaskitemsWidth() {
     var width = $("#task-content-inner li").length * tabwidth;
     $("#task-content-inner").width(width);
-    if (($(window).width()-268-119- 30 * 2) < width) {
-        $("#task-content").width($(window).width() -268-119- 30 * 2);
+    if (($(document).width()-268-119- 30 * 2) < width) {
+        $("#task-content").width($(document).width() -268-119- 30 * 2);
         $("#task-next,#task-pre").show();
     } else {
         $("#task-next,#task-pre").hide();
@@ -190,13 +190,13 @@ function openapp(url, appid, appname, selectObj) {
     	var $iframe=$("#appiframe-"+appid);
     	var src=$iframe.get(0).contentWindow.location.href;
     	src=src.substr(src.indexOf("://")+3);
-    	if(src!=GV.HOST+url){
+    	/*if(src!=GV.HOST+url){
     		$loading.show();
     		$iframe.attr("src",url);
     		$appiframe.load(function(){
             	$loading.hide();
             });
-    	}
+    	}*/
     	$iframe.show();
     	$mainiframe.attr("src",url);
     }

@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<title>系统后台</title>
 		<meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
 		<meta name="robots" content="noindex,nofollow">
 		<link href="__ROOT__/statics/css/admin_login.css{$js_debug}" rel="stylesheet" />
 		<style>
@@ -35,7 +36,7 @@
 			<div class="login">
 				<ul>
 					<li>
-						<input class="input" id="J_admin_name" required name="username" type="text" placeholder="帐号名" title="帐号名" />
+						<input class="input" id="J_admin_name" required name="username" type="text" placeholder="帐号名或邮箱" title="帐号名或邮箱" value="{$_COOKIE['admin_username']}"/>
 					</li>
 					<li>
 						<input class="input" id="admin_pwd" type="password" required name="password" placeholder="密码" title="密码" />

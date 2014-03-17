@@ -4,11 +4,25 @@
  * 作       者: 刘海艇
  * 修改日期: 2013-06-22
  */
-
+if(function_exists('saeAutoLoader') ){
+	$saedb=array(
+	    'DB_TYPE' => 'mysql',
+		'DB_DEPLOY_TYPE'=> 1,
+		'DB_RW_SEPARATE'=>true,
+	    'DB_HOST' => SAE_MYSQL_HOST_M,
+	    'DB_NAME' => SAE_MYSQL_DB,
+	    'DB_USER' => SAE_MYSQL_USER,
+	    'DB_PWD' => SAE_MYSQL_PASS,
+	    'DB_PORT' => SAE_MYSQL_PORT,
+		'DB_PREFIX' => 'sp_',
+	);
+}else{
+	$db = require '../../../conf/db.php';
+}
 //基本配置
 $_CFG = array
 (
-	'DB' => include_once '../../../conf/db.php', //数据库配置
+	'DB' => require '../../../conf/db.php', //数据库配置
 	'PATH'=> array
 	(
 		'ROOT'  => dirname(__FILE__), //API根目录

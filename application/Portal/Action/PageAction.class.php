@@ -21,6 +21,6 @@ class PageAction extends HomeBaseAction{
 						"id"=>"ID"
 				),
 				"label"=>"post_title");
-		echo sp_get_nav4admin($navcatname,$datas,$navrule);
+		exit( sp_get_nav4admin($navcatname,$datas,$navrule) );
 	}
 }

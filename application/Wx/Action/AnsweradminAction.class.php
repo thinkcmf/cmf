@@ -22,7 +22,7 @@ class AnsweradminAction extends AdminbaseAction {
     
     //固定回答设置
     function fixed_post(){
-    	$k=trim($_POST['k']); $v=trim($_POST['v']); $id=rtrim($_POST['id'],',');
+    	$k=trim($_POST['k']); $v=trim($_POST['v']); $id=intval($_POST['id']);
     	$ans = M('WxAnswer');
     	//设置或修改
     	if(!empty($k) && !empty($v)){
@@ -43,7 +43,7 @@ class AnsweradminAction extends AdminbaseAction {
     	}else if(!empty($id)){
     		$id_arr = split(',',$id);
     		foreach($id_arr as $k=>$v){
-    			$ans->where("id=".intval($v))->delete();
+    			$ans->where("id=".$v)->delete();
     		}
     		$this->ajaxReturn('1','删除成功！',1);
     	}
@@ -57,7 +57,7 @@ class AnsweradminAction extends AdminbaseAction {
 	}
 	//机器人数据
 	function robot_post(){
-		$k=trim($_POST['question']); $v=trim($_POST['answer']); $id=rtrim($_POST['id'],',');
+		$k=trim($_POST['question']); $v=trim($_POST['answer']); $id=intval($_POST['id']);
 		$ans = M('WxAnswerRobot');
 		//设置或修改
 		if(!empty($k) && !empty($v)){
@@ -77,10 +77,7 @@ class AnsweradminAction extends AdminbaseAction {
 			}
 			//删除项
 		}else if(!empty($id)){
-			$id_arr = split(',',$id);
-			foreach($id_arr as $k=>$v){
-				$ans->where("id=".intval($v))->delete();
-			}
+			$ans->where("id=".$id)->delete();
 			$this->ajaxReturn('1','删除成功！',1);
 		}
 	}

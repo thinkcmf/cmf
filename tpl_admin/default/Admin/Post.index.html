@@ -4,7 +4,7 @@
   <div class="nav">
     <ul class="cc">
       <li class="current"><a href="javascript:;">所有文章</a></li>
-      <li><a target="_self" href="{:U('post/add',array('term'=>$term['term_id']))}">添加文章</a></li>
+      <li><a target="_self" href="{:U('post/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}">添加文章</a></li>
     </ul>
   </div>
   <div class="h_a">搜索</div>
@@ -17,7 +17,7 @@
           	{$taxonomys}
         </select>
         &nbsp;&nbsp;时间：
-        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off">
+        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time|default=''}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off">
         
         <!-- 
         <select class="select_2" name="searchtype" style="width:70px;">
@@ -43,7 +43,7 @@
 	            <!-- <td>点击量</td> -->
 	            <td width="80">发布人</td>
 	            <td width="120"><span>发布时间</span></td>
-	            <td width="140">状态</td>
+	            <td width="50">状态</td>
 	            <td width="120">操作</td>
 	          </tr>
         </thead>
@@ -61,8 +61,9 @@
 		            <td>{$vo.post_date}</td>
 		            <td>{$status[$vo['post_status']]}</td>
 		            <td>
-		            	<a href="{:U('post/edit',array('term'=>$term['term_id'],'id'=>$vo[ID]))}" target="_blank" >修改</a>|
-		            	<a href="{:U('post/delete',array('term'=>$term['term_id'],'tid'=>$vo[tid]))}" class="J_ajax_del" >删除</a>
+		            	<a href="javascript:open_iframe_dialog('{:u('comment/commentadmin/index',array('post_id'=>$vo['ID']))}','评论列表')">查看评论</a> |
+		            	<a href="{:U('post/edit',array('term'=>empty($term['term_id'])?'':$term['term_id'],'id'=>$vo['ID']))}" target="_blank" >修改</a>|
+		            	<a href="{:U('post/delete',array('term'=>empty($term['term_id'])?'':$term['term_id'],'tid'=>$vo['tid']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>
           </foreach>

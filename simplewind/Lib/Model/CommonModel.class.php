@@ -57,6 +57,15 @@ class CommonModel extends Model {
         $fields = $this->get_fields($table);
         return array_key_exists($field, $fields);
     }
+    
+    protected function _before_write(&$data) {
+    	if(!isset($_SESSION['ADMIN_ID']) || (isset($_SESSION['ADMIN_ID'])&& $_SESSION['roleid']!=1)){
+    		foreach ($data as $key=>$d){
+    			$data[$key]=hh($d);
+    		}
+    	}
+    	
+    }
 
 }
 

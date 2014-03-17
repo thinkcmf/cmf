@@ -8,7 +8,7 @@ class NavcatAction extends AdminbaseAction {
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->navcat = new NavCatModel();
+		$this->navcat =D("NavCat");
 	}
 	
 	
@@ -54,7 +54,7 @@ class NavcatAction extends AdminbaseAction {
 	 * 编辑
 	 */
 	function edit(){
-		$id=$this->_get("id");
+		$id= intval(I("get.id"));
 		$navcat=$this->navcat->where("navcid=$id")->find();
 		$this->assign($navcat);
 		$this->display();
@@ -84,9 +84,9 @@ class NavcatAction extends AdminbaseAction {
 	
 	
 	function delete(){
-		$id = (int) $this->_get("id");
-		if ($this->navcat->where("navcid=$id")->delete()) {
-			$nav_obj=new NavModel();
+		$id = intval(I("get.id"));
+		if ($this->navcat->where("navcid=$id")->delete()!==false) {
+			$nav_obj=D("Nav");
 			$nav_obj->where("cid=$id")->delete();
 			$this->success("删除成功！");
 		} else {

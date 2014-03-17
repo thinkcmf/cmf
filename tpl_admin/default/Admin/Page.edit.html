@@ -54,8 +54,13 @@ body fieldset legend {
         <tr>
           <td>
           	<div  style="text-align: center;"><input type='hidden' name='smeta[thumb]' id='thumb' value="{$smeta.thumb|default=''}">
-			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','content','12','b6ba209759e147124653ac77362ef2bd');return false;">
-			<img src="{$smeta.thumb|default='__ROOT__/statics/images/icon/upload-pic.png'}" id='thumb_preview' width='135' height='113' style='cursor:hand' /></a>
+			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','','','');return false;">
+				<if condition="empty($smeta['thumb'])">
+					<img src="__ROOT__/statics/images/icon/upload-pic.png" id='thumb_preview' width='135' height='113' style='cursor:hand' />
+				<else/>
+					<img src="{:sp_get_asset_upload_path($smeta['thumb'])}" id='thumb_preview' width='135' height='113' style='cursor:hand' />
+				</if>
+			</a>
 			<!-- <input type="button" class="btn" onclick="crop_cut_thumb($('#thumb').val());return false;" value="裁减图片">  -->
             <input type="button"  class="btn" onclick="$('#thumb_preview').attr('src','__ROOT__/statics/images/icon/upload-pic.png');$('#thumb').val('');return false;" value="取消图片">
             </div>
@@ -68,27 +73,14 @@ body fieldset legend {
           <td><input type="text" name="post[post_modified]" id="updatetime" value="{$post.post_modified}" size="21" class="input length_3 J_datetime "></td>
         </tr>
         <tr>
-          <td><b>允许评论</b></td>
-        </tr>
-        <tr>
-          <td>
-          	<php>
-          		$comment_yes=$post[comment_status]==1?"checked":"";
-          		$comment_no=$post[comment_status]==0?"checked":"";
-          	</php>
-          	<label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_1"  value="1" {$comment_yes}> 允许评论</label>
-          	<label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_0"  value="0" {$comment_no}> 不允许评论</label>
-          </td>
-        </tr>
-        <tr>
           <td><b>状态</b></td>
         </tr>
         <tr>
           <td>
           	<span class="switch_list cc">
           	<php>
-          		$status_yes=$post[post_status]==1?"checked":"";
-          		$status_no=$post[post_status]==0?"checked":"";
+          		$status_yes=$post['post_status']==1?"checked":"";
+          		$status_no=$post['post_status']==0?"checked":"";
           	</php>
 			<label><input type="radio" name="post[post_status]" value="1" {$status_yes}><span>审核通过</span></label>
 			<label><input type="radio" name="post[post_status]" value="0" {$status_no}><span>待审核</span></label>
@@ -126,10 +118,10 @@ body fieldset legend {
               			$tpl_list=sp_admin_get_tpl_file_list();
               			unset($tpl_list['page']);
               		</php>
-              		<select style="min-width:290px;" name='smeta[template]'>
+              		<select style="min-width:290px;" name="smeta[template]">
               			<option value="page">page{:C("TMPL_TEMPLATE_SUFFIX")}</option>
               			<foreach name="tpl_list" item="vo">
-              				<php>$template_selected=$smeta[template]==$vo?"selected":"";</php>
+              				<php>$template_selected=$smeta['template']==$vo?"selected":"";</php>
               				<option value="{$vo}" {$template_selected}>{$vo}{:C("TMPL_TEMPLATE_SUFFIX")}</option>
               			</foreach>
               		</select>
@@ -151,8 +143,8 @@ body fieldset legend {
                 //编辑器路径定义
                 var editorURL = GV.DIMAUB;
                 </script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_config.js{$js_debug}"></script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_all_min.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.config.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.all.min.js{$js_debug}"></script>
 				<script type="text/javascript">
     			var editorcontent;
                         UE.commands['attachments'] = {

@@ -1,5 +1,5 @@
 <?php
-class DownloadAction extends HomeBaseAction {
+class DownloadAction extends Action {
 	//文件下载
     function index(){
     	header("Content-type:text/html;charset=utf-8");

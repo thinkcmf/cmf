@@ -2,11 +2,11 @@
 class DEBUG{
 	
 	public static function text(){
-		$xml = '<xml><ToUserName><![CDATA[gh_bb79d5ac9568]]></ToUserName>
+		$xml = '<xml><ToUserName><![CDATA[gh_2aa68e03f59c]]></ToUserName>
 				<FromUserName><![CDATA[oXljVjl4hQDqcnitvFLAai2KOU3E]]></FromUserName>
 				<CreateTime>1372054505</CreateTime>
 				<MsgType><![CDATA[text]]></MsgType>
-				<Content><![CDATA[快递申通768277296108]]></Content>
+				<Content><![CDATA[你好]]></Content>
 				<MsgId>5892929227304468576</MsgId>
 				</xml>';
 		return $xml;

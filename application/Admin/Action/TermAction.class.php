@@ -6,7 +6,7 @@ class TermAction extends AdminbaseAction {
 	protected $taxonomys=array("article"=>"文章","picture"=>"图片");
 	function _initialize() {
 		parent::_initialize();
-		$this->terms_obj = new TermsModel();
+		$this->terms_obj = D("Terms");
 		$this->assign("taxonomys",$this->taxonomys);
 	}
 	function index(){
@@ -48,7 +48,7 @@ class TermAction extends AdminbaseAction {
 	
 	
 	function add(){
-	 	$parentid = (int) $this->_get("parent");
+	 	$parentid = intval(I("get.parent"));
 	 	$tree = new PathTree();
 	 	$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 	 	$tree->nbsp = '---';
@@ -63,10 +63,10 @@ class TermAction extends AdminbaseAction {
 	function add_post(){
 		if (IS_POST) {
 			if ($this->terms_obj->create()) {
-				if ($this->terms_obj->add()) {
-					$this->success("新增成功！",U("term/index"));
+				if ($this->terms_obj->add()!==false) {
+					$this->success("添加成功！",U("term/index"));
 				} else {
-					$this->error("新增失败！");
+					$this->error("添加失败！");
 				}
 			} else {
 				$this->error($this->terms_obj->getError());
@@ -75,14 +75,14 @@ class TermAction extends AdminbaseAction {
 	}
 	
 	function edit(){
+		$id = intval(I("get.id"));
 		$tree = new PathTree();
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
 		$tree->nbsp = '---';
-		$result = $this->terms_obj->order(array("path"=>"asc"))->select();
+		$result = $this->terms_obj->where(array("term_id" => array("NEQ",$id)))->order(array("path"=>"asc"))->select();
 		$tree->init($result);
 		$tree=$tree->get_tree();
-			
-		$id = (int) $this->_get("id");
+		
 		$data=$this->terms_obj->where(array("term_id" => $id))->find();
 		$this->assign("terms",$tree);
 		$this->assign("data",$data);
@@ -105,7 +105,7 @@ class TermAction extends AdminbaseAction {
 	
 	//排序
 	public function listorders() {
-		$status = parent::listorders($this->terms_obj);
+		$status = parent::_listorders($this->terms_obj);
 		if ($status) {
 			$this->success("排序更新成功！");
 		} else {
@@ -117,19 +117,19 @@ class TermAction extends AdminbaseAction {
 	 *  删除
 	 */
 	public function delete() {
-		$id = (int) $this->_get("id");
+		$id = intval(I("get.id"));
 		$count = $this->terms_obj->where(array("parent" => $id))->count();
 		if ($count > 0) {
 			$this->error("该菜单下还有子类，无法删除！");
 		}
-		if ($this->terms_obj->delete($id)) {
+		if ($this->terms_obj->delete($id)!==false) {
 			$this->success("删除成功！");
 		} else {
 			$this->error("删除失败！");
 		}
 	}
 	
-	public function show(){
+	/* public function show(){
 		$result = $this->terms_obj->order(array("listorder"=>"asc"))->select();
 		$tree = new Tree();
 		$tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
@@ -151,6 +151,5 @@ class TermAction extends AdminbaseAction {
 			
 		$this->assign("categorys", $categorys);
 		$this->display();
-		
-	}
+	} */
 }

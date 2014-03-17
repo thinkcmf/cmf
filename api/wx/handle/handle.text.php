@@ -40,4 +40,33 @@ if(mb_substr($data1['content'], 0, 2, 'utf-8')=='天气'){ //天气查询
 	}
 }
 
+/*
+ * 作用：获取图文回复
+ * 参数：$term_id, int, 选择的图文封面term_id
+ */
+function getTwData($db, $term_id){
+	global $_CFG;
+	$fields = 'select title,description,img,linkurl from '.$_CFG["DB"]['DB_PREFIX'].'wx_tw';
+	$where = " where term_id = $term_id order by create_time desc";
+	$tablePre = $_CFG["DB"]['DB_PREFIX'].'';
+	$termData = $db->select($db->query($fields.'_terms'.$where));
+	$itemsData = $db->select($db->query($fields.$where));
+	$arr = array_merge($termData, $itemsData);
+	//修正图片地址
+	$http = 'http://';
+	if(isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) $http='https://';
+	$url = $http.$_SERVER['HTTP_HOST'].'/data/upload/';
+	foreach($arr as $k=>$v){
+		$arr[$k]['img'] = $url.$v['img'];
+	}
+	return $arr;
+}
+
+//是否需要图文回复
+if(preg_match('/^#tw([0-9]+)#$/i', $contentStr, $matches)){
+	$twData = getTwData($db, $matches[1]);
+	exit(Tools::answer_tuwen($postObj->ToUserName, $data1['from'], $twData));
+}
+
 exit(Tools::answer_text($postObj->ToUserName, $data1['from'], $contentStr));
+

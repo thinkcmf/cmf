@@ -11,7 +11,7 @@ class BackupAction extends AdminbaseAction
     {
         parent::_initialize();
         $this->backup_path = '/data/backup/';
-        $this->_database_mod = new Model();
+        $this->_database_mod = M();
     }
 
     /**
@@ -19,59 +19,61 @@ class BackupAction extends AdminbaseAction
      */
     public function index()
     {
-        if (IS_POST || isset($_GET['dosubmit']))
-        {
-            //print_r($_REQUEST);exit();
-            if (isset($_GET['type']) && $_GET['type'] == 'url')
-            {
-                $sizelimit = isset($_GET['sizelimit']) && abs(intval($_GET['sizelimit'])) ? abs(intval
-                    ($_GET['sizelimit'])) : $this->error('请输入每个分卷文件大小');
-                $this->backup_name = isset($_GET['backup_name']) && trim($_GET['backup_name']) ?
-                    trim($_GET['backup_name']) : $this->error('请输入备份名称');
-                $vol = $this->_get_vol();
-                $vol++;
-            } else
-            {
-                $sizelimit = isset($_POST['sizelimit']) && abs(intval($_POST['sizelimit'])) ?
-                    abs(intval($_POST['sizelimit'])) : $this->error('请输入每个分卷文件大小');
-
-                $this->backup_name = isset($_POST['backup_name']) && trim($_POST['backup_name']) ?
-                    trim($_POST['backup_name']) : $this->error('请输入备份名称');
-
-                $backup_tables = isset($_POST['backup_tables']) && $_POST['backup_tables'] ? $_POST['backup_tables'] :
-                    $this->error('请选择备份数据表');
-
-                if (is_dir(SITE_PATH . $this->backup_path . $this->backup_name))
-                {
-                    $this->error('备份名称已经存在');
-                }
-                mkdir(SITE_PATH . $this->backup_path . $this->backup_name);
-
-                if (!is_file(SITE_PATH . $this->backup_path . $this->backup_name .
-                    '/tbl_queue.log'))
-                {
-                    //写入队列
-                    $this->_put_tbl_queue($backup_tables);
-                }
-                $vol = 1;
-            }
-            $tables = $this->_dump_queue($vol, $sizelimit * 1024);
-
-            if ($tables === false)
-            {
-                $this->error('加载队列文件错误');
-            }
-
-            $this->_deal_result($tables, $vol, $sizelimit);
-            exit();
-        }
-
         //获得当前服务器上传最大限制作为分卷大小
         $allow_max_size = $this->_return_bytes(@ini_get('upload_max_filesize'));
         $this->assign('sizelimit', 10*1024*1024 / 1024);
         $this->assign('backup_name', $this->_make_backup_name());
         $this->assign('tables', M()->db()->getTables()); //显示所有数据表
         $this->display();
+    }
+    
+    public function index_post(){
+    	if (IS_POST || isset($_GET['dosubmit']))
+    	{
+    		//print_r($_REQUEST);exit();
+    		if (isset($_GET['type']) && $_GET['type'] == 'url')
+    		{
+    			$sizelimit = isset($_GET['sizelimit']) && abs(intval($_GET['sizelimit'])) ? abs(intval
+    					($_GET['sizelimit'])) : $this->error('请输入每个分卷文件大小');
+    			$this->backup_name = isset($_GET['backup_name']) && trim($_GET['backup_name']) ?
+    			trim($_GET['backup_name']) : $this->error('请输入备份名称');
+    			$vol = $this->_get_vol();
+    			$vol++;
+    		} else
+    		{
+    			$sizelimit = isset($_POST['sizelimit']) && abs(intval($_POST['sizelimit'])) ?
+    			abs(intval($_POST['sizelimit'])) : $this->error('请输入每个分卷文件大小');
+    	
+    			$this->backup_name = isset($_POST['backup_name']) && trim($_POST['backup_name']) ?
+    			trim($_POST['backup_name']) : $this->error('请输入备份名称');
+    	
+    			$backup_tables = isset($_POST['backup_tables']) && $_POST['backup_tables'] ? $_POST['backup_tables'] :
+    			$this->error('请选择备份数据表');
+    	
+    			if (is_dir(SITE_PATH . $this->backup_path . $this->backup_name))
+    			{
+    				$this->error('备份名称已经存在');
+    			}
+    			mkdir(SITE_PATH . $this->backup_path . $this->backup_name);
+    	
+    			if (!is_file(SITE_PATH . $this->backup_path . $this->backup_name .
+    					'/tbl_queue.log'))
+    			{
+    				//写入队列
+    				$this->_put_tbl_queue($backup_tables);
+    			}
+    			$vol = 1;
+    		}
+    		$tables = $this->_dump_queue($vol, $sizelimit * 1024);
+    	
+    		if ($tables === false)
+    		{
+    			$this->error('加载队列文件错误');
+    		}
+    	
+    		$this->_deal_result($tables, $vol, $sizelimit);
+    		exit();
+    	}
     }
 
     /**
@@ -550,6 +552,7 @@ class BackupAction extends AdminbaseAction
     function _get_dir_size($dir)
     {
         $handle = opendir($dir);
+        $sizeResult=0;
         while (false !== ($FolderOrFile = readdir($handle)))
         {
             if ($FolderOrFile != "." && $FolderOrFile != "..")

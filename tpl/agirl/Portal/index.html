@@ -18,6 +18,7 @@
 	<![endif]-->
 </head>
 <body>
+<include file="test" />
 <div class="wrapper">
 	<include file="Public:header" />
     <div class="slider-wrapper section">
@@ -33,7 +34,7 @@
                         	体验新的ThinkCMF和BootStrap
                     </p>
                     <p class="claim dark" data-position="120,0" data-in="top" data-step="1" data-out="bottom" data-time="3500" data-delay="250">
-                        ThinkCMF_V1.0.4新体验
+                        ThinkCMF_V1.1.1新体验
                     </p>		
                     
                     <p class="teaser dark small" data-position="180,0" data-in="left" data-step="2" data-time="1500" data-delay="100">
@@ -372,7 +373,7 @@
     <else />
     </if>
     <php>	
-    $Lastnews=sp_sql_posts('cid:'.$Portal_index['Cat']['Lastnews'].';field:post_title,post_content,tid,smeta,post_date;limit:4');
+    $Lastnews=sp_sql_posts('cid:'.$Portal_index['Cat']['Lastnews'].";field:post_title,post_content,tid,smeta,post_date,post_excerpt;order:post_date DESC;limit:4");
     </php>
     <div class="slice animate-hover-slide bg-5 section">
         <div class="w-section inverse">
@@ -381,12 +382,16 @@
                 <div class="row">
                 
                 <foreach  name="Lastnews" item="vo">
-                <php>$pic=json_decode($vo['smeta'],true);</php>
+                <php>$smeta=json_decode($vo['smeta'],true);</php>
                 
                     <div class="col-md-3">
                         <div class="w-box">
                             <div class="figure">
-                                <img alt="" src="__UPLOAD__{$pic.thumb}"  class="img-responsive">
+                            	<if condition="!empty($smeta['thumb'])">
+                               		<img width="263" height="197" src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive" alt="">
+                               	<else/>
+                               		<img width="263" height="197" src="__TMPL__Public/images/default/list.jpg" class="img-responsive" alt="">
+                               	</if>
                                 <span class="date-over small"><strong>{:date("M d,Y",strtotime($vo['post_date']))}</strong></span>
                                 <div class="figcaption bg-2"></div>
                                 <div class="figcaption-btn">
@@ -395,7 +400,7 @@
                                 </div>
                             </div>
                             <h2>{$vo.post_title}</h2>
-                            {$vo.post_content}
+                            {$vo.post_excerpt}
                         </div>
                     </div>
                    </foreach>

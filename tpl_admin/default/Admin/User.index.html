@@ -17,7 +17,6 @@
             <td>最后登录IP</td>
             <td>最后登录时间</td>
             <td>E-mail</td>
-            <td>备注</td>
             <td width="120">管理操作</td>
           </tr>
         </thead>
@@ -26,25 +25,24 @@
           <tr>
             <td>{$vo.ID}</td>
             <td>{$vo.user_login}</td>
-            <td>{$roles[$vo[role_id]]['name']}</td>
+            <td>{$roles[$vo['role_id']]['name']}</td>
             <td>{$vo.last_login_ip}</td>
             <td>
-            <if condition="$vo['last_login_time'] eq 0">
-            该用户还没登陆过
-            <else />
-            {$vo.last_login_time}
-            </if>
+	            <if condition="$vo['last_login_time'] eq 0">
+	            该用户还没登陆过
+	            <else />
+	            {$vo.last_login_time}
+	            </if>
             </td>
             <td>{$vo.user_email}</td>
-            <td>{$vo.remark}</td>
             <td>
-            <if condition="$vo['ID'] eq 1">
-            <font color="#cccccc">修改</font> | 
-            <font color="#cccccc">删除</font>
-            <else />
-            <a href='{:U("user/edit",array("id"=>$vo[ID]))}'>修改</a> | 
-            <a class="J_ajax_del" href="{:U('user/delete',array('id'=>$vo['ID']))}">删除</a>
-            </if>
+	            <if condition="$vo['ID'] eq 1">
+	            <font color="#cccccc">修改</font> | 
+	            <font color="#cccccc">删除</font>
+	            <else />
+	            <a href='{:U("user/edit",array("id"=>$vo["ID"]))}'>修改</a> | 
+	            <a class="J_ajax_del" href="{:U('user/delete',array('id'=>$vo['ID']))}">删除</a>
+	            </if>
             </td>
           </tr>
          </foreach>

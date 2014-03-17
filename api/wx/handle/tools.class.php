@@ -12,6 +12,25 @@ class Tools
 		<FuncFlag>0</FuncFlag>
 		</xml>";
 	
+	//图文消息格式
+	public static $Tuwen = "<xml>
+		<ToUserName><![CDATA[%s]]></ToUserName>
+		<FromUserName><![CDATA[%s]]></FromUserName>
+		<CreateTime>%s</CreateTime>
+		<MsgType><![CDATA[news]]></MsgType>
+		<ArticleCount>%s</ArticleCount>
+		<Articles>
+		%s
+		</Articles>
+		</xml>";
+	//图文子消息格式
+	public static $TuwenArticle = "<item>
+		<Title><![CDATA[%s]]></Title> 
+		<Description><![CDATA[%s]]></Description>
+		<PicUrl><![CDATA[%s]]></PicUrl>
+		<Url><![CDATA[%s]]></Url>
+		</item>";
+	
 	//image消息格式
 	public static $Image = "<xml>
 		<ToUserName><![CDATA[%s]]></ToUserName>
@@ -38,6 +57,19 @@ class Tools
 	//回复消息
 	public static function answer_text($from, $to, $text){
 		$resultStr = sprintf(self::$Text, $to, $from, time(), 'text', $text);
+		return $resultStr;
+	}
+	
+	/*
+	 * 作用：回复图文消息
+	 * 参数：$data, 二维数组, array(array('title'=>xx,'description'=>xx,'img'=>xx,'linkurl'=>xx))
+	 */
+	public static function answer_tuwen($from, $to, $data){
+		$articles = '';
+		foreach($data as $k=>$v){
+			$articles .= sprintf(self::$TuwenArticle, $v['title'], $v['description'], $v['img'], $v['linkurl']);
+		}
+		$resultStr = sprintf(self::$Tuwen, $to, $from, time(), count($data), $articles);
 		return $resultStr;
 	}
 	

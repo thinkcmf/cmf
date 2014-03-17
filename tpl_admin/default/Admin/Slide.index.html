@@ -42,8 +42,8 @@
 		            <td>{$vo.slide_name}</td>
 	            	<td>{$vo.slide_des}</td>
 		            <td>
-		            	<a href="{:U('slide/edit',array('id'=>$vo[slide_id]))}">修改</a>|
-		            	<a href="{:U('slide/delete',array('id'=>$vo[slide_id]))}" class="J_ajax_del" >删除</a>
+		            	<a href="{:U('slide/edit',array('id'=>$vo['slide_id']))}">修改</a>|
+		            	<a href="{:U('slide/delete',array('id'=>$vo['slide_id']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>
           </foreach>

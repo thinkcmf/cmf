@@ -328,6 +328,7 @@ input::-moz-focus-inner {
 	font-family:inherit;
 	_position:relative;
 	margin:0;
+	box-sizing: border-box;
 }
 a.btn{
 	*padding:5px 10px 2px !important;
@@ -468,7 +469,7 @@ select {
 	background-color:#fffbde;
 }
 .input_hd,.textarea_hd{
-	background:#fff url(../images/admin/content/input_hd.png) 0 bottom repeat-x;
+	background:#fff;
 }
 .input{
 	height:18px;
@@ -1655,7 +1656,6 @@ input:radio+span{
 }
 .error_cont{
 	padding:20px 20px 30px 80px;
-	background:url(../images/admin/tips/light.png) 20px 20px no-repeat;
 	line-height:1.8;
 }
 .error_return{

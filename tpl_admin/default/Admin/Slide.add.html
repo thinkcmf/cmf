@@ -58,35 +58,7 @@ body fieldset legend {
 			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','content','12','b6ba209759e147124653ac77362ef2bd');return false;">
 			<img src='__ROOT__/statics/images/icon/upload-pic.png' id='thumb_preview' width='135' height='113' style='cursor:hand' /></a>
             <input type="button"  class="btn" onclick="$('#thumb_preview').attr('src','__ROOT__/statics/images/icon/upload-pic.png');$('#thumb').val('');return false;" value="取消图片">
-            <script type="text/javascript">
-            function crop_cut_thumb(id){
-			if ( id =='' || id == undefined ) {
-                      isalert('请先上传缩略图！');
-                      return false;
-                    }
-                    var catid = $('input[name="info[catid]"]').val();
-                    if(catid == '' ){
-                        isalert('请选择栏目ID！');
-                        return false;
-                    }
-                    Wind.use('artDialog','iframeTools',function(){
-                      art.dialog.open(GV.DIMAUB+'index.php?a=public_imagescrop&m=Content&g=Contents&catid='+catid+'&picurl='+encodeURIComponent(id)+'&input=thumb&preview=thumb_preview', {
-                        title:'裁减图片', 
-                        id:'crop',
-                        ok: function () {
-                            var iframe = this.iframe.contentWindow;
-                            if (!iframe.document.body) {
-                                 alert('iframe还没加载完毕呢');
-                                 return false;
-                            }
-                            iframe.uploadfile();
-                            return false;
-                        },
-                        cancel: true
-                      });
-                    });
-            	};
-				</script></div>
+            </div>
 			</td>
         </tr>
         
@@ -255,9 +227,9 @@ $(function () {
 												},
 												focus: true
 											},{
-												name: '关闭',
+												name: '返回列表',
 												callback:function(){
-													//window.close();
+													location.href="__URL__";
 													return true;
 												}
 											}

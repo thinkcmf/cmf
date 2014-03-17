@@ -27,8 +27,8 @@
 		            <php>$usercode="{".":sp_getad('".$vo['ad_name']."')}";</php>
 		            <td>{$usercode}</td>
 		            <td>
-		            	<a href="{:U('ad/edit',array('id'=>$vo[ad_id]))}" >修改</a>|
-			            <a href="{:U('ad/delete',array('id'=>$vo[ad_id]))}" class="J_ajax_del" >删除</a>
+		            	<a href="{:U('ad/edit',array('id'=>$vo['ad_id']))}" >修改</a>|
+			            <a href="{:U('ad/delete',array('id'=>$vo['ad_id']))}" class="J_ajax_del" >删除</a>
 			        </td>
 	          	</tr>
 	          	</foreach>

@@ -67,8 +67,8 @@
 		            <td>{$vo.post_date}</td>
 		            <td>{$status[$vo['post_status']]}</td>
 		            <td>
-		            	<a href="{:U('post/restore',array('term'=>$term['term_id'],'id'=>$vo[tid]))}" class="J_ajax_dialog_btn"  data-msg="确定还原吗？">还原</a>|
-		            	<a href="{:U('post/clean',array('term'=>$term['term_id'],'tid'=>$vo[tid],'id'=>$vo[ID]))}" class="J_ajax_del" >删除</a>
+		            	<a href="{:U('post/restore',array('term'=>empty($term['term_id'])?'':$term['term_id'],'id'=>$vo['tid']))}" class="J_ajax_dialog_btn"  data-msg="确定还原吗？">还原</a>|
+		            	<a href="{:U('post/clean',array('term'=>empty($term['term_id'])?'':$term['term_id'],'tid'=>$vo['tid'],'id'=>$vo['ID']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>
           </foreach>

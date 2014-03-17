@@ -1,7 +1,11 @@
 <admintpl file="header"/>
 <body class="J_scroll_fixed">
 <div class="wrap jj">
-  <admintpl file="nav"/>
+  <div class="nav">
+	  <ul class="cc">
+	        <li class="current"><a href="{:U('User/userinfo')}">修改信息</a></li>
+	      </ul>
+  </div>
   <div class="common-form">
     <form method="post" class="J_ajaxForm" action="{:U('User/userinfo_post')}">
       <div class="h_a">个人信息</div>

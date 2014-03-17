@@ -4,7 +4,7 @@ class AdAction extends AdminbaseAction{
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->ad_obj = new  AdModel();
+		$this->ad_obj = D("Ad");
 	}
 	function index(){
 		$ads=$this->ad_obj->where("status!=0")->select();
@@ -19,7 +19,7 @@ class AdAction extends AdminbaseAction{
 	function add_post(){
 		if(IS_POST){
 			if ($this->ad_obj->create()) {
-				if ($this->ad_obj->add()) {
+				if ($this->ad_obj->add()!==false) {
 					$this->success("添加成功！", U("ad/index"));
 				} else {
 					$this->error("添加失败！");
@@ -33,7 +33,7 @@ class AdAction extends AdminbaseAction{
 	
 	
 	function edit(){
-		$id=$this->_get("id");
+		$id=I("get.id");
 		$ad=$this->ad_obj->where("ad_id=$id")->find();
 		$this->assign($ad);
 		$this->display();

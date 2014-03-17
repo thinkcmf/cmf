@@ -43,24 +43,34 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h3 class="section-title">联系我们</h3>
-                        <form class="form-light mt-20" role="form">
+                        <form class="form-light mt-20" role="form" method="post" action="{:u('api/guestbook/addmsg')}">
                             <div class="row">
                             	<div class="col-md-6">
                                     <div class="form-group">
                                         <label>姓名</label>
-                                		<input type="text" class="form-control" placeholder="Your name">
+                                		<input type="text" class="form-control" placeholder="Your name" name="full_name">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>邮箱</label>
-                                        <input type="email" class="form-control" placeholder="Email address">
+                                        <input type="email" class="form-control" placeholder="Email address" name="email">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>内容</label>
-                                <textarea class="form-control" id="message" placeholder="Write you message here..." style="height:100px;"></textarea>
+                                <textarea class="form-control" id="message" placeholder="Write you message here..." style="height:100px;" name="msg"></textarea>
+                            </div>
+                             
+                            <div class="row">
+                            	<div class="col-md-6">
+                                    <div class="form-group">
+		                                <label>验证码</label>
+		                                <input type="text" class="form-control" placeholder="please enter the code"  name="verify">
+		                                {:sp_verifycode_img()}
+		                            </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-two">发送留言</button>
                         </form>

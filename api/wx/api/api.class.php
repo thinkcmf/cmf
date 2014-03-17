@@ -69,7 +69,7 @@ class API
 	}
 	
 	//获取token
-	private function getToken($weixin_ini){
+	private function getToken($weixin_ini=""){
 		global $_CFG;
 		include_once HANDLE_DIR.'db.class.php';
 		include_once HANDLE_DIR.'tools.class.php';

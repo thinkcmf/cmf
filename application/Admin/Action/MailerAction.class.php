@@ -14,18 +14,12 @@ class MailerAction extends AdminbaseAction {
     public function index_post() {
     	$_POST = array_map('trim', $_POST);
     	if(in_array('', $_POST)) $this->error("不能留空！");
-    	$home_config_file="./data/conf/config.php";
-    	if(file_exists($home_config_file)){
-    		$home_configs=include $home_config_file;
-    	}else {
-    		$home_configs=array();
-    	}
-    	$home_configs['SP_MAIL_ADDRESS'] = $_POST['address'];
-    	$home_configs['SP_MAIL_SMTP'] = $_POST['smtp'];
-    	$home_configs['SP_MAIL_LOGINNAME'] = $_POST['loginname'];
-    	$home_configs['SP_MAIL_PASSWORD'] = $_POST['password'];
+    	$configs['SP_MAIL_ADDRESS'] = $_POST['address'];
     	
-    	$rst = sp_save_var($home_config_file, $home_configs);
+    	$configs['SP_MAIL_SMTP'] = $_POST['smtp'];
+    	$configs['SP_MAIL_LOGINNAME'] = $_POST['loginname'];
+    	$configs['SP_MAIL_PASSWORD'] = $_POST['password'];
+    	$rst=sp_set_dynamic_config($configs);
     	if ($rst) {
     		$this->success("保存成功！");
     	} else {
@@ -46,14 +40,8 @@ class MailerAction extends AdminbaseAction {
     }
     
     public function active_post(){
-    	$home_config_file="./data/conf/config.php";
-    	if(file_exists($home_config_file)){
-    		$home_configs=include $home_config_file;
-    	}else {
-    		$home_configs=array();
-    	}
-    	$home_configs['SP_MEMBER_EMAIL_ACTIVE'] = $_POST['lightup'];
-    	$rst1 = sp_save_var($home_config_file, $home_configs);
+    	$configs['SP_MEMBER_EMAIL_ACTIVE'] = $_POST['lightup'];
+    	sp_set_dynamic_config($configs);
 
     	if(!empty($_POST['option_id'])) $data['option_id']=intval($_POST['option_id']);
     	$data['option_name'] = "member_email_active";

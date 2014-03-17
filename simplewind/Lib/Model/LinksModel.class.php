@@ -95,6 +95,10 @@ class LinksModel extends CommonModel
 		return $result[0];
 	}
 	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
+	}
+	
 	
 }
 

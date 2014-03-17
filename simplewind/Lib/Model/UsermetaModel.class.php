@@ -1,5 +1,5 @@
 <?php
-class UsermetaModel extends Model
+class UsermetaModel extends CommonModel
 {
 	/**
 	 * 添加用户附加信息, 如果有了则更新
@@ -63,6 +63,10 @@ class UsermetaModel extends Model
 			$usermetas[$val['meta_key']]=$val['meta_value'];
 		}
 		return $usermetas;
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 	
 }

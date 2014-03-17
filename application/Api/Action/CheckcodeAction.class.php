@@ -40,7 +40,7 @@ class CheckcodeAction extends Action {
         $checkcode->doimage();
         
         //验证码类型
-        $type = $this->_get("type");
+        $type = I("get.type");
         $type = $type?strtolower($type):"verify";
         $verify = session("_verify_");
         if(empty($verify)){

@@ -35,9 +35,9 @@
           </td>
           <td  class="text-c">
           <if condition="$vo['id'] eq 1"> 
-          <font color="#cccccc">权限设置</font> | <a href="{:U('rbac/member',array('id'=>$vo['id']))}">成员管理</a> | <font color="#cccccc">修改</font> | <font color="#cccccc">删除</font>
+          <font color="#cccccc">权限设置</font> | <a href="javascript:open_iframe_dialog('{:U('rbac/member',array('id'=>$vo['id']))}','成员管理');">成员管理</a> | <font color="#cccccc">修改</font> | <font color="#cccccc">删除</font>
           <else />
-          <a href="{:U('Rbac/authorize',array('id'=>$vo['id']))}">权限设置</a>  |<a href="{:U('rbac/member',array('id'=>$vo['id']))}">成员管理</a> | <a href="{:U('Rbac/roleedit',array('id'=>$vo['id']))}">修改</a> | <a class="J_ajax_del" href="{:U('Rbac/roledelete',array('id'=>$vo['id']))}">删除</a>
+          <a href="{:U('Rbac/authorize',array('id'=>$vo['id']))}">权限设置</a>  |<a href="javascript:open_iframe_dialog('{:U('rbac/member',array('id'=>$vo['id']))}','成员管理');">成员管理</a>| <a href="{:U('Rbac/roleedit',array('id'=>$vo['id']))}">修改</a> | <a class="J_ajax_del" href="{:U('Rbac/roledelete',array('id'=>$vo['id']))}">删除</a>
           </if>
           </td>
         </tr>

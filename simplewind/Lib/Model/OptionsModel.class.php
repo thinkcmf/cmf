@@ -1,5 +1,5 @@
 <?php
-class OptionsModel extends Model{
+class OptionsModel extends CommonModel{
 	static $website='website';
 	
 	function getFormatedOptions(){
@@ -84,6 +84,10 @@ class OptionsModel extends Model{
 		$result = $this->where('option_id='.$option_id)->setField('autoload',$value);
 		return $result;
 		
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 	
 	

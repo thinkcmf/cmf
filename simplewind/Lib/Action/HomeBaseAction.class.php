@@ -3,14 +3,37 @@ class HomeBaseAction extends AppframeAction {
 	
 	public function __construct() {
 		$this->set_action_success_error_tpl();
+		C("TMPL_FILE_DEPR","/");
 		parent::__construct();
 	}
 	
 	function _initialize() {
 		parent::_initialize();
 		$site_options=get_site_options();
-		$this->assign($site_options);		
-	}	
+		$this->assign($site_options);
+		$ucenter_syn=C("UCENTER_ENABLED");
+		if($ucenter_syn){
+			if(!isset($_SESSION["MEMBER_id"])){
+				if(!empty($_COOKIE['thinkcmf_auth'])  && $_COOKIE['thinkcmf_auth']!="logout"){
+					$thinkcmf_auth=sp_authcode($_COOKIE['thinkcmf_auth'],"DECODE");
+					$thinkcmf_auth=explode("\t", $thinkcmf_auth);
+					$auth_username=$thinkcmf_auth[1];
+					$members_obj=M('Members');
+					$where['user_login_name']=$auth_username;
+					$member=$members_obj->where($where)->find();
+					if(!empty($member)){
+						$is_login=true;
+						$_SESSION["MEMBER_type"]='local';
+						$_SESSION["MEMBER_id"]=$member['ID'];
+						$_SESSION['MEMBER_name']=$auth_username;
+						$_SESSION['MEMBER_status']=$member['user_status'];
+					}
+				}
+			}else{
+			}
+		}
+		
+	}		
 	
 	/**
 	 * 加载模板和页面输出 可以返回输出内容
@@ -97,7 +120,10 @@ class HomeBaseAction extends AppframeAction {
 		}elseif(false === strpos($template, '/')){
 			$template = MODULE_NAME . $depr . $template;
 		}
-		return THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
+		$templateFile=THEME_PATH.$group.$template.C('TMPL_TEMPLATE_SUFFIX');
+		if(!is_file($templateFile))
+			throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
+		return $templateFile;
 	}
 	
 	

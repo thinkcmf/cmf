@@ -35,7 +35,7 @@ class RbacAction extends AdminbaseAction {
     public function roleadd_post() {
     	if (IS_POST) {
     		if ($this->Role->create()) {
-    			if ($this->Role->add()) {
+    			if ($this->Role->add()!==false) {
     				$this->assign("jumpUrl", U("Rbac/rolemanage"));
     				$this->success("添加角色成功",U("rbac/index"));
     			} else {
@@ -51,8 +51,8 @@ class RbacAction extends AdminbaseAction {
      * 删除角色
      */
     public function roledelete() {
-    	$users_obj=new UsersModel();
-        $id = (int) $this->_get("id");
+    	$users_obj = D("Users");
+        $id = intval(I("get.id"));
         if ($id == 1) {
             $this->error("超级管理员角色不能被删除！");
         }
@@ -61,7 +61,7 @@ class RbacAction extends AdminbaseAction {
         	$this->error("该角色已经有用户！");
         }else{
         	$status = $this->Role->delete($id);
-        	if ($status) {
+        	if ($status!==false) {
         		$this->success("删除成功！", U('Rbac/index'));
         	} else {
         		$this->error("删除失败！");
@@ -74,9 +74,9 @@ class RbacAction extends AdminbaseAction {
      * 编辑角色
      */
     public function roleedit() {
-        $id = (int) $this->_get("id");
+        $id = intval(I("get.id"));
         if ($id == 0) {
-            $id = (int) $this->_post("id");
+            $id = intval(I("post.id"));
         }
         if ($id == 1) {
             $this->error("超级管理员角色不能被修改！");
@@ -93,9 +93,9 @@ class RbacAction extends AdminbaseAction {
      * 编辑角色
      */
     public function roleedit_post() {
-    	$id = (int) $this->_get("id");
+    	$id = intval(I("get.id"));
     	if ($id == 0) {
-    		$id = (int) $this->_post("id");
+    		$id = intval(I("post.id"));
     	}
     	if ($id == 1) {
     		$this->error("超级管理员角色不能被修改！");
@@ -103,7 +103,7 @@ class RbacAction extends AdminbaseAction {
     	if (IS_POST) {
     		$data = $this->Role->create();
     		if ($data) {
-    			if ($this->Role->save($data)!=false) {
+    			if ($this->Role->save($data)!==false) {
     				$this->success("修改成功！", U('Rbac/index'));
     			} else {
     				$this->error("修改失败！");
@@ -120,7 +120,7 @@ class RbacAction extends AdminbaseAction {
     public function authorize() {
         $this->Access = D("Access");
        //角色ID
-        $roleid = (int) $this->_get("id");
+        $roleid = intval(I("get.id"));
         if (!$roleid) {
         	$this->error("参数错误！");
         }
@@ -158,7 +158,7 @@ class RbacAction extends AdminbaseAction {
     public function authorize_post() {
     	$this->Access = D("Access");
     	if (IS_POST) {
-    		$roleid = (int) $this->_post("roleid");
+    		$roleid = intval(I("post.roleid"));
     		if(!$roleid){
     			$this->error("需要授权的角色不存在！");
     		}
@@ -258,7 +258,7 @@ class RbacAction extends AdminbaseAction {
     
     public function member(){
     	$role_id=$_GET['id'];
-    	$users_obj=new UsersModel();
+    	$users_obj = D("Users");
     	$join = C('DB_PREFIX').'role as b on a.role_id =b.id';
     	$lists=$users_obj->alias("a")->join($join)->where("role_id=$role_id and a.user_status=1")->select();
     	$this->assign("lists",$lists);

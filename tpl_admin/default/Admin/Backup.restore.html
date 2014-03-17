@@ -1,7 +1,11 @@
 <admintpl file="header"/>
 <body class="J_scroll_fixed">
 <div class="wrap jj">
-  <admintpl file="nav"/>
+  <div class="nav">
+	  <ul class="cc">
+	        <li class="current"><a href="{:U('Admin/backup/restore')}">数据还原</a></li>
+	  </ul>
+  </div>
   <div class="common-form">
     <form action="{:U('Admin/backup/import')}" method="post">
     	<div class="table_list">

@@ -1,5 +1,5 @@
 <?php
-class PostmetaModel extends Model{
+class PostmetaModel extends CommonModel{
 	//GUYS meta_key的值定义在这里吧。格式“public static $metakey_+值='值';”记得加“文档注释”，可不能是一般的注释哟
 	/**
 	 * @var string 
@@ -64,5 +64,9 @@ class PostmetaModel extends Model{
 		}else{
 			return $this->addMeta($post_id, $meta_key, $meta_value);
 		}
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 }

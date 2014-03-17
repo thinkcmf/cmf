@@ -44,16 +44,23 @@
                                         <ul class="meta-list">
                                             <li>
                                                 <span>作者</span>
-                                                <span class="bold">{$user_login} {$post_date}</span>
+                                                <span class="bold">&nbsp;{$user_login}&nbsp;{$post_date}</span>
                                             </li>
                                         </ul>
                                         {$post_content}
+                                    </div>
+                                    <div>
+                                    	<ul class="pagination">
+				                            {$page}
+				                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="row">{:Comments("posts",$object_id)}</div>
+                
             </div>
         </div>
     </div>

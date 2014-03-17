@@ -1,7 +1,11 @@
 <admintpl file="header"/>
 <body class="J_scroll_fixed">
 <div class="wrap jj">
-  <admintpl file="nav"/>
+  <div class="nav">
+	  <ul class="cc">
+	     <li class="current"><a href="{:U('Wx/Indexadmin/index')}">账号信息</a></li>
+	  </ul>
+  </div>
   <div class="common-form">
     <form method="post" class="J_ajaxForm" action="{:U('Wx/Indexadmin/index_post')}">
       <div class="h_a">账号信息</div>
@@ -11,25 +15,25 @@
             <tr>
               <td>公众号:</td>
               <td>
-              <input type="text" class="input" name="WX_NUM" value="{:wx_val('WX_NUM')}"><span class="must_red">*</span>
+              <input type="text" class="input" name="WX_NUM" value="{:wx_val('WX_NUM')}">
               </td>
             </tr>
             <tr>
               <td>微信原始账号:</td>
               <td>
-              <input type="text" class="input" name="WX_INI_NUM" value="{:wx_val('WX_INI_NUM')}"><span class="must_red">*</span>
+              <input type="text" class="input" name="WX_INI_NUM" value="{:wx_val('WX_INI_NUM')}">
               </td>
             </tr>
             <tr>
               <td>TOKEN:</td>
               <td>
-              <input type="text" class="input" name="WX_TOKEN" value="{:wx_val('WX_TOKEN')}"><span class="must_red">*</span>
+              <input type="text" class="input" name="WX_TOKEN" value="{:wx_val('WX_TOKEN')}">
               </td>
             </tr>
             <tr>
               <td>AppId:</td>
               <td>
-              <input type="text" class="input" name="WX_APPID" value="{:wx_val('WX_APPID')}">（没有AppId和AppSecret将无法设置微信菜单）
+              <input type="text" class="input" name="WX_APPID" value="{:wx_val('WX_APPID')}">
               </td>
             </tr>
             <tr>

@@ -10,8 +10,8 @@ class NavAction extends AdminbaseAction {
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->nav = new NavModel();
-		$this->navcat = new NavCatModel();
+		$this->nav = D("Nav");
+		$this->navcat =D("NavCat");
 	}
 	
 	
@@ -66,9 +66,9 @@ class NavAction extends AdminbaseAction {
 		$tree = new Tree();
 		$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
 		$tree->nbsp = '&nbsp;';
-		$parentid=$this->_get("parentid");
+		$parentid=I("get.parentid");
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid"))) . '">删除</a> ';
 			$r['status'] = $r['status'] ? "显示" : "隐藏";
 			$r['selected'] = $r['id']==$parentid?"selected":"";
 			$array[] = $r;
@@ -101,7 +101,7 @@ class NavAction extends AdminbaseAction {
 		if (IS_POST) {
 			if ($this->nav->create()) {
 				$result=$this->nav->add();
-				if ($result) {
+				if ($result!==false) {
 					$parentid = $_POST['parentid']==0?"0":$_POST['parentid'];
 					if(empty($parentid)){
 						$data['path']="0-$result";
@@ -127,14 +127,14 @@ class NavAction extends AdminbaseAction {
 	 *  编辑
 	 */
 	public function edit() {
-		$cid=$_REQUEST['cid'];
-		$id=$this->_get("id");
+		$cid=intval($_REQUEST['cid']);
+		$id=intval(I("get.id"));
 		$result = $this->nav->where("cid=$cid and id!=$id")->order(array("listorder" => "ASC"))->select();
 		import("Tree");
 		$tree = new Tree();
 		$tree->icon = array('&nbsp;│ ', '&nbsp;├─ ', '&nbsp;└─ ');
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		$parentid=$this->_get("parentid");
+		$parentid= I("get.parentid");
 		foreach ($result as $r) {
 			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
 			$r['status'] = $r['status'] ? "显示" : "隐藏";
@@ -211,7 +211,7 @@ class NavAction extends AdminbaseAction {
 	 * 排序
 	 */
 	public function listorders() {
-		$status = parent::listorders($this->nav);
+		$status = parent::_listorders($this->nav);
 		if ($status) {
 			$this->success("排序更新成功！");
 		} else {
@@ -223,12 +223,12 @@ class NavAction extends AdminbaseAction {
 	 *  删除
 	 */
 	public function delete() {
-		$id = (int) $this->_get("id");
+		$id = intval(I("get.id"));;
 		$count = $this->nav->where(array("parentid" => $id))->count();
 		if ($count > 0) {
 			$this->error("该菜单下还有子菜单，无法删除！");
 		}
-		if ($this->nav->delete($id)) {
+		if ($this->nav->delete($id)!==false) {
 			$this->success("删除菜单成功！");
 		} else {
 			$this->error("删除失败！");
@@ -240,7 +240,7 @@ class NavAction extends AdminbaseAction {
 	 */
 	
 	private function _select(){
-		$apps=Dir::getList(SPAPP);
+		$apps=scandir(SPAPP);
 		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
 		$navs=array();
 		foreach ($apps as $a){

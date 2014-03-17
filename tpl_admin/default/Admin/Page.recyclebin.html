@@ -52,8 +52,8 @@
 		            <td>{$users[$vo['post_author']]['user_login']}</td>
 		            <td>{$vo.post_date}</td>
 		            <td>
-		            	<a href="{:U('page/restore',array('id'=>$vo[ID]))}" class="J_ajax_dialog_btn"  data-msg="确定还原吗？">还原</a>|
-		            	<a href="{:U('page/clean',array('id'=>$vo[ID]))}" class="J_ajax_del">删除</a>
+		            	<a href="{:U('page/restore',array('id'=>$vo['ID']))}" class="J_ajax_dialog_btn"  data-msg="确定还原吗？">还原</a>|
+		            	<a href="{:U('page/clean',array('id'=>$vo['ID']))}" class="J_ajax_del">删除</a>
 					</td>
 	          	</tr>
           </foreach>
@@ -64,7 +64,7 @@
     <div>
       <div class="btn_wrap_pd">
         <label class="mr20"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
-        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:U('page/clean')}">删除</button>
+        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:U('page/clean')}" data-subcheck="true">删除</button>
       </div>
     </div>
   </form>

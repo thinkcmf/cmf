@@ -1,6 +1,11 @@
 <?php
-$runtime_config = include "conf/config_sae.php";
-$thinksdk = include "conf/ThinkSDK_sae.config.php";
+$kv = new SaeKV();
+
+// 初始化SaeKV对象
+$ret = $kv->init();
+$ret = $kv->get('THINKCMF_DYNAMIC_CONFIG');
+$runtime_config= $ret ? unserialize($ret) : array();
+
 $sae = array(
     'DB_TYPE' => 'mysql',
 	'DB_DEPLOY_TYPE'=> 1,
@@ -11,8 +16,6 @@ $sae = array(
     'DB_PWD' => SAE_MYSQL_PASS,
     'DB_PORT' => SAE_MYSQL_PORT,
     'DB_PREFIX' => 'sp_',
-    //密钥
-    "AUTHCODE" => 'Q2O2QmjODncBgG6kMQ',
     //cookies
     "COOKIE_PREFIX" => 'U49dZ1_',
 	
@@ -21,4 +24,4 @@ $sae = array(
 	)
 );
 //print_r($runtime_config); die;
-return  array_merge($sae, $runtime_config, $thinksdk);
+return  array_merge($sae, $runtime_config);

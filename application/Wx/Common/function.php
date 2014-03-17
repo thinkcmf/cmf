@@ -3,7 +3,7 @@
  * 使用动态缓存机制
 * 获取 设置config表中的key-value值
 */
-function wx_val($key,$value){
+function wx_val($key,$value=null){
 	if(is_string($key) && is_null($value)){
 		$data=M("WxConfig")->getField("_key,_value");
 		//$data=v_cache();

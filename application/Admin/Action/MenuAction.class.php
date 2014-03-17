@@ -23,7 +23,7 @@ class MenuAction extends AdminbaseAction {
         $tree->icon = array('&nbsp;&nbsp;&nbsp;│ ', '&nbsp;&nbsp;&nbsp;├─ ', '&nbsp;&nbsp;&nbsp;└─ ');
         $tree->nbsp = '&nbsp;&nbsp;&nbsp;';
         foreach ($result as $r) {
-            $r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+            $r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a target="_blank" href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => I("get.menuid")) ). '">删除</a> ';
             $r['status'] = $r['status'] ? "显示" : "隐藏";
             if(APP_DEBUG){
             	$r['app']=$r['app']."/".$r['model']."/".$r['action'];
@@ -59,8 +59,8 @@ class MenuAction extends AdminbaseAction {
     public function add() {
     	import("Tree");
     	$tree = new Tree();
-    	$parentid = (int) $this->_get("parentid");
-    	$result = $this->Menu->select();
+    	$parentid = intval(I("get.parentid"));
+    	$result = $this->Menu->order(array("listorder" => "ASC"))->select();
     	foreach ($result as $r) {
     		$r['selected'] = $r['id'] == $parentid ? 'selected' : '';
     		$array[] = $r;
@@ -78,11 +78,11 @@ class MenuAction extends AdminbaseAction {
     public function add_post() {
     	if (IS_POST) {
     		if ($this->Menu->create()) {
-    			if ($this->Menu->add()) {
+    			if ($this->Menu->add()!==false) {
     				$to=empty($_SESSION['admin_menu_index'])?"Menu/index":$_SESSION['admin_menu_index'];
-    				$this->success("新增成功！", U($to));
+    				$this->success("添加成功！", U($to));
     			} else {
-    				$this->error("新增失败！");
+    				$this->error("添加失败！");
     			}
     		} else {
     			$this->error($this->Menu->getError());
@@ -94,12 +94,12 @@ class MenuAction extends AdminbaseAction {
      *  删除
      */
     public function delete() {
-        $id = (int) $this->_get("id");
+        $id = intval(I("get.id"));
         $count = $this->Menu->where(array("parentid" => $id))->count();
         if ($count > 0) {
             $this->error("该菜单下还有子菜单，无法删除！");
         }
-        if ($this->Menu->delete($id)) {
+        if ($this->Menu->delete($id)!==false) {
             $this->success("删除菜单成功！");
         } else {
             $this->error("删除失败！");
@@ -112,9 +112,9 @@ class MenuAction extends AdminbaseAction {
     public function edit() {
         import("Tree");
         $tree = new Tree();
-        $id = (int) $this->_get("id");
+        $id = intval(I("get.id"));
         $rs = $this->Menu->where(array("id" => $id))->find();
-        $result = $this->Menu->select();
+        $result = $this->Menu->order(array("listorder" => "ASC"))->select();
         foreach ($result as $r) {
         	$r['selected'] = $r['id'] == $rs['parentid'] ? 'selected' : '';
         	$array[] = $r;
@@ -146,7 +146,7 @@ class MenuAction extends AdminbaseAction {
 
     //排序
     public function listorders() {
-        $status = parent::listorders($this->Menu);
+        $status = parent::_listorders($this->Menu);
         if ($status) {
             $this->success("排序更新成功！");
         } else {
@@ -294,7 +294,7 @@ class MenuAction extends AdminbaseAction {
     	$groups=explode(",", C("APP_GROUP_LIST"));
     	$group_count=count($groups);
     	$newmenus=array();
-    	$g=$this->_get("app");
+    	$g=I("get.app");
     	if(empty($g)){
     		$g=$groups[0];
     	}
@@ -314,7 +314,7 @@ class MenuAction extends AdminbaseAction {
     									continue;
     								}
     							}else{
-    								if(strpos($mf,"adminAction.class.php")){
+    								if(strpos($mf,"adminAction.class.php") || strpos($mf,"Admin")===0){
     									$m=str_replace("Action.class.php", "",$mf);
     								}else{
     									continue;

@@ -28,8 +28,8 @@
 			            <td>{$vo.link_name}</td>
 			            <td><a href="{$vo.link_url}" target="_blank">{$vo.link_url}</a></td>
 			            <td>
-			            	<a href="{:U('link/edit',array('id'=>$vo[link_id]))}" >修改</a>|
-				            <a href="{:U('link/delete',array('id'=>$vo[link_id]))}" class="J_ajax_del" >删除</a>
+			            	<a href="{:U('link/edit',array('id'=>$vo['link_id']))}" >修改</a>|
+				            <a href="{:U('link/delete',array('id'=>$vo['link_id']))}" class="J_ajax_del" >删除</a>
 				        </td>
 		          	</tr>
 	          	</foreach>

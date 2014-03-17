@@ -1,9 +1,13 @@
 <admintpl file="header"/>
 <body class="J_scroll_fixed">
 <div class="wrap jj">
-  <admintpl file="nav"/>
+  <div class="nav">
+	  <ul class="cc">
+	        <li class="current"><a href="{:U('Admin/backup/index')}">数据还原</a></li>
+	  </ul>
+  </div>
   <div class="common-form">
-        <form action="{:U('Admin/backup/index')}" method="post">
+        <form action="{:U('Admin/backup/index_post')}" method="post">
 	        <div class="table_list">
 	        <table width="100%" cellspacing="0" class="table_form">
 	        	<thead>

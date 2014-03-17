@@ -18,8 +18,9 @@ if (ini_get('magic_quotes_gpc')) {
 	$_GET = stripslashesRecursive($_GET);
 	$_POST = stripslashesRecursive($_POST);
 }
+
 //开启调试模式
-define("APP_DEBUG", false);
+define("APP_DEBUG", true);
 //网站当前路径
 define('SITE_PATH', getcwd());
 //项目名称，不可更改
@@ -35,7 +36,9 @@ define('SPSTATIC',   'statics/');
 //定义缓存存放路径
 define("RUNTIME_PATH", SITE_PATH . "/data/runtime/");
 //版本号
-define("SIMPLEWIND_CMF_VERSION", 'V1.1.0');
+define("SIMPLEWIND_CMF_VERSION", 'V1.1.1');
+//uc client root
+define("UC_CLIENT_ROOT", './uc_client/');
 
 if(function_exists('saeAutoLoader') || isset($_SERVER['HTTP_BAE_ENV_APPID'])){
 	
@@ -44,6 +47,14 @@ if(function_exists('saeAutoLoader') || isset($_SERVER['HTTP_BAE_ENV_APPID'])){
 		header("Location:./install");
 		exit();
 	}
+}
+
+if(file_exists("./conf/uc_config.php")){
+	include './conf/uc_config.php';
+}
+
+if(APP_DEBUG){
+	error_reporting(E_ALL);
 }
 
 //载入框架核心文件

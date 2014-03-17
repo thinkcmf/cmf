@@ -7,7 +7,7 @@ class LinkAction extends AdminbaseAction{
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->link_obj = new  LinksModel();
+		$this->link_obj = D("Links");
 	}
 	
 	function index(){
@@ -23,7 +23,7 @@ class LinkAction extends AdminbaseAction{
 	function add_post(){
 		if(IS_POST){
 			if ($this->link_obj->create()) {
-				if ($this->link_obj->add()) {
+				if ($this->link_obj->add()!==false) {
 					$this->success("添加成功！", U("link/index"));
 				} else {
 					$this->error("添加失败！");
@@ -38,7 +38,7 @@ class LinkAction extends AdminbaseAction{
 	
 	
 	function edit(){
-		$id=$this->_get("id");
+		$id=I("get.id");
 		$link=$this->link_obj->where("link_id=$id")->find();
 		$this->assign($link);
 		$this->assign("targets",$this->targets);
@@ -61,7 +61,7 @@ class LinkAction extends AdminbaseAction{
 	
 	//排序
 	public function listorders() {
-		$status = parent::listorders($this->link_obj);
+		$status = parent::_listorders($this->link_obj);
 		if ($status) {
 			$this->success("排序更新成功！");
 		} else {
@@ -74,8 +74,8 @@ class LinkAction extends AdminbaseAction{
 		if(isset($_POST['ids'])){
 			
 		}else{
-			$id = (int) $this->_get("id");
-			if ($this->link_obj->delete($id)) {
+			$id = intval(I("get.id"));
+			if ($this->link_obj->delete($id)!==false) {
 				$this->success("删除成功！");
 			} else {
 				$this->error("删除失败！");

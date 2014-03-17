@@ -7,7 +7,12 @@
 #url_ul span.disabled{color:#999; cursor:default;}
 </style>
 <div class="wrap jj">
-  <admintpl file="nav"/>
+  <div class="nav">
+    <ul class="cc">
+      <li><a href="{:U('menuadmin/index')}">后台菜单</a></li>
+      <li class="current"><a href="{:U('menuadmin/add')}">添加菜单</a></li>
+    </ul>
+  </div>
   <div class="common-form">
     <form method="post" class="J_ajaxForm" action="{:U('Menuadmin/add_post')}">
       <div class="h_a">菜单信息</div>
@@ -64,9 +69,10 @@
           </tbody>
         </table>
       </div>
-      <div class="">
+      <div class="btn_wrap_pd">
         <div class="btn_wrap_pd">
           <button class="btn btn_submit mr10 J_ajax_submit_btn" type="submit">添加</button>
+          <a class="btn" href="__URL__">返回</a>
         </div>
       </div>
     </form>

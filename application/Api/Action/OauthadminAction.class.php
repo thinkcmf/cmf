@@ -10,9 +10,10 @@ class OauthadminAction extends AdminbaseAction {
 	
 	//用户列表
 	function index(){
-		$count=M('OauthMember')->where("status=1")->count();
+		$outhmember_model=M('OauthMember');
+		$count=$outhmember_model->where("status=1")->count();
 		$page = $this->page($count, 20);
-		$lists = M("OauthMember")
+		$lists = $outhmember_model
 		->where("status=1")
 		->limit($page->firstRow . ',' . $page->listRows)
 		->select();
@@ -24,15 +25,14 @@ class OauthadminAction extends AdminbaseAction {
 	//删除用户
 	function delete(){
 		$id=intval($_GET['id']);
-		if ($id) {
-			$rst = M("OauthMember")->where("status=1 and ID=$id")->setField('status','0');
-			if ($rst) {
-				$this->success("保存成功！", U("oauthadmin/index"));
-			} else {
-				$this->error('会员删除失败！');
-			}
+		if(empty($id)){
+			$this->error('非法数据！');
+		}
+		$rst = M("OauthMember")->where("status=1 and ID=$id")->delete();
+		if ($rst!==false) {
+			$this->success("删除成功！", U("oauthadmin/index"));
 		} else {
-			$this->error('数据传入失败！');
+			$this->error('删除失败！');
 		}
 	}
 	
@@ -43,53 +43,35 @@ class OauthadminAction extends AdminbaseAction {
 	
 	//设置
 	function setting_post(){
-		$oauth_config_file="conf/ThinkSDK.config.php";
 		if($_POST){
-			$h='$_SERVER["HTTP_HOST"]';
-			extract($_POST);
-			if(IS_SAE){
-				$call_back = 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=';
-				$data = array(
-						'THINK_SDK_QQ' => array(
-								'APP_KEY'    => '{$qq_key}',
-								'APP_SECRET' => '{$qq_sec}',
-								'CALLBACK'   => $call_back . 'qq',
-						),
-						'THINK_SDK_SINA' => array(
-								'APP_KEY'    => '{$sina_key}',
-								'APP_SECRET' => '{$sina_sec}',
-								'CALLBACK'   => $call_back . 'sina',
-						),
-				);
-				$kv = new SaeKV();
-				$ret = $kv->init();
-				$result = $kv->set('THINKSDK_CONFIG', serialize($data));
+			$host=$_SERVER["HTTP_HOST"];
+			$protocol=is_ssl()?"https://":"http://";
+			$qq_key=$_POST['qq_key'];
+			$qq_sec=$_POST['qq_sec'];
+			$sina_key=$_POST['sina_key'];
+			$sina_sec=$_POST['sina_sec'];
+			
+			$call_back = $protocol.$host.__ROOT__.'/index.php?g=api&m=oauth&a=callback&type=';
+			$data = array(
+					'THINK_SDK_QQ' => array(
+							'APP_KEY'    => $qq_key,
+							'APP_SECRET' => $qq_sec,
+							'CALLBACK'   => $call_back . 'qq',
+					),
+					'THINK_SDK_SINA' => array(
+							'APP_KEY'    => $sina_key,
+							'APP_SECRET' => $sina_sec,
+							'CALLBACK'   => $call_back . 'sina',
+					),
+			);
+			
+			$result=sp_set_dynamic_config($data);
+			
+			if($result){
+				$this->success("更新成功！");
 			}else{
-				$con =  <<<OAUTH
-<?php
-defined('OAUTH_URL_CALLBACK') or define('OAUTH_URL_CALLBACK', 'http://'.$h.'/index.php?g=api&m=oauth&a=callback&type=');
-return array(
-	'THINK_SDK_QQ' => array(
-		'APP_KEY'    => '$qq_key',
-		'APP_SECRET' => '$qq_sec',
-		'CALLBACK'   => OAUTH_URL_CALLBACK . 'qq',
-	),
-	'THINK_SDK_SINA' => array(
-		'APP_KEY'    => '$sina_key',
-		'APP_SECRET' => '$sina_sec',
-		'CALLBACK'   => OAUTH_URL_CALLBACK . 'sina',
-	),
-);
-?>
-OAUTH;
-				$fp = fopen($oauth_config_file, 'wb');
-				chmod($oauth_config_file, 0777);
-				$result	= fwrite($fp, trim($con));
-				@fclose($fp);
-			}
-			if($result) $this->success("更新成功！");
-			else $this->error("更新失败！");
-			exit;
+				$this->error("更新失败！");
 			}
 		}
+	}
 }

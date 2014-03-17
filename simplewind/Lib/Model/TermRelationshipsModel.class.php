@@ -1,5 +1,5 @@
 <?php
-class TermRelationshipsModel extends Model {
+class TermRelationshipsModel extends CommonModel {
 	
 	function addRelationship($object_id, $term_id) {
 		$has = $this->where ( "object_id='$object_id' and term_id='$term_id'" )->count ();
@@ -101,6 +101,10 @@ class TermRelationshipsModel extends Model {
 		}
 		
 		return $this->where ( $where )->count ();
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 
 }

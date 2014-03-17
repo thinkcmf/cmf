@@ -1,7 +1,5 @@
 <?php
-class TermsModel extends Model {
-	
-	
+class TermsModel extends CommonModel {
 	
 	/*
 	 * term_id category name description pid path status
@@ -11,11 +9,6 @@ class TermsModel extends Model {
 	protected $_validate = array(
 			//array(验证字段,验证规则,错误提示,验证条件,附加规则,验证时间)
 			array('name', 'require', '分类名称不能为空！', 1, 'regex', 3),
-			//array('app', 'require', '应用不能为空！', 1, 'regex', 3),
-			//array('model', 'require', '模块名称不能为空！', 1, 'regex', 3),
-			//array('action', 'require', '方法名称不能为空！', 1, 'regex', 3),
-			//array('app,model,action', 'checkAction', '同样的记录已经存在！', 0, 'callback', 1),
-			//array('parentid', 'checkParentid', '菜单只支持四级！', 1, 'callback', 1),
 	);
 	
 	/**
@@ -179,15 +172,8 @@ class TermsModel extends Model {
 		return $this->join(C( 'DB_PREFIX' )."term_relationships using(term_id)")->where( C ( 'DB_PREFIX' )."term_relationships.status=$status and category='$category'  ")->count();
 	}
 	
-	/**
-	 * 后台有更新/编辑则删除缓存
-	 * @param type $data
-	 */
-	public function _before_write($data) {
-		parent::_before_write($data);
-	}
 	
-	public function _after_insert($data,$options) {
+	protected function _after_insert($data,$options){
 		parent::_after_insert($data,$options);
 		$term_id=$data['term_id'];
 		$parent_id=$data['parent'];
@@ -198,6 +184,24 @@ class TermsModel extends Model {
 			$d['path']=$parent['path'].'-'.$term_id;
 		}
 		$this->where("term_id=$term_id")->save($d);
+	}
+	
+	
+	protected function _after_update($data,$options){
+		parent::_after_update($data,$options);
+		$term_id=$data['term_id'];
+		$parent_id=$data['parent'];
+		if($parent_id==0){
+			$d['path']="0-$term_id";
+		}else{
+			$parent=$this->where("term_id=$parent_id")->find();
+			$d['path']=$parent['path'].'-'.$term_id;
+		}
+		$this->where("term_id=$term_id")->save($d);
+	}
+	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
 	}
 	
 	

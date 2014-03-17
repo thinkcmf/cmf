@@ -6,7 +6,7 @@ class SettingAction extends AdminbaseAction {
 	
 	function _initialize() {
 		parent::_initialize();
-		$this->options_obj = new OptionsModel();
+		$this->options_obj = D("Options");
 	}
 	
 	function site(){
@@ -28,27 +28,20 @@ class SettingAction extends AdminbaseAction {
 			if(isset($_POST['option_id'])){
 				$data['option_id']=intval($_POST['option_id']);
 			}
-			$home_config_file="./data/conf/config.php";
-			if(file_exists($home_config_file)){
-				$home_configs=include $home_config_file;
-			}else {
-				$home_configs=array();
-			}
+			
+			$configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$configs["URL_MODEL"]=$_POST['options']['urlmode'];
+			$configs["URL_HTML_SUFFIX"]=$_POST['options']['html_suffix'];
+			$configs["UCENTER_ENABLED"]=empty($_POST['options']['ucenter_enabled'])?0:1;
 				
-			$home_configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
-			$home_configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
-			$home_configs["URL_MODEL"]=$_POST['options']['urlmode'];
-			$home_configs["URL_HTML_SUFFIX"]=$_POST['options']['html_suffix'];
-				
-			sp_save_var($home_config_file, $home_configs);//sae use same function
+			sp_set_dynamic_config($configs);//sae use same function
 				
 			$data['option_name']="site_options";
 			$data['option_value']=json_encode($_POST['options']);
 			$r=$this->options_obj->add($data,array(),true);
 			
-			sp_clear_cache();
-			//F("site_options",get_site_options());
-			if ($r) {
+			if ($r!==false) {
 				$this->success("保存成功！");
 			} else {
 				$this->error("保存失败！");
@@ -70,7 +63,7 @@ class SettingAction extends AdminbaseAction {
 			if(empty($_POST['password'])){
 				$this->error("新密码不能为空！");
 			}
-			$user_obj=new UsersModel();
+			$user_obj = D("Users");
 			$uid=get_current_admin_id();
 			$admin=$user_obj->where("ID=$uid")->find();
 			$old_password=$_POST['old_password'];

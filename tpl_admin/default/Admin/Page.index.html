@@ -58,8 +58,8 @@
 		            <td>{$users[$vo['post_author']]['user_login']}</td>
 		            <td>{$vo.post_date}</td>
 		            <td>
-		            	<a href="{:U('page/edit',array('id'=>$vo[ID]))}" target="_blank" >修改</a>|
-		            	<a href="{:U('page/delete',array('id'=>$vo[ID]))}" class="J_ajax_del" >删除</a>
+		            	<a href="{:U('page/edit',array('id'=>$vo['ID']))}" target="_blank" >修改</a>|
+		            	<a href="{:U('page/delete',array('id'=>$vo['ID']))}" class="J_ajax_del" >删除</a>
 					</td>
 	          	</tr>
           </foreach>
@@ -70,7 +70,7 @@
     <div>
       <div class="btn_wrap_pd">
         <label class="mr20"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y">全选</label>                
-        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:U('page/delete')}">删除</button>
+        <button class="btn J_ajax_submit_btn" type="submit" data-action="{:U('page/delete')}" data-subcheck="true">删除</button>
       </div>
     </div>
   </form>

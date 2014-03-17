@@ -27,7 +27,6 @@
         </thead>
         {$categorys}
       </table>
-      <div class="p10"><div class="pages"> {$Page} </div> </div>
     </div>
     <div class="btn_wrap">
       <div class="btn_wrap_pd">             
@@ -37,5 +36,16 @@
   </form>
 </div>
 <script src="__ROOT__/statics/js/common.js{$js_debug}"></script>
+<script>
+
+setInterval(function () {
+    var refersh_time = getCookie('refersh_time_admin_menu_index');
+    if (refersh_time == 1) {
+    	reloadPage(window);
+    }
+}, 1000);
+setCookie('refersh_time_admin_menu_index',0);
+
+</script>
 </body>
 </html>

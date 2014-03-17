@@ -5,15 +5,15 @@
  */
 return array(
     'DB_TYPE' => 'mysql',
-    'DB_HOST' => 'localhost',
-    'DB_NAME' => 'cmf06',
+    'DB_HOST' => '127.0.0.1',
+    'DB_NAME' => 'thinkcmf',
     'DB_USER' => 'root',
-    'DB_PWD' => '',
+    'DB_PWD' => 'admin',
     'DB_PORT' => '3306',
     'DB_PREFIX' => 'sp_',
     //密钥
-    "AUTHCODE" => 'eVYtjP6nlYdVfNmv3n',
+    "AUTHCODE" => 'AQH01sG9RqkgIwHn0M',
     //cookies
-    "COOKIE_PREFIX" => 'kGUoKq_',
+    "COOKIE_PREFIX" => 'hrYYi2_',
 );
 ?>

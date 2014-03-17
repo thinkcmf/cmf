@@ -45,7 +45,6 @@ body fieldset legend {
     </ul>
   </div>
   <form name="myform" id="myform"  action="{:U('page/add_post')}" method="post" class="J_ajaxForms" enctype="multipart/form-data">
-  <input type="hidden" name="post[post_author]" value="{$author}">
   <input type="hidden" name="post[post_type]" value="2">
   <div class="col-right">
     <div class="table_full">
@@ -56,7 +55,7 @@ body fieldset legend {
         <tr>
           <td>
           	<div  style="text-align: center;"><input type='hidden' name='smeta[thumb]' id='thumb' value=''>
-			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','content','12','b6ba209759e147124653ac77362ef2bd');return false;">
+			<a href='javascript:void(0);' onclick="flashupload('thumb_images', '附件上传','thumb',thumb_images,'1,jpg|jpeg|gif|png|bmp,1,,,1','','','');return false;">
 			<img src='__ROOT__/statics/images/icon/upload-pic.png' id='thumb_preview' width='135' height='113' style='cursor:hand' /></a>
 			<!-- <input type="button" class="btn" onclick="crop_cut_thumb($('#thumb').val());return false;" value="裁减图片"> -->
             <input type="button"  class="btn" onclick="$('#thumb_preview').attr('src','__ROOT__/statics/images/icon/upload-pic.png');$('#thumb').val('');return false;" value="取消图片">
@@ -68,12 +67,6 @@ body fieldset legend {
         </tr>
         <tr>
           <td><input type="text" name="post[post_modified]" id="updatetime" value="{:date('Y-m-d H:i:s',time())}" size="21" class="input length_3 J_datetime "></td>
-        </tr>
-        <tr>
-          <td><b>允许评论</b></td>
-        </tr>
-        <tr>
-          <td><label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_1" checked value="1"> 允许评论</label><label class="ib" style="width:88px"><input type="radio" name='post[comment_status]'  id="allow_comment_0"  value="0"> 不允许评论</label></td>
         </tr>
         <tr>
           <td><b>状态</b></td>
@@ -126,13 +119,13 @@ body fieldset legend {
             <tr>
               <th width="80">内容</th>
               <td><span class="must_red">*</span><div id='content_tip'></div>
-				<script type="text/plain" id="content" name="post[post_content]">{$post.post_content}</script>
+				<script type="text/plain" id="content" name="post[post_content]"></script>
                 <script type="text/javascript">
                 //编辑器路径定义
                 var editorURL = GV.DIMAUB;
                 </script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_config.js{$js_debug}"></script>
-                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/editor_all_min.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.config.js{$js_debug}"></script>
+                <script type="text/javascript"  src="__ROOT__/statics/js/ueditor/ueditor.all.min.js{$js_debug}"></script>
 				<script type="text/javascript">
     			var editorcontent;
                         UE.commands['attachments'] = {

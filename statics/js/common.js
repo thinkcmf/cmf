@@ -1,12 +1,7 @@
 ;(function () {
     //全局ajax处理
     $.ajaxSetup({
-        complete: function (jqXHR) {
-            //登录失效处理
-            if (jqXHR.responseText.state === 'logout') {
-                location.href = GV.URL.LOGIN;
-            }
-        },
+        complete: function (jqXHR) {},
         data: {
             __hash__: GV.TOKEN
         },
@@ -189,27 +184,31 @@
                         btn.removeClass('disabled').text(text.replace('中...', '')).parent().find('span').remove();
                         if (data.state === 'success') {
                             $('<span class="tips_success">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('slow').delay(1000).fadeOut(function () {
-                                if (data.referer) {
-                                    //返回带跳转地址
-                                    if(window.parent.art){
-                                        //iframe弹出页
-                                        window.parent.location.href = data.referer;
-                                    }else{
-                                        window.location.href = data.referer;
-                                    }
-                                } else {
-                                    if(window.parent.art){
-                                        reloadPage(window.parent);
-                                    }else{
-                                        //刷新当前页
-                                        reloadPage(window);
-                                    }
-                                }
                             });
                         } else if (data.state === 'fail') {
                             $('<span class="tips_error">' + data.info + '</span>').appendTo(btn.parent()).fadeIn('fast');
                             btn.removeProp('disabled').removeClass('disabled');
                         }
+                        
+                        if (data.referer) {
+                            //返回带跳转地址
+                            if(window.parent.art){
+                                //iframe弹出页
+                                window.parent.location.href = data.referer;
+                            }else{
+                                window.location.href = data.referer;
+                            }
+                        } else {
+                        	if (data.state === 'success') {
+                        		if(window.parent.art){
+                                    reloadPage(window.parent);
+                                }else{
+                                    //刷新当前页
+                                    reloadPage(window);
+                                }
+                        	}
+                        }
+                        
                     }
                 });
             });
@@ -704,4 +703,17 @@ function confirmurl(url, message) {
             art.dialog.tips('你取消了操作');
         });
     });
+}
+
+function open_iframe_dialog(url,title,options){
+	var params={
+            title: title,
+            lock:true,
+            opacity:0,
+            width:"95%"
+        };
+	params=options?$.extend(params,options):params;
+	 Wind.use('artDialog','iframeTools', function () {
+	            art.dialog.open(url, params);
+	        });
 }

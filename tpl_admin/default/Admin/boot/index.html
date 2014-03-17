@@ -2,9 +2,8 @@
 <html lang="zh_CN">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!--[if IE ]>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<![endif]-->
+<meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
 <meta charset="utf-8">
 <title>ThinkCMF</title>
 
@@ -13,7 +12,7 @@
 
 <link href="__TMPL__res/reset.css?{$js_debug}" rel="stylesheet">
 <link href="__TMPL__res/bootstrap.min.css?{$js_debug}" rel="stylesheet">
-<link href="__TMPL__res/bootstrap-responsive.min.css?{$js_debug}" rel="stylesheet">
+<!-- <link href="__TMPL__res/bootstrap-responsive.min.css?{$js_debug}" rel="stylesheet"> -->
 <link rel="stylesheet" href="__TMPL__res/css/font-awesome.min.css?{$js_debug}">
 <!--[if IE ]>
 		  <link rel="stylesheet" href="__TMPL__res/css/font-awesome-ie7.min.css?{$js_debug}" />
@@ -24,7 +23,7 @@
 <link rel="stylesheet" href="__TMPL__res/ace.min.css?{$js_debug}">
 
 
-<link rel="stylesheet" href="__TMPL__res/ace-responsive.min.css?{$js_debug}">
+<!-- <link rel="stylesheet" href="__TMPL__res/ace-responsive.min.css?{$js_debug}"> -->
 <link rel="stylesheet" href="__TMPL__res/ace-skins.min.css?{$js_debug}">
 
 <!--[if lte IE 8]>
@@ -114,7 +113,7 @@ right: initial !important;}
 
 </head>
 
-<body style="" screen_capture_injected="true">
+<body style="min-width:900px;" screen_capture_injected="true">
 	<div id="loading"><i class="loadingicon"></i><span>正在加载...</span></div>
 	<div id="right_tools_wrapper">
 		<!--<span id="right_tools_clearcache" title="清除缓存" onclick="javascript:openapp('{:u('admin/setting/clearcache')}','right_tool_clearcache','清除缓存');"><i class="fa fa-trash-o right_tool_icon"></i></span>

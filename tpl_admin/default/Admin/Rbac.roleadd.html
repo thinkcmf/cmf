@@ -2,26 +2,23 @@
 <head/>
 <body class="J_scroll_fixed">
 <div class="wrap J_check_wrap">
-  <admintpl file="nav"/>
   <div class="h_a">角色信息</div>
   <form class="J_ajaxForm" action="{:U('Rbac/roleadd_post')}" method="post" id="myform">
   <div class="table_full">
       <table width="100%">
         <tr>
           <th width="100">角色名称</th>
-          <td><input type="text" name="name" value="{$data.name}" class="input" id="rolename"></input><span class="must_red">*</span></td>
+          <td><input type="text" name="name" value="" class="input" id="rolename"></input><span class="must_red">*</span></td>
         </tr>
         <tr>
           <th>角色描述</th>
-          <td><textarea name="remark" rows="2" cols="20" id="remark" class="inputtext" style="height:100px;width:500px;">{$data.remark}</textarea></td>
+          <td><textarea name="remark" rows="2" cols="20" id="remark" class="inputtext" style="height:100px;width:500px;"></textarea></td>
         </tr>
         <tr>
           <th>是否启用</th>
           <td><input type="radio" name="status" value="1" checked>启用<label>  &nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="status" value="0">禁止</label></td>
         </tr>
       </table>
-      <input type="hidden" name="id" value="{$data.id}" />
-    
   </div>
   <div class="btn_wrap">
       <div class="btn_wrap_pd">             

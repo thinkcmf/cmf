@@ -7,4 +7,8 @@ class SlideModel extends  CommonModel{
 			array('slide_name', 'require', '名称不能为空！', 1, 'regex', 3),
 	);
 	
+	protected function _before_write(&$data) {
+		parent::_before_write($data);
+	}
+	
 }

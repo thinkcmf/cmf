@@ -142,9 +142,9 @@ class MenuadminAction extends AdminbaseAction {
     			$this->error('显示名称必填！');
     		}
     		if ($this->Menu->add($data)) {
-    			$this->success("新增成功！", U("Menuadmin/index"));
+    			$this->success("添加成功！", U("Menuadmin/index"));
     		} else {
-    			$this->error("新增失败！");
+    			$this->error("添加失败！");
     		}
     }
     
@@ -164,12 +164,12 @@ class MenuadminAction extends AdminbaseAction {
      *  删除
      */
     public function delete() {
-    	$id = (int) $this->_get("id");
+    	$id = intval(I("get.id"));
     	$count = $this->Menu->where(array("parentid" => $id))->count();
     	if ($count > 0) {
     		$this->error("该菜单下还有子菜单，无法删除！");
     	}
-    	if ($this->Menu->delete($id)) {
+    	if ($this->Menu->delete($id)!==false) {
     		$this->success("删除菜单成功！");
     	} else {
     		$this->error("删除失败！");
@@ -205,7 +205,7 @@ class MenuadminAction extends AdminbaseAction {
     
     //选择菜单
     private function _select(){
-    	$apps = Dir::getList(SPAPP);
+    	$apps = scandir(SPAPP);
     	$host = (is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
     	$navs = array();
     	foreach ($apps as $a){
@@ -215,6 +215,7 @@ class MenuadminAction extends AdminbaseAction {
     				$app=$a;
     				if(file_exists($navfile)){
     					$navgeturls=include $navfile;
+    					
     					foreach ($navgeturls as $url){
     						//echo U("$app/$url");
     						$nav = file_get_contents($host.U("$app/$url"));

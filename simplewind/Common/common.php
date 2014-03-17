@@ -1,8 +1,14 @@
 <?php
-
+function sp_get_host(){
+	return (is_ssl()?"https://":"http://").$_SERVER['HTTP_HOST'];
+}
 
 function get_current_admin_id(){
 	return $_SESSION['ADMIN_ID'];
+}
+
+function get_current_userid(){
+	return $_SESSION['MEMBER_id'];
 }
 function sp_password($pw){
 	$decor=md5(C('DB_PREFIX'));
@@ -67,6 +73,33 @@ function sp_clear_cache(){
 		foreach ( $dirs as $dir ) {
 			$dirtool->del ( $dir );
 		}
+		
+		if(defined('IS_SAE') && IS_SAE){
+			$global_mc=@memcache_init();
+			if($global_mc){
+				$global_mc->flush();
+			}
+			
+			$no_need_delete=array("THINKCMF_DYNAMIC_CONFIG");
+			$kv = new SaeKV();
+			// 初始化KVClient对象
+			$ret = $kv->init();
+			// 循环获取所有key-values
+			$ret = $kv->pkrget('', 100);
+			while (true) {
+				foreach($ret as $key =>$value){
+                    if(!in_array($key, $no_need_delete)){
+                    	$kv->delete($key);
+                    }
+                }
+				end($ret);
+				$start_key = key($ret);
+				$i = count($ret);
+				if ($i < 100) break;
+				$ret = $kv->pkrget('', 100, $start_key);
+			}
+			
+		}
 	
 }
 
@@ -74,26 +107,38 @@ function sp_clear_cache(){
  * 保存变量
  */
 function sp_save_var($path,$value){
-	if(IS_SAE){
-		$kv = new SaeKV();
-		$ret = $kv->init();
-		$kv->delete('DYNAMIC_CONFIG');
-		$ret = $kv->set('DYNAMIC_CONFIG', serialize($value));
-	}else{
-		$ret = file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
-	}
+	$ret = file_put_contents($path, "<?php\treturn " . var_export($value, true) . ";?>");
 	return $ret;
 }
 
-/**
- * 生成上传附件验证
- * @param $args   参数
- */
-function upload_key($args) {
-	$auth_key = md5(C("AUTHCODE") . $_SERVER['HTTP_USER_AGENT']);
-	$authkey = md5($args . $auth_key);
-	return $authkey;
+function sp_set_dynamic_config($data){
+	if(defined('IS_SAE') && IS_SAE){
+		$kv = new SaeKV();
+		$ret = $kv->init();
+		$configs=$kv->get("THINKCMF_DYNAMIC_CONFIG");
+		$configs=empty($configs)?array():unserialize($configs);
+		$configs=array_merge($configs,$data);
+		$result = $kv->set('THINKCMF_DYNAMIC_CONFIG', serialize($configs));
+	}elseif(defined('IS_BAE') && IS_BAE){
+		$bae_mc=new BaeMemcache();
+		$configs=$bae_mc->get("THINKCMF_DYNAMIC_CONFIG");
+		$configs=empty($configs)?array():unserialize($configs);
+		$configs=array_merge($configs,$data);
+		$result = $bae_mc->set("THINKCMF_DYNAMIC_CONFIG",serialize($configs),MEMCACHE_COMPRESSED,0);
+	}else{
+		$config_file="./data/conf/config.php";
+		if(file_exists($config_file)){
+			$configs=include $config_file;
+		}else {
+			$configs=array();
+		}
+		$configs=array_merge($configs,$data);
+		$result = file_put_contents($config_file, "<?php\treturn " . var_export($configs, true) . ";?>");
+	}
+	sp_clear_cache();
+	return $result;
 }
+
 
 /**
  * 生成参数列表,以数组形式返回
@@ -116,7 +161,7 @@ function sp_param_lable($tag = ''){
 function get_site_options(){
 	$site_options = F("site_options");
 	if(empty($site_options)){
-		$options_obj = new OptionsModel();
+		$options_obj = M("Options");
 		$option = $options_obj->where("option_name='site_options'")->find();
 		if($option){
 			$site_options = (array)json_decode($option['option_value']);
@@ -159,115 +204,7 @@ hello;
 	return $img;
 }
 
-/**
- * 此方法只能在模板里使用,在action方法里使用会有问题
- * @param string $tplname
- */
-function sp_show_comment($tplname="comment.default"){
-	$_index = A('Comment/_index');
-	echo $_index->showtpl();
-}
 
-
-/**
- * flash上传初始化
- * 初始化swfupload上传中需要的参数
- * @param $module 模块名称
- * @param $catid 栏目id
- * @param $args 传递参数
- * @param $userid 用户id
- * @param $groupid 用户组id 默认游客
- * @param $isadmin 是否为管理员模式
- */
-function initupload($module, $catid, $args, $userid, $groupid = '8', $isadmin = false) {
-	//检查用户组上传权限
-// 	if (!$isadmin) {
-// 		$Member_group = F("Member_group");
-// 		if ((int) $Member_group[$groupid]['allowattachment'] < 1 || empty($Member_group)) {
-// 			return false;
-// 		}
-// 	}
-
-	$sess_id = time();
-	$swf_auth_key = md5(C("AUTHCODE") . $sess_id);
-
-	//同时允许的上传个数, 允许上传的文件类型, 是否允许从已上传中选择, 图片高度, 图片宽度,是否添加水印1是
-	$args = explode(',', $args);
-	//参数补充完整
-	if (empty($args[1])) {
-		//如果允许上传的文件类型为空，启用网站配置的 uploadallowext
-		if ($isadmin) {
-			$args[1] = CONFIG_UPLOADALLOWEXT;
-		} else {
-			$args[1] = CONFIG_QTUPLOADALLOWEXT;
-		}
-	}
-	//允许上传后缀处理
-	$arr_allowext = explode('|', $args[1]);
-	foreach ($arr_allowext as $k => $v) {
-		$v = '*.' . $v;
-		$array[$k] = $v;
-	}
-	$upload_allowext = implode(';', $array);
-
-	//允许上传大小
-	if ($isadmin) {
-		$file_size_limit = intval(CONFIG_UPLOADMAXSIZE);
-	} else {
-		$file_size_limit = intval(CONFIG_QTUPLOADMAXSIZE);
-	}
-	//上传个数
-	$file_upload_limit = intval($args[0]) ? intval($args[0]) : '8';
-
-	$init = 'var swfu = \'\';
-	$(document).ready(function(){
-		Wind.use("swfupload",GV.DIMAUB+"statics/js/swfupload/handlers.js",function(){
-		      swfu = new SWFUpload({
-			flash_url:"' . CONFIG_SITEURL . 'statics/js/swfupload/swfupload.swf?"+Math.random(),
-			upload_url:"' . CONFIG_SITEURL . 'index.php?m=Attachments&g=Attachment&a=swfupload",
-			file_post_name : "Filedata",
-			post_params:{
-			                        "SWFUPLOADSESSID":"' . $sess_id . '",
-			                        "module":"' . $module . '",
-			                        "catid":"' . $catid . '",
-			                        "uid":"' . $userid . '",
-			                        "isadmin":"' . $isadmin . '",
-			                        "groupid":"' . $groupid . '",
-			                        "thumb_width":"' . intval($args[3]) . '",
-			                        "thumb_height":"' . intval($args[4]) . '",
-			                        "watermark_enable":"' . (($args[5] == '') ? 1 : intval($args[5])) . '",
-			                        "filetype_post":"' . $args[1] . '",
-			                        "swf_auth_key":"' . $swf_auth_key . '"
-			},
-			file_size_limit:"' . $file_size_limit . 'KB",
-			file_types:"' . $upload_allowext . '",
-			file_types_description:"All Files",
-			file_upload_limit:"' . $file_upload_limit . '",
-			custom_settings : {progressTarget : "fsUploadProgress",cancelButtonId : "btnCancel"},
-
-			button_image_url: "",
-			button_width: 75,
-			button_height: 28,
-			button_placeholder_id: "buttonPlaceHolder",
-			button_text_style: "",
-			button_text_top_padding: 3,
-			button_text_left_padding: 12,
-			button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-			button_cursor: SWFUpload.CURSOR.HAND,
-
-			file_dialog_start_handler : fileDialogStart,
-			file_queued_handler : fileQueued,
-			file_queue_error_handler:fileQueueError,
-			file_dialog_complete_handler:fileDialogComplete,
-			upload_progress_handler:uploadProgress,
-			upload_error_handler:uploadError,
-			upload_success_handler:uploadSuccess,
-			upload_complete_handler:uploadComplete
-		      });
-		});
-	})';
-	return $init;
-}
 
 
 /**
@@ -326,9 +263,9 @@ function sp_get_menu($id="main",$effected_id="mainmenu",$filetpl="<span class='f
 	return $tree->get_treeview_menu(0,$effected_id, $filetpl, $foldertpl,  $showlevel,$ul_class,$li_class,  $style,  1, FALSE, $dropdown);
 }
 function _sp_get_menu_datas($id){
-	$nav_obj=new NavModel();
+	$nav_obj= M("Nav");
 	if($id=="main"){
-		$navcat_obj=new NavCatModel();
+		$navcat_obj= M("NavCat");
 		$main=$navcat_obj->where("active=1")->find();
 		$id=$main['navcid'];
 	}
@@ -542,3 +479,146 @@ function SendMail($address,$title,$message){
 	// 发送邮件。
 	return($mail->Send());
 }
+
+function sp_get_asset_upload_path($file){
+	if(strpos($file,"http")===0){
+		return $file;
+	}else{
+		return C("TMPL_PARSE_STRING.__UPLOAD__").$file;
+	}                    			
+                        		
+}
+
+
+function sp_authcode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+	$ckey_length = 4;
+
+	$key = md5($key ? $key : C("AUTHCODE"));
+	$keya = md5(substr($key, 0, 16));
+	$keyb = md5(substr($key, 16, 16));
+	$keyc = $ckey_length ? ($operation == 'DECODE' ? substr($string, 0, $ckey_length): substr(md5(microtime()), -$ckey_length)) : '';
+
+	$cryptkey = $keya.md5($keya.$keyc);
+	$key_length = strlen($cryptkey);
+
+	$string = $operation == 'DECODE' ? base64_decode(substr($string, $ckey_length)) : sprintf('%010d', $expiry ? $expiry + time() : 0).substr(md5($string.$keyb), 0, 16).$string;
+	$string_length = strlen($string);
+
+	$result = '';
+	$box = range(0, 255);
+
+	$rndkey = array();
+	for($i = 0; $i <= 255; $i++) {
+		$rndkey[$i] = ord($cryptkey[$i % $key_length]);
+	}
+
+	for($j = $i = 0; $i < 256; $i++) {
+		$j = ($j + $box[$i] + $rndkey[$i]) % 256;
+		$tmp = $box[$i];
+		$box[$i] = $box[$j];
+		$box[$j] = $tmp;
+	}
+
+	for($a = $j = $i = 0; $i < $string_length; $i++) {
+		$a = ($a + 1) % 256;
+		$j = ($j + $box[$a]) % 256;
+		$tmp = $box[$a];
+		$box[$a] = $box[$j];
+		$box[$j] = $tmp;
+		$result .= chr(ord($string[$i]) ^ ($box[($box[$a] + $box[$j]) % 256]));
+	}
+
+	if($operation == 'DECODE') {
+		if((substr($result, 0, 10) == 0 || substr($result, 0, 10) - time() > 0) && substr($result, 10, 16) == substr(md5(substr($result, 26).$keyb), 0, 16)) {
+			return substr($result, 26);
+		} else {
+			return '';
+		}
+	} else {
+		return $keyc.str_replace('=', '', base64_encode($result));
+	}
+
+}
+
+function sp_authencode($string){
+	return sp_authcode($string,"ENCODE");
+}
+
+function Comments($table,$post_id,$params){
+	return  R("Comment/Widget/index",array($table,$post_id,$params));
+}
+
+function sp_file_write($file,$content){
+	
+	if(IS_SAE){
+		$s=new SaeStorage();
+		$arr=explode('/',ltrim($file,'./'));
+		$domain=array_shift($arr);
+		$save_path=implode('/',$arr);
+		return $s->write($domain,$save_path,$content);
+	}else{
+		try {
+			$fp2 = @fopen( $file , "w" );
+			fwrite( $fp2 , $content );
+			fclose( $fp2 );
+			return true;
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+}
+
+function sp_asset_relative_url($asset_url){
+	return str_replace(C("TMPL_PARSE_STRING.__UPLOAD__"), "", $asset_url);
+}
+
+function sp_content_page($content,$pagetpl='{first}{prev}&nbsp;{liststart}{list}{listend}&nbsp;{next}{last}'){
+	$contents=split('_ueditor_page_break_tag_',$content);
+	$totalsize=count($contents);
+	import('Page');
+	$pagesize=1;
+	$PageParam = C("VAR_PAGE");
+	$page = new Page($totalsize,$pagesize);
+	$page->setLinkWraper("li");
+	$page->SetPager('default', $pagetpl, array("listlong" => "6", "first" => "首页", "last" => "尾页", "prev" => "上一页", "next" => "下一页", "list" => "*", "disabledclass" => ""));
+	$content=$contents[$page->firstRow];
+	$data['content']=$content;
+	$data['page']=$page->show('default');
+	
+	return $data;
+}
+
+
+/**
+ * 根据广告名称获取广告内容
+ * @param string $ad
+ * @return 广告内容
+ */
+
+function sp_getad($ad){
+	$ad_obj= M("Ad");
+	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad'")->find();
+	return $ad['ad_content'];
+}
+
+/**
+ * 根据幻灯片标识获取所有幻灯片
+ * @param string $slide 幻灯片标识
+ * @return array;
+ */
+function sp_getslide($slide){
+	$slide_obj= M("SlideCat");
+	$join = "".C('DB_PREFIX').'slide as b on '.C('DB_PREFIX').'slide_cat.cid =b.slide_cid';
+	return $slide_obj->join($join)->where("cat_idname='$slide'")->select();
+
+}
+
+/**
+ * 获取所有友情连接
+ * @return array
+ */
+function sp_getlinks(){
+	$links_obj= M("Links");
+	return  $links_obj->where("link_status=1")->select();
+}
+

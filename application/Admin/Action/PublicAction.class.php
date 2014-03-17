@@ -21,15 +21,15 @@ class PublicAction extends AdminbaseAction {
     }
     
     public function dologin(){
-    	$name = $this->_post('username');
+    	$name = I("post.username");
     	if(empty($name)){
-    		$this->error("用户名不能为空！");
+    		$this->error("用户名或邮箱不能为空！");
     	}
-    	$pass = $this->_post('password');
+    	$pass = I("post.password");
     	if(empty($pass)){
     		$this->error("密码不能为空！");
     	}
-    	$verrify = $this->_post('verify');
+    	$verrify = I("post.verify");
     	if(empty($verrify)){
     		$this->error("验证码不能为空！");
     	}
@@ -39,7 +39,12 @@ class PublicAction extends AdminbaseAction {
     		$this->error("验证码错误！");
     	}else{
     		$user = D("Users");
-    		$where['user_login']=$name;
+    		if(strpos($name,"@")>0){//邮箱登陆
+    			$where['user_email']=$name;
+    		}else{
+    			$where['user_login']=$name;
+    		}
+    		
     		$result = $user->where($where)->find();
     		if($result != null)
     		{
@@ -52,6 +57,7 @@ class PublicAction extends AdminbaseAction {
     				$result['last_login_ip']=get_client_ip();
     				$result['last_login_time']=date("Y-m-d H:i:s");
     				$user->save($result);
+    				setcookie("admin_username",$name,time()+30*24*3600,"/");
     				$this->success("登录验证成功！",U("Index/index"));
     			}else{
     				$this->error("密码错误！");

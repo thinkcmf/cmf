@@ -1,40 +1,4 @@
 <?php
-/**
- * 1
- * 根据广告名称获取广告内容
- * @param string $ad
- * @return 广告内容
- */
-
-function sp_getad($ad){
-	$ad_obj=new AdModel();
-	$ad=$ad_obj->field("ad_content")->where("ad_name='$ad'")->find();
-	return $ad['ad_content'];
-}
-
-/**
- * 2
- * 根据幻灯片标识获取所有幻灯片
- * @param string $slide 幻灯片标识
- * @return array;
- */
-function sp_getslide($slide){
-	$slide_obj=new SlideCatModel();
-	$join = "".C('DB_PREFIX').'slide as b on '.C('DB_PREFIX').'slide_cat.cid =b.slide_cid';
-	return $slide_obj->join($join)->where("cat_idname='$slide'")->select();
-
-}
-
-/**
- * 3
- * 获取所有友情连接
- * @return array
- */
-function sp_getlinks(){
-	$links_obj=new LinksModel();
-	return  $links_obj->where("link_status=1")->select();
-}
-
 
 /**
  * 4
@@ -69,7 +33,7 @@ function sp_sql_posts($tag){
 
 	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
 	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
-	$rs=new TermRelationshipsModel();
+	$rs= M("TermRelationships");
 
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $posts;
@@ -108,7 +72,7 @@ function sp_sql_posts_paged($tag,$pagesize=20,$pagetpl='{first}{prev}&nbsp;{list
 
 	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
 	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
-	$rs=new TermRelationshipsModel();
+	$rs= M("TermRelationships");
 	$totalsize=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->count();
 	
 	import('Page');
@@ -151,7 +115,7 @@ function sp_sql_post($tid,$tag){
 
 	$join = "".C('DB_PREFIX').'posts as b on a.object_id =b.ID';
 	$join2= "".C('DB_PREFIX').'users as c on b.post_author = c.ID';
-	$rs=new TermRelationshipsModel();
+	$rs= M("TermRelationships");
 
 	$posts=$rs->alias("a")->join($join)->join($join2)->field($field)->where($where)->find();
 	return $posts;
@@ -180,7 +144,7 @@ function sp_sql_pages($tag){
 	$where['post_status'] = array('eq',1);
 	$where['post_type'] = array('eq',2);
 
-	$rs=new PostsModel();
+	$rs= M("Posts");
 
 	$posts=$rs->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $posts;
@@ -196,8 +160,7 @@ function sp_sql_page($ID){
 	$where=array();
 	$where['ID'] = array('eq',$ID);
 
-	$rs=new PostsModel();
-
+	$rs= M("Posts");
 	$post=$rs->where($where)->find();
 	return $post;
 }
@@ -211,7 +174,7 @@ function sp_get_term($term_id){
 	
 	$terms=F('all_terms');
 	if(empty($terms)){
-		$term_obj=new TermsModel();
+		$term_obj= M("Terms");
 		$terms=$term_obj->where("status=1")->select();
 		$mterms=array();
 		
@@ -233,7 +196,7 @@ function sp_get_term($term_id){
 function sp_get_child_terms($term_id){
 
 	$term_id=intval($term_id);
-	$term_obj=new TermsModel();
+	$term_obj = M("Terms");
 	$terms=$term_obj->where("status=1 and parent=$term_id")->select();
 	
 	return $terms;
@@ -264,7 +227,7 @@ function sp_get_terms($tag){
 		$where['term_id'] = array('in',$tag['ids']);
 	}
 	
-	$term_obj=new TermsModel();
+	$term_obj= M("Terms");
 	$terms=$term_obj->field($field)->where($where)->order($order)->limit($limit)->select();
 	return $terms;
 }
