@@ -237,6 +237,12 @@
                     $this = $($_this),
                     href = $this.prop('href'),
                     msg = $this.data('msg');
+                    
+                var errorDialog = art.dialog({
+                	icon: 'error',
+                    title: '提示信息'
+                }).hide();
+                
                 art.dialog({
                     title: false,
                     icon: 'question',
@@ -257,7 +263,8 @@
                                 }
                             } else if (data.state === 'fail') {
                                 //art.dialog.alert(data.info);
-                            	alert(data.info);//暂时处理方案
+                            	//alert(data.info);//暂时处理方案
+                            	errorDialog.content(data.info).show();
                             }
                         });
                     },
