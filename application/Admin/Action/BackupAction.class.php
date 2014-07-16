@@ -105,13 +105,11 @@ class BackupAction extends AdminbaseAction
             if ($vol < count($backups))
             {
                 $vol++;
-                $link = 'index.php?g=admin&m=' . MODULE_NAME . '&a=import&vol=' . $vol .
-                    '&backup=' . urlencode($this->backup_name);
+                $link = U("Backup/import",array("vol"=>$vol,"backup"=>urlencode($this->backup_name)));
                 $this->success(sprintf('导入成功！', $vol - 1), $link);
             } else
             {
-                $this->success('导入成功！', 'index.php?g=admin&m=' . MODULE_NAME .
-                    '&a=restore');
+                $this->success('导入成功！', U("Backup/restore"));
             }
         }
     }
@@ -241,15 +239,12 @@ class BackupAction extends AdminbaseAction
             //备份完毕
             $this->_drop_tbl_queue();
             $vol != 1 && $this->_drop_vol(); //只有一卷时不需删除
-            $this->success('备份成功！', 'index.php?g=admin&m=' . MODULE_NAME .
-                '&a=restore');
+            $this->success('备份成功！',U("Backup/restore"));
         } else
         {
             //开始下一卷
             $this->_set_vol($vol); //设置分卷记录
-            $link = 'index.php?g=admin&m=' . MODULE_NAME .
-                '&a=index&dosubmit=1&type=url&backup_name=' . $this->backup_name . '&sizelimit=' .
-                $sizelimit;
+            $link= U("Backup/index",array("dosubmit"=>1,"type"=>"url","backup_name"=>$this->backup_name,"sizelimit"=>$sizelimit));
             $this->success(sprintf('备份写入成功！', $vol), $link);
         }
     }

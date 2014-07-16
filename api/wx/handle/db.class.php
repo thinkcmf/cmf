@@ -22,12 +22,12 @@ class DB
 		if( $p_error == "1" )
 		{
 			//数据库连接错误自动处理
-			$this->_conn = @mysql_connect( $_CFG["DB"]['DB_HOST'].":".$_CFG["DB"]['PORT'], $_CFG["DB"]['DB_USER'], $_CFG["DB"]['DB_PWD'] ) or die( "数据库连接错误.." );
+			$this->_conn = @mysql_connect( $_CFG["DB"]['DB_HOST'].":".$_CFG["DB"]['DB_PORT'], $_CFG["DB"]['DB_USER'], $_CFG["DB"]['DB_PWD'] ) or die( "数据库连接错误.." );
 		}
 		else
 		{
 			//数据库连接错误人工处理
-			$this->_conn = @mysql_connect( $_CFG["DB"]['DB_HOST'].":".$_CFG["DB"]['PORT'], $_CFG["DB"]['DB_USER'], $_CFG["DB"]['DB_PWD'] );
+			$this->_conn = @mysql_connect( $_CFG["DB"]['DB_HOST'].":".$_CFG["DB"]['DB_PORT'], $_CFG["DB"]['DB_USER'], $_CFG["DB"]['DB_PWD'] );
 			if(!$this->_conn)
 			{
 				return false;

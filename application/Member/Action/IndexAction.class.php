@@ -18,10 +18,6 @@ class IndexAction extends HomeBaseAction {
 
     }
 	
-	function test(){
-		include UC_CLIENT_ROOT."client.php";
-		$uc_uid2=uc_user_register("1test", "666666", 'test11@126.com');
-	}
 
     //登录验证
     function dologin(){
@@ -304,11 +300,9 @@ class IndexAction extends HomeBaseAction {
     	if (IS_POST) {
     		if($_POST['pass'] != $_POST['repass']){
     			$this->error("两次密码输入不一致！");
-    			exit();
     		}
     		if(strlen($_POST['pass']) < 5 || strlen($_POST['pass']) > 12){
     			$this->error("密码长度至少5位，最多12位！");
-    			exit();
     		}
     		$mem = M('Members');
     		$uid = $_SESSION["MEMBER_id"];

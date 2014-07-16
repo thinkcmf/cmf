@@ -2,6 +2,9 @@
 $db = include 'conf/db.php';
 $config= include 'conf/config.php';
 $runtime_config=include "data/conf/config.php";
+if(empty($runtime_config)){
+	$runtime_config=array();
+}
 $configs= array(
 		"LOAD_EXT_FILE"=>"extend",
 		
@@ -10,7 +13,7 @@ $configs= array(
 		'THIRD_UDER_ACCESS'		=> false, //第三方用户是否有全部权限，没有则需绑定本地账号
 		/* 标签库 */
 		'TAGLIB_BUILD_IN' => 'cx,spadmin',
-		'APP_GROUP_LIST'        => 'Admin,Portal,Asset,Api,Member,Wx,Topic,Strap,Comment',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
+		'APP_GROUP_LIST'        => 'Admin,Portal,Asset,Api,Member,Wx,Comment',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
 	    'APP_GROUP_MODE'        =>  1,  // 分组模式 0 普通分组 1 独立分组
 	    'APP_GROUP_PATH'        =>  '../application', // 分组目录 独立分组模式下面有效
  		'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
@@ -19,11 +22,12 @@ $configs= array(
  		'DEFAULT_MODULE'        => 'Index', // 默认模块名称
  		'DEFAULT_ACTION'        => 'index', // 默认操作名称
 		'SP_TMPL_PATH'     		=> 'tpl/',       // 前台模板文件根目录
-		'SP_DEFAULT_THEME'		=> 'agirl',       // 前台模板文件
+		'SP_DEFAULT_THEME'		=> 'simpleboot',       // 前台模板文件
 		'SP_TMPL_ACTION_ERROR' 	=> 'error', // 默认错误跳转对应的模板文件,注：相对于前台模板路径
 		'SP_TMPL_ACTION_SUCCESS' 	=> 'success', // 默认成功跳转对应的模板文件,注：相对于前台模板路径
+		'SP_ADMIN_STYLE'		=> 'flat',
 		'SP_ADMIN_TMPL_PATH'    => 'tpl_admin/',       // 各个项目后台模板文件根目录
-		'SP_ADMIN_DEFAULT_THEME'=> 'default',       // 各个项目后台模板文件
+		'SP_ADMIN_DEFAULT_THEME'=> 'simpleboot',       // 各个项目后台模板文件
 		'SP_ADMIN_TMPL_ACTION_ERROR' 	=> 'Admin/error.html', // 默认错误跳转对应的模板文件,注：相对于后台模板路径
 		'SP_ADMIN_TMPL_ACTION_SUCCESS' 	=> 'Admin/success.html', // 默认成功跳转对应的模板文件,注：相对于后台模板路径
 		
@@ -52,8 +56,5 @@ $configs= array(
 		)
 );
 
-if(!APP_DEBUG){
-	$configs['APP_STATUS']="release";
-}
 
 return  array_merge($configs,$config,$db,$runtime_config);

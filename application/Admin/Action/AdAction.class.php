@@ -57,7 +57,7 @@ class AdAction extends AdminbaseAction{
 	 *  删除
 	 */
 	function delete(){
-		$id = (int) $this->_get("id");
+		$id = I("get.id",0,"intval");
 		$data['status']=0;
 		$data['ad_id']=$id;
 		if ($this->ad_obj->save($data)!==false) {

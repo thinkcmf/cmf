@@ -5,7 +5,7 @@
  * 修改日期: 2013-06-22
  */
 if(function_exists('saeAutoLoader') ){
-	$saedb=array(
+	$db=array(
 	    'DB_TYPE' => 'mysql',
 		'DB_DEPLOY_TYPE'=> 1,
 		'DB_RW_SEPARATE'=>true,
@@ -22,7 +22,7 @@ if(function_exists('saeAutoLoader') ){
 //基本配置
 $_CFG = array
 (
-	'DB' => require '../../../conf/db.php', //数据库配置
+	'DB' => $db, //数据库配置
 	'PATH'=> array
 	(
 		'ROOT'  => dirname(__FILE__), //API根目录

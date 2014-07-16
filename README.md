@@ -1,5 +1,9 @@
 UPDATE
 ===
+V1.1.2
+·统一前后台UI框架为simpleboot(bootstrap 2.3.2 ThinkCMF优化版)
+·后台增加风格一键切换功能
+
 V1.1.1
 ·集成Ucenter
 ·增加文章评论功能

@@ -36,7 +36,7 @@ define('SPSTATIC',   'statics/');
 //定义缓存存放路径
 define("RUNTIME_PATH", SITE_PATH . "/data/runtime/");
 //版本号
-define("SIMPLEWIND_CMF_VERSION", 'V1.1.1');
+define("SIMPLEWIND_CMF_VERSION", 'V1.1.2');
 //uc client root
 define("UC_CLIENT_ROOT", './uc_client/');
 

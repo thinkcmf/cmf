@@ -14,8 +14,11 @@ class SettingAction extends AdminbaseAction {
 		$tpls=scandir(C("SP_TMPL_PATH"));
 		$noneed=array(".","..",".svn");
 		$tpls=array_diff($tpls, $noneed);
-		 
 		$this->assign("templates",$tpls);
+		
+		$adminstyles=scandir(SPSTATIC."simpleboot/themes");
+		$adminstyles=array_diff($adminstyles, $noneed);
+		$this->assign("adminstyles",$adminstyles);
 		if($option){
 			$this->assign((array)json_decode($option['option_value']));
 			$this->assign("option_id",$option['option_id']);
@@ -31,6 +34,7 @@ class SettingAction extends AdminbaseAction {
 			
 			$configs["SP_DEFAULT_THEME"]=$_POST['options']['site_tpl'];
 			$configs["DEFAULT_THEME"]=$_POST['options']['site_tpl'];
+			$configs["SP_ADMIN_STYLE"]=$_POST['options']['site_adminstyle'];
 			$configs["URL_MODEL"]=$_POST['options']['urlmode'];
 			$configs["URL_HTML_SUFFIX"]=$_POST['options']['html_suffix'];
 			$configs["UCENTER_ENABLED"]=empty($_POST['options']['ucenter_enabled'])?0:1;

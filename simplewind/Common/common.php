@@ -269,7 +269,7 @@ function _sp_get_menu_datas($id){
 		$main=$navcat_obj->where("active=1")->find();
 		$id=$main['navcid'];
 	}
-	$navs= $nav_obj->where("cid=$id")->order(array("listorder" => "ASC"))->select();
+	$navs= $nav_obj->where("cid=$id and status=1")->order(array("listorder" => "ASC"))->select();
 	foreach ($navs as $key=>$nav){
 		$href=$nav['href'];
 		$hrefold=$href;
@@ -480,11 +480,20 @@ function SendMail($address,$title,$message){
 	return($mail->Send());
 }
 
-function sp_get_asset_upload_path($file){
+function sp_get_asset_upload_path($file,$withhost=false){
 	if(strpos($file,"http")===0){
 		return $file;
 	}else{
-		return C("TMPL_PARSE_STRING.__UPLOAD__").$file;
+		$filepath=C("TMPL_PARSE_STRING.__UPLOAD__").$file;
+		if($withhost){
+			if(strpos($filepath,"http")!==0){
+				$http = 'http://';
+				$http =is_ssl()?'https://':$http;
+				$filepath = $http.$_SERVER['HTTP_HOST'].$filepath;
+			}
+		}
+		return $filepath;
+		
 	}                    			
                         		
 }

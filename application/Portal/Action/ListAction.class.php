@@ -24,7 +24,7 @@ class ListAction extends HomeBaseAction {
 						"id"=>"term_id"
 				),
 				"label"=>"name");
-		exit( sp_get_nav4admin($navcatname,$datas,$navrule) );
+		exit(sp_get_nav4admin($navcatname,$datas,$navrule));
 		
 	}
 	

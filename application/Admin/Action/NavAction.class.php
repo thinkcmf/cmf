@@ -40,7 +40,7 @@ class NavAction extends AdminbaseAction {
 	
 		$tree->init($array);
 		$str = "<tr>
-				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+				<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 				<td>\$id</td>
 				<td >\$spacer\$label</td>
 			    <td>\$status</td>
@@ -127,6 +127,8 @@ class NavAction extends AdminbaseAction {
 	 *  编辑
 	 */
 	public function edit() {
+		
+		
 		$cid=intval($_REQUEST['cid']);
 		$id=intval(I("get.id"));
 		$result = $this->nav->where("cid=$cid and id!=$id")->order(array("listorder" => "ASC"))->select();
@@ -136,7 +138,7 @@ class NavAction extends AdminbaseAction {
 		$tree->nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		$parentid= I("get.parentid");
 		foreach ($result as $r) {
-			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $this->_get("menuid"))) . '">删除</a> ';
+			$r['str_manage'] = '<a href="' . U("Menu/add", array("parentid" => $r['id'], "menuid" => $_GET['menuid'])) . '">添加子菜单</a> | <a href="' . U("Menu/edit", array("id" => $r['id'], "menuid" => $_GET['menuid'])) . '">修改</a> | <a class="J_ajax_del" href="' . U("Menu/delete", array("id" => $r['id'], "menuid" => $_GET["menuid"])) . '">删除</a> ';
 			$r['status'] = $r['status'] ? "显示" : "隐藏";
 			$r['selected'] = $r['id']==$parentid?"selected":"";
 			$array[] = $r;
@@ -186,6 +188,7 @@ class NavAction extends AdminbaseAction {
 	 *  编辑
 	 */
 	public function edit_post() {
+		
 		if (IS_POST) {
 			$parentid=empty($_POST['parentid'])?"0":$_POST['parentid'];
 			if(empty($parentid)){
@@ -193,10 +196,10 @@ class NavAction extends AdminbaseAction {
 			}else{
 				$parent=$this->nav->where("id=$parentid")->find();
 					
-				$_POST['path']=$parent[path]."-".$_POST['id'];
+				$_POST['path']=$parent['path']."-".$_POST['id'];
 			}
 			if ($this->nav->create()) {
-				if ($this->nav->save($_POST) !== false) {
+				if ($this->nav->save() !== false) {
 					$this->success("保存成功！", U("nav/index"));
 				} else {
 					$this->error("保存失败！");
@@ -241,7 +244,7 @@ class NavAction extends AdminbaseAction {
 	
 	private function _select(){
 		$apps=scandir(SPAPP);
-		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'];
+		$host=(is_ssl() ? 'https' : 'http')."://".$_SERVER['HTTP_HOST'].":".$_SERVER['SERVER_PORT'];
 		$navs=array();
 		foreach ($apps as $a){
 		

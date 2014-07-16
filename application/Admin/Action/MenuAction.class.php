@@ -34,7 +34,7 @@ class MenuAction extends AdminbaseAction {
 
         $tree->init($array);
         $str = "<tr>
-					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td><input name='listorders[\$id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$id</td>
         			<td>\$app</td>
 					<td>\$spacer\$name</td>

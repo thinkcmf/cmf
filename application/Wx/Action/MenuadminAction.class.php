@@ -25,7 +25,7 @@ class MenuadminAction extends AdminbaseAction {
         
         $tree->init($array);
         $str = "<tr>
-					<td><input name='listorders[\$menu_id]' type='text' size='3' value='\$listorder' class='input'></td>
+					<td><input name='listorders[\$menu_id]' type='text' size='3' value='\$listorder' class='input input-order'></td>
 					<td>\$menu_id</td>
 					<td >\$spacer\$menu_name</td>
 				    <td>\$menu_type</td>
@@ -152,7 +152,7 @@ class MenuadminAction extends AdminbaseAction {
      * 排序
      */
     public function listorders() {
-    	$status = parent::listorders($this->Menu);
+    	$status = parent::_listorders($this->Menu);
     	if ($status) {
     		$this->success("排序更新成功！");
     	} else {
