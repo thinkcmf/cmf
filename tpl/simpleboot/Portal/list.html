@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{$name}|{$site_seo_title}</title>
+	<meta name="keywords" content="{$name},{$site_seo_keywords}" />
+	<meta name="description" content="{$site_seo_description}">
+    <include file="Public:head" />
+    <style>
+		.listing{
+			margin-bottom: 20px;
+		}
+		.listing h3{
+			margin: 0 0 10px 0;
+			line-height: 100%;
+		}
+	</style>
+</head>
+<body>
+<include file="Public:nav" />
+<div class="container">
+	
+	
+    <div class="pg-opt pin">
+        <div class="container">
+            <h2>{$name}</h2>
+        </div>
+    </div>
+    
+    <div class="slice bg-3 section">
+        <div class="w-section inverse">
+            <div class="container">
+                <div>
+                     <php>
+                     		$lists = sp_sql_posts_paged("cid:$cat_id;order:post_date DESC;",10);
+                     	</php>
+                     	<volist name="lists['posts']" id="vo">
+                     	<php>
+                     		$smeta=json_decode($vo['smeta'], true);
+                     	</php>
+                         <div class="row listing">
+                             <div class="listing-image span3">
+                             	<if condition="!empty($smeta['thumb'])">
+                             		<img width="263" height="197" src="{:sp_get_asset_upload_path($smeta['thumb'])}" class="img-responsive" alt="">
+                             	<else/>
+                             		<img width="263" height="197" src="__TMPL__Public/images/default/list.jpg" class="img-responsive" alt="">
+                             	</if>
+                             </div>
+                             <div class="listing-body span9">
+                                 <h3><a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a></h3>
+                                 <h4>{$vo.post_date}</h4>
+                                 <p>
+                                 {$vo.post_excerpt}
+                                 </p>
+                                 <div class="listing-actions">
+                                 
+                                 <a href="{:U('article/index',array('id'=>$vo['tid']))}" class="btn btn-success pull-right">阅读详细</a>
+                             	</div>
+                             </div>
+                             <div class="clearfix"></div>
+                         </div>
+                         </volist>
+                     <div class="pagination">
+                      <ul>
+                          {$lists['page']}
+                      </ul>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <include file="Public:footer" />
+</div>
+    
+<!-- JavaScript -->
+<include file="Public:scripts" />
+
+</body>
+</html>

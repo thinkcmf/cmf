@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{$post_title}|{$term.name}|{$site_name}</title>
+	<meta name="keywords" content="{$post_keywords}" />
+	<meta name="description" content="{$post_excerpt}">
+    <include file="Public:head" />
+</head>
+<body>
+<include file="Public:nav" />
+<div class="container">
+
+    <div class="pg-opt pin">
+        <div class="container">
+            <div class="row">
+                <div class="span6">
+                    <h2>{$term.name}</h2>
+                </div>
+                <!-- <div class="span6">
+                    <ol class="breadcrumb">
+                    	<li><a href="index.php">首页</a></li>
+                        <li class="active">{$term.name}</li>
+                    </ol>
+                </div> -->
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    <div class="slice bg-3 animate-hover-slide section">
+        <div class="w-section inverse blog-grid">
+            <div class="container">
+                <div class="row">
+                    <div class="span8">
+                        <div class="w-box blog-post">
+                            <div class="figure">
+                                <h4>{$post_title}</h4>
+                                
+                                <span>作者:&nbsp;{$user_login}&nbsp;{$post_date}</span>
+                                {$post_content}
+                            </div>
+                            <div class="pagination">
+                            	<ul>
+			                        {$page}
+			                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span4">
+                    	<h3>最新文章</h3>
+				      	<dl>
+				      		<php>$last_posts = sp_sql_posts("cid:$term_id;order:post_date DESC;limit:5;");</php>
+				      		<foreach name="last_posts" item="vo">
+				            <dt>
+				                <span class="hot_num">{$key+1}.</span>&nbsp;<a href="{:U('article/index',array('id'=>$vo['tid']))}">{$vo.post_title}</a>
+				            </dt>
+				            </foreach>
+                		</dl>
+				    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+<include file="Public:footer" />
+</div>
+
+<!-- JavaScript -->
+<include file="Public:scripts" />
+
+</body>
+</html>
